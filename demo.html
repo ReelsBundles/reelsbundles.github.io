@@ -293,6 +293,71 @@ function closeVideo() {
   document.getElementById("videoModal").style.display = "none";
 }
 </script>
+<script>
 
+// 🚫 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U block
+document.addEventListener('keydown', function(e) {
+
+  // F12
+  if (e.key === "F12") {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+U (View Source)
+  if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+I (Inspect)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+C (Inspect Element)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+    e.preventDefault();
+    return false;
+  }
+
+});
+
+// 🚫 Right click block
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+});
+
+// 🚫 DevTools open detect (advanced trick)
+setInterval(function() {
+  let before = new Date().getTime();
+  debugger;
+  let after = new Date().getTime();
+
+  if (after - before > 100) {
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:20%">
+      ⚠ DevTools Detected <br> Access Blocked
+      </h1>
+    `;
+  }
+}, 1000);
+
+</script>
+<script>
+// tab switch detect (suspicious activity)
+document.addEventListener("visibilitychange", function() {
+  if (document.hidden) {
+    document.body.innerHTML = "⚠ Suspicious Activity Detected";
+  }
+});
+</script>
 </body>
 </html>
