@@ -8,11 +8,17 @@
 <title>Reels Bundles Vault</title>
 
 <script>
-// ✅ Access check
+// ❌ payment check
+if(localStorage.getItem("payment") !== "done"){
+location.href="error.html";
+}
+
+// ❌ must come from warning
 if(localStorage.getItem("vaultAccess") !== "granted"){
-  location.href="error.html";
+location.href="warning.html";
 }
 </script>
+
 
 <style>
 *{
