@@ -141,7 +141,6 @@ p {
 </div>
 
 <script>
-// Get next Monday
 function getNextMonday() {
   let now = new Date();
   let day = now.getDay();
@@ -159,7 +158,10 @@ function updateCountdown() {
   let diff = targetDate - now;
 
   if(diff <= 0) {
-    document.getElementById("countdown").innerHTML = "We are live now 🚀";
+    document.getElementById("countdown").innerHTML = "Opening payment page... 💳";
+
+    // ✅ Payment page pe bhejo
+    window.location.href = "https://payments.cashfree.com/forms?code=Reels-Bundles";
     return;
   }
 
@@ -174,66 +176,6 @@ function updateCountdown() {
 
 setInterval(updateCountdown, 1000);
 updateCountdown();
-</script>
-<script>
-// Get next Monday
-function getNextMonday() {
-  let now = new Date();
-  let day = now.getDay();
-  let diff = (8 - day) % 7;
-  if(diff === 0) diff = 7;
-  now.setDate(now.getDate() + diff);
-  now.setHours(0,0,0,0);
-  return now;
-}
-
-let targetDate = getNextMonday();
-
-function checkWebsiteStatus() {
-  let now = new Date();
-
-  if (now >= targetDate) {
-    // 👉 Monday ke baad redirect to main website
-    window.location.href = "index.html"; // apni real website ka naam daalo
-  }
-}
-
-// har 5 sec check karega
-setInterval(checkWebsiteStatus, 5000);
-</script>
-  <script>
-// Next Monday
-function getNextMonday() {
-  let now = new Date();
-  let day = now.getDay();
-  let diff = (8 - day) % 7;
-  if(diff === 0) diff = 7;
-  now.setDate(now.getDate() + diff);
-  now.setHours(0,0,0,0);
-  return now;
-}
-let targetDate = getNextMonday();
-
-// check every 5 sec
-setInterval(function(){
-  let now = new Date();
-
-  if(now >= targetDate){
-    // 👉 Monday ke baad redirect to payment
-    window.location.href = "https://payments.cashfree.com/forms?code=Reels-Bundles"; 
-    // yaha Cashfree ka link bhi daal sakte ho
-  }
-
-},5000);
-</script>  
-<button onclick="goHome()" class="home-btn">
-  ⬅ Back to Home
-</button>
-
-<script>
-function goHome() {
-  window.location.href = "index.html"; // apni home page ka naam daalo
-}
 </script>
 </body>
 </html>
