@@ -5,44 +5,45 @@
 <title>Payment Success</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-  margin:0;
-  font-family:Arial;
-  background:#000;
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+body{
+margin:0;
+font-family:Arial;
+background:#000;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
-.card {
-  background:#111;
-  padding:30px;
-  border-radius:12px;
-  text-align:center;
-  box-shadow:0 0 30px rgba(255,0,0,0.6);
+.card{
+background:#111;
+padding:30px;
+border-radius:12px;
+text-align:center;
+box-shadow:0 0 30px rgba(255,0,0,0.6);
 }
-#timer { color:red; font-size:20px; }
+#timer{color:red;font-size:20px;}
 </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h2>✅ Payment Successful</h2>
-  <p>Redirecting in <span id="timer">5</span> sec...</p>
+<h2>✔ Payment Successful</h2>
+<p>Redirecting in <span id="timer">5</span> sec...</p>
 </div>
 
 <script>
 localStorage.setItem("payment","done");
 
 let t=5;
-setInterval(()=>{
-  t--;
-  document.getElementById("timer").innerText=t;
-  if(t<=0){
-    window.location.href="warning.html";
-  }
+let x=setInterval(()=>{
+t--;
+document.getElementById("timer").innerText=t;
+if(t<=0){
+clearInterval(x);
+window.location.href="download.html?access=yes";
+}
 },1000);
 </script>
 
