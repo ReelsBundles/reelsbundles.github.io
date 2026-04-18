@@ -153,6 +153,13 @@ function getNextMonday() {
 
 let targetDate = getNextMonday();
 
+// ✅ PAGE LOAD PE CHECK
+let now = new Date();
+if(now >= targetDate){
+  // 👉 Maintenance khatam ho gaya → wapas mat dikhao
+  window.location.href = "https://payments.cashfree.com/forms?code=Reels-Bundles";
+}
+
 function updateCountdown() {
   let now = new Date();
   let diff = targetDate - now;
@@ -160,7 +167,6 @@ function updateCountdown() {
   if(diff <= 0) {
     document.getElementById("countdown").innerHTML = "Opening payment page... 💳";
 
-    // ✅ Payment page pe bhejo
     window.location.href = "https://payments.cashfree.com/forms?code=Reels-Bundles";
     return;
   }
