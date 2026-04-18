@@ -3,7 +3,7 @@
 🔥 Stop Editing. Start Posting.
 
 A high-converting one-page sales website for a digital product:
-**200,000+ Viral Instagram Reels Bundle – Only ₹99**
+**200,000+ Viral Instagram Reels Bundle – Only ₹69**
 
 ---
 
