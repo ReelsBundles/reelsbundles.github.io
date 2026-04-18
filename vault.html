@@ -7,19 +7,6 @@
 
 <title>Reels Bundles Vault</title>
 
-<script>
-// ❌ payment check
-if(localStorage.getItem("payment") !== "done"){
-location.href="error.html";
-}
-
-// ❌ must come from warning
-if(localStorage.getItem("vaultAccess") !== "granted"){
-location.href="warning.html";
-}
-</script>
-
-
 <style>
 *{
 margin:0;
@@ -218,7 +205,16 @@ const links=[
 
 ]
 
+  
+// ❌ payment check
+if(localStorage.getItem("payment") !== "done"){
+  location.href="error.html";
+}
 
+// ❌ must pass flow
+if(localStorage.getItem("vaultAccess") !== "yes"){
+  location.href="warning.html";
+}
 const container = document.getElementById("vaultList");
 
 files.forEach((file,i)=>{
