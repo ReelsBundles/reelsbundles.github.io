@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://reelsbundles.github.io/Reels-Bundles/sitemap.xml
+Sitemap: https://reelsbundles.github.io/sitemap.xml
