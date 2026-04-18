@@ -4,14 +4,7 @@
 <meta charset="UTF-8">
 <title>Secure Download</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script>
-// ❌ direct access block
-if(localStorage.getItem("payment") !== "done"){
-  window.location.href="error.html";
-}
-</script>
-
+  
 <style>
 body{
 margin:0;
@@ -57,17 +50,26 @@ Redirecting in <span id="count">5</span>s
 </div>
 
 <script>
-let loader=document.getElementById("loader");
-let title=document.getElementById("title");
-let status=document.getElementById("status");
-let btn=document.getElementById("btn");
-let countBox=document.getElementById("countBox");
-let countEl=document.getElementById("count");
-
 setTimeout(()=>{
 loader.style.display="none";
 
-let isPaid=localStorage.getItem("payment")==="done";
+// 🔐 token check
+let urlToken = new URLSearchParams(location.search).get("token");
+let savedToken = localStorage.getItem("secureToken");
+let expiry = localStorage.getItem("tokenExpiry");
+
+// ❌ block invalid
+if(!urlToken || urlToken !== savedToken){
+  window.location.href="error.html";
+}
+
+// ❌ expired
+if(Date.now() > expiry){
+  window.location.href="error.html";
+}
+
+// ❌ payment check
+let isPaid = localStorage.getItem("payment")==="done";
 
 countBox.style.display="block";
 let time=5;
@@ -77,12 +79,13 @@ title.innerText="Payment Verified";
 status.innerText="Download Ready";
 btn.classList.add("active");
 
-// 🔐 grant access
-localStorage.setItem("downloadAccess","yes");
+// 🔐 NEW SYSTEM (IMPORTANT)
+localStorage.setItem("goWarning","yes");
 
 let t=setInterval(()=>{
 time--;
 countEl.innerText=time;
+
 if(time<=0){
 clearInterval(t);
 window.location.href="warning.html";
@@ -97,6 +100,7 @@ window.location.href="index.html";
 
 },2000);
 
+// button control
 btn.addEventListener("click",function(e){
 if(!btn.classList.contains("active")){
 e.preventDefault();
