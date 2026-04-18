@@ -154,13 +154,20 @@ let countdown = setInterval(()=>{
     enterVault();
   }
 },1000);
-
-// ✅ Enter Vault
-function enterVault(){
-  localStorage.setItem("vaultAccess","granted");
-  window.location.href = "vault.html";
+  
+// ❌ must come from download
+if(localStorage.getItem("goWarning") !== "yes"){
+  location.href="error.html";
 }
+</script>
 
+<button onclick="enterVault()">Enter Vault</button>
+
+<script>
+function enterVault(){
+  localStorage.setItem("vaultAccess","yes");
+  location.href="vault.html";
+}
 // 🔒 Basic protection (safe)
 document.addEventListener("contextmenu", e => e.preventDefault());
 
