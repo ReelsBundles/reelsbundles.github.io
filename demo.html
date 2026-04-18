@@ -157,27 +157,78 @@ body {
   border-radius: 10px;
 }
 
-/* MOBILE */
+/* 📱 MOBILE FIX - DEMO PAGE */
 @media (max-width: 768px) {
 
-  .content h1 {
-    font-size: 28px;
+  /* HERO CENTER */
+  .hero {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
   }
 
+  /* TEXT CENTER */
+  .content {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .content h1 {
+    font-size: 26px;
+  }
+
+  .content p {
+    font-size: 14px;
+  }
+
+  /* BUTTONS CENTER PERFECT */
+  .btn-group {
+    width: 100%;
+    align-items: center;
+  }
+
+  .pay-btn {
+    width: 220px;
+    max-width: 90%;
+    font-size: 15px;
+    margin: 0 auto 10px auto;
+  }
+
+  .secondary-btn {
+    width: 180px;
+    max-width: 80%;
+    font-size: 12px;
+    margin: 0 auto;
+  }
+
+  /* PRODUCT IMAGE NICHE */
   .product-img {
     position: relative;
     right: auto;
     bottom: auto;
     transform: none;
+    margin-top: 25px;
     text-align: center;
-    margin-top: 20px;
   }
 
   .product-img img {
-    width: 220px;
+    width: 200px;
   }
 
 }
+@media (min-width: 769px) {
+
+  .content {
+    text-align: left;
+  }
+
+  .btn-group {
+    align-items: flex-start;
+  }
+
+}
+
 </style>
 </head>
 
