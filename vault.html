@@ -1,34 +1,20 @@
-//<script>
-
-//if(localStorage.getItem("vaultAccess") !== "granted"){
-  //location.href="error.html";
-//}
-
-//</script>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title> Reels Bundles org </title>
-//<script>
+<title>Reels Bundles Vault</title>
 
-// ACCESS CHECK
-//if(localStorage.getItem("vaultAccess") !== "granted"){
-//location.href="error.html";
-//}
+<script>
+// ✅ Access check
+if(localStorage.getItem("vaultAccess") !== "granted"){
+  location.href="error.html";
+}
+</script>
 
-// DIRECT LINK BLOCK
-//if(!document.referrer.includes("warning.html")){
-//location.href="error.html";
-//}
-
-//</script>
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -112,7 +98,6 @@ letter-spacing:1px;
 margin-top:40px;
 border-top:1px solid #333;
 }
-
 </style>
 
 </head>
@@ -227,119 +212,29 @@ const links=[
 
 ]
 
-const container=document.getElementById("vaultList")
+
+const container = document.getElementById("vaultList");
 
 files.forEach((file,i)=>{
-
-container.innerHTML+=`
-
-<div class="card">
-
-<span>${file}</span>
-
-<a href="${links[i]}" target="_blank">OPEN</a>
-
-</div>
-
-`
-
-})
-
-</script>
-<script>
-
-// 🚫 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U block
-document.addEventListener('keydown', function(e) {
-
-  // F12
-  if (e.key === "F12") {
-    e.preventDefault();
-    return false;
-  }
-
-  // Ctrl+U (View Source)
-  if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-    e.preventDefault();
-    return false;
-  }
-
-  // Ctrl+Shift+I (Inspect)
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
-    e.preventDefault();
-    return false;
-  }
-
-  // Ctrl+Shift+J (Console)
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
-    e.preventDefault();
-    return false;
-  }
-
-  // Ctrl+Shift+C (Inspect Element)
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
-    e.preventDefault();
-    return false;
-  }
-
+  container.innerHTML += `
+  <div class="card">
+    <span>${file}</span>
+    <a href="${links[i]}" target="_blank">OPEN</a>
+  </div>
+  `;
 });
 
-// 🚫 Right click block
-document.addEventListener("contextmenu", function(e){
-  e.preventDefault();
+// 🔒 simple protection (safe)
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.addEventListener("keydown", function(e){
+  if(e.key === "F12") e.preventDefault();
+  if(e.ctrlKey && e.key.toLowerCase() === "u") e.preventDefault();
 });
-
-// 🚫 DevTools open detect (advanced trick)
-setInterval(function() {
-  let before = new Date().getTime();
-  debugger;
-  let after = new Date().getTime();
-
-  if (after - before > 100) {
-    document.body.innerHTML = `
-      <h1 style="color:red;text-align:center;margin-top:20%">
-      ⚠ DevTools Detected <br> Access Blocked
-      </h1>
-    `;
-  }
-}, 1000);
-
-</script>
-<script>
-// tab switch detect (suspicious activity)
-document.addEventListener("visibilitychange", function() {
-  if (document.hidden) {
-    document.body.innerHTML = "⚠ Suspicious Activity Detected";
-  }
-});
-</script>
-
-<script>
-
-document.addEventListener('keydown', function(e) {
-
-if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-e.preventDefault();
-alert("Source view disabled");
-}
-
-if (e.key === "F12") {
-e.preventDefault();
-}
-
-if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
-e.preventDefault();
-}
-
-if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
-e.preventDefault();
-}
-
-});
-
 </script>
 
 <footer class="vault-footer">
-<p>© 2026 Reels Bundles | Developed by Santosh Koli.</p>
+© 2026 Reels Bundles | Developed by Santosh Koli
 </footer>
 
 </body>
