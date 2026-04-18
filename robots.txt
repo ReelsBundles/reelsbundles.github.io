@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# Block sensitive pages (optional but recommended)
+Disallow: /error.html
+
+# Sitemap
 Sitemap: https://reelsbundles.github.io/sitemap.xml
