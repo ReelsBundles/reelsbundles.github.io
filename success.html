@@ -34,6 +34,28 @@ box-shadow:0 0 30px rgba(255,0,0,0.6);
 </div>
 
 <script>
+// payment done
+localStorage.setItem("payment","done");
+
+// 🔐 token generate
+function genToken(){
+  return 'tok_' + Date.now() + '_' + Math.random().toString(36).substring(2,10);
+}
+
+let token = genToken();
+
+// save token + expiry (10 min)
+localStorage.setItem("secureToken", token);
+localStorage.setItem("tokenExpiry", Date.now() + (10*60*1000));
+
+// reset old access
+localStorage.removeItem("downloadAccess");
+localStorage.removeItem("vaultAccess");
+
+// redirect
+window.location.href = "download.html?token=" + token;
+</script>
+<script>
 localStorage.setItem("payment","done");
 
 let t=5;
@@ -46,6 +68,7 @@ window.location.href="download.html?access=yes";
 }
 },1000);
 </script>
-
+  
+  
 </body>
 </html>
