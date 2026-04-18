@@ -6,9 +6,14 @@
 <title>Reels Bundles Vault Warning</title>
 
 <script>
-// ✅ Payment check
+// ❌ payment check
 if(localStorage.getItem("payment") !== "done"){
-  window.location.href = "error.html";
+  window.location.href="error.html";
+}
+
+// ❌ must come from download
+if(localStorage.getItem("downloadAccess") !== "yes"){
+  window.location.href="error.html";
 }
 </script>
 
