@@ -316,12 +316,4 @@ font-size:32px;
 }
 
 }
-
-/* 📱 MOBILE FIX */
-@media (max-width: 768px) {
-  .pay-btn {
-    width: 95%;
-    font-size: 16px;
-  }
-}
 </style>
