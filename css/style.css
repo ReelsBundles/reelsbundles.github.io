@@ -316,5 +316,57 @@ font-size:32px;
 }
 
 }
+/* 🔻 BOTTOM FIXED BAR */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #000;
+  padding: 15px;
+  text-align: center;
+  z-index: 999;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+}
 
+/* OFFER TEXT */
+.offer {
+  color: #ffd700;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* 🔴 MAIN PAY BUTTON */
+.pay-btn {
+  width: 90%;
+  max-width: 400px;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+/* ⚪ SECONDARY BUTTON */
+.secondary-btn {
+  background: #222;
+  color: #ccc;
+  border: none;
+  padding: 8px 15px;
+  font-size: 13px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* 📱 MOBILE FIX */
+@media (max-width: 768px) {
+  .pay-btn {
+    width: 95%;
+    font-size: 16px;
+  }
+}
 </style>
