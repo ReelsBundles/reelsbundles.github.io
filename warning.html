@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reels Bundles Vault Warning</title>
+<script>  
+// ACCESS CHECK
+if(localStorage.getItem("payment") !== "done"){
+  window.location.href = "error.html";
+}
+  </script>
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:#0a0a0a;
+color:white;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+
+width:100%;
+max-width:650px;
+background:#111;
+padding:45px 40px;
+border-radius:18px;
+border:2px solid red;
+box-shadow:0 0 50px rgba(255,0,0,0.4);
+text-align:center;
+
+}
+
+h1{
+color:#ff3b3b;
+margin-bottom:15px;
+font-size:34px;
+}
+
+p{
+color:#aaa;
+font-size:16px;
+margin-bottom:20px;
+}
+
+.rules{
+
+text-align:left;
+margin:20px 0 30px 0;
+color:#ccc;
+line-height:1.8;
+font-size:16px;
+
+}
+
+.rules li{
+margin:12px 0;
+}
+
+.count{
+
+font-size:20px;
+color:#ff3b3b;
+margin-bottom:25px;
+
+}
+
+.btn{
+
+background:red;
+border:none;
+color:white;
+padding:15px 40px;
+font-size:18px;
+border-radius:10px;
+cursor:pointer;
+transition:.3s;
+
+}
+
+.btn:hover{
+
+background:#ff2d2d;
+transform:scale(1.05);
+
+}
+
+.footer{
+
+margin-top:30px;
+font-size:13px;
+color:#777;
+
+}
+
+
+/* MOBILE */
+
+@media (max-width:600px){
+
+.container{
+
+padding:30px 22px;
+
+}
+
+h1{
+
+font-size:26px;
+
+}
+
+.rules{
+
+font-size:14px;
+
+}
+
+.btn{
+
+width:100%;
+font-size:16px;
+padding:14px;
+
+}
+
+.count{
+
+font-size:18px;
+
+}
+
+}
+
+
+/* LARGE LAPTOP */
+
+@media (min-width:1200px){
+
+.container{
+
+max-width:750px;
+padding:55px 50px;
+
+}
+
+h1{
+
+font-size:38px;
+
+}
+
+.rules{
+
+font-size:17px;
+
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>⚠ Vault Access Warning</h1>
+
+<p>Please read all rules before entering the vault.</p>
+
+<ul class="rules">
+
+<li>🔒 Vault access sirf <b>original buyer</b> ke liye hai.</li>
+
+<li>❌ Is vault ka <b>link kisi ko share karna strictly mana hai.</b></li>
+
+<li>🚫 Agar link dusron ko share kiya gaya to <b>access permanently block</b> ho sakta hai.</li>
+
+<li>📱 Ek se zyada device par access karne ki koshish ki gayi to <b>vault access suspend</b> ho sakta hai.</li>
+
+<li>⚠ Agar aap <b>Reels Bundles Vault ka tab close ya remove</b> kar dete ho to aapka access khatam ho sakta hai.</li>
+
+<li>💰 Agar purchase ke baad <b>vault tab delete ya hata diya</b> to dubara access ke liye <b>phirse buy karna padega.</b></li>
+
+<li>🎥 Screen recording ya content download karke dusron ko dena allowed nahi hai.</li>
+
+<li>📦 In bundles ko bina permission <b>resell ya distribute</b> karna strictly prohibited hai.</li>
+
+<li>🚨 Kisi bhi suspicious activity par <b>vault access turant band</b> kiya ja sakta hai.</li>
+
+</ul>
+
+<div class="count">
+Redirecting to Vault in <span id="timer">40</span> seconds...
+</div>
+
+<button class="btn" onclick="enterVault()">Enter Vault Now</button>
+
+<div class="footer">
+@2026 Reels Bundles.All Rights Reserved
+</div>
+
+</div>
+
+<script>
+
+var time=40;
+
+var countdown=setInterval(function(){
+
+time--;
+
+document.getElementById("timer").innerHTML=time;
+
+if(time<=0){
+clearInterval(countdown);
+enterVault();
+}
+
+},1000);
+
+function enterVault(){
+window.location.href="vault.html?access=yes";
+}
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+document.onkeydown=function(e){
+
+if(e.keyCode==123){return false;}
+
+if(e.ctrlKey && e.keyCode==85){return false;}
+
+if(e.ctrlKey && e.keyCode==83){return false;}
+
+}
+// SECURITY
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+document.addEventListener("keydown",function(e){
+
+if(e.key==="F12") e.preventDefault();
+
+if(e.ctrlKey && e.key==="u") e.preventDefault();
+
+if(e.ctrlKey && e.shiftKey && e.key==="i") e.preventDefault();
+
+});
+</script>
+<script>
+
+// 🚫 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U block
+document.addEventListener('keydown', function(e) {
+
+  // F12
+  if (e.key === "F12") {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+U (View Source)
+  if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+I (Inspect)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+C (Inspect Element)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+    e.preventDefault();
+    return false;
+  }
+
+});
+
+// 🚫 Right click block
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+});
+
+// 🚫 DevTools open detect (advanced trick)
+setInterval(function() {
+  let before = new Date().getTime();
+  debugger;
+  let after = new Date().getTime();
+
+  if (after - before > 100) {
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:20%">
+      ⚠ DevTools Detected <br> Access Blocked
+      </h1>
+    `;
+  }
+}, 1000);
+
+</script>
+<script>
+// tab switch detect (suspicious activity)
+document.addEventListener("visibilitychange", function() {
+  if (document.hidden) {
+    document.body.innerHTML = "⚠ Suspicious Activity Detected";
+  }
+});
+</script>
+  
+</body>
+</html>

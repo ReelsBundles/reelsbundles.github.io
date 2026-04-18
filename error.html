@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 - Reels Bundles</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
+color:#fff;
+padding:20px;
+}
+
+/* container */
+.container{
+width:100%;
+max-width:550px;
+text-align:center;
+background:rgba(0,0,0,0.9);
+border-radius:12px;
+padding:35px;
+box-shadow:0 0 40px rgba(229,9,20,0.6);
+}
+
+/* heading */
+h2{
+color:#ccc;
+margin-bottom:10px;
+font-weight:400;
+}
+
+h1{
+font-size:100px;
+margin:10px 0;
+color:#e50914;
+text-shadow:0 0 20px rgba(229,9,20,0.8);
+}
+
+/* gif */
+.video{
+width:100%;
+max-width:380px;
+margin:20px auto;
+display:block;
+border-radius:10px;
+}
+
+/* text */
+p{
+color:#aaa;
+font-size:16px;
+margin-top:10px;
+}
+
+.note{
+background:#111;
+border:1px solid #222;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+font-size:15px;
+color:#ccc;
+}
+
+/* button */
+.btn{
+display:inline-block;
+margin-top:25px;
+padding:12px 30px;
+border-radius:5px;
+background:#e50914;
+color:white;
+text-decoration:none;
+font-weight:500;
+transition:0.3s;
+}
+
+.btn:hover{
+background:#ff1a1a;
+transform:scale(1.05);
+}
+
+/* footer */
+.site-footer{
+text-align:center;
+color:#777;
+font-size:13px;
+margin-top:20px;
+}
+
+/* mobile */
+@media(max-width:600px){
+
+h1{
+font-size:70px;
+}
+
+h2{
+font-size:20px;
+}
+
+.video{
+max-width:300px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Kaha Aa Gaye Dost? 😅</h2>
+
+<h1>404</h1>
+
+<img src="404.gif" class="video">
+
+<p>Dimag Ka Kuch Jada Use Kar Liye Apne ( ͡° ͜ʖ ͡° )</p>
+
+<div class="note">
+Sir Ji, link ko copy-paste mat kariye, pehle Payment kariye aur phir Reels Bundles enjoy kariye!
+</div>
+
+<a href="index.html" class="btn">⬅ Back to Home</a>
+
+<p class="site-footer">© 2026 Reels Bundles • All Rights Reserved</p>
+
+</div>
+
+<script>
+// same security
+document.addEventListener('keydown', function(e) {
+
+if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+e.preventDefault();
+alert("⚠ Source code view is disabled!");
+return false;
+}
+
+if (e.key === "F12") {
+e.preventDefault();
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+e.preventDefault();
+return false;
+}
+
+if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+e.preventDefault();
+return false;
+}
+
+});
+</script>
+
+</body>
+</html>

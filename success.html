@@ -1,0 +1,174 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Success</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }.card {
+  background: #111;
+  padding: 30px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255,0,0,0.6);
+  animation: fadeIn 1s ease;
+}
+
+.success-icon {
+  font-size: 60px;
+  color: #0f0;
+  margin-bottom: 10px;
+  animation: pop 0.6s ease;
+}
+
+h2 {
+  margin-bottom: 10px;
+  animation: slideUp 0.8s ease;
+}
+
+p {
+  color: #ccc;
+  font-size: 16px;
+  animation: fadeIn 1.2s ease;
+}
+
+#timer {
+  font-size: 20px;
+  color: #ff0000;
+  font-weight: bold;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+  </style>
+</head>
+<body><div class="card">
+  <div class="success-icon">✔</div>
+  <h2>Payment Successful</h2>
+  <p>
+    Redirecting to download in 
+    <span id="timer">5</span><span id="dots">.</span>
+  </p>
+</div><script>
+  let timeLeft = 5;
+  const timerEl = document.getElementById("timer");
+
+  // dots animation
+  let dotCount = 1;
+  setInterval(() => {
+    dotCount++;
+    if(dotCount > 6) dotCount = 1;
+    document.getElementById("dots").textContent = '.'.repeat(dotCount);
+  }, 400);
+
+    localStorage.setItem("payment", "done"); 
+  
+  // countdown
+  const countdown = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      document.body.style.opacity = "0";
+      document.body.style.transition = "0.5s";
+      setTimeout(()=>{
+       window.location.href = "download.html?paid=true"; // change if needed
+      },500);
+    }
+  }, 1000);
+</script>
+
+<script>
+
+// 🚫 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U block
+document.addEventListener('keydown', function(e) {
+
+  // F12
+  if (e.key === "F12") {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+U (View Source)
+  if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+I (Inspect)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+C (Inspect Element)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+    e.preventDefault();
+    return false;
+  }
+
+});
+
+// 🚫 Right click block
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+});
+
+// 🚫 DevTools open detect (advanced trick)
+setInterval(function() {
+  let before = new Date().getTime();
+  debugger;
+  let after = new Date().getTime();
+
+  if (after - before > 100) {
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:20%">
+      ⚠ DevTools Detected <br> Access Blocked
+      </h1>
+    `;
+  }
+}, 1000);
+
+</script>
+<script>
+// tab switch detect (suspicious activity)
+document.addEventListener("visibilitychange", function() {
+  if (document.hidden) {
+    document.body.innerHTML = "⚠ Suspicious Activity Detected";
+  }
+});
+</script>
+</body>
+</html>

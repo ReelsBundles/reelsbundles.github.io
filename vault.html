@@ -1,0 +1,346 @@
+<script>
+
+if(localStorage.getItem("vaultAccess") !== "granted"){
+  location.href="error.html";
+}
+
+</script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title> Reels Bundles org </title>
+<script>
+
+// ACCESS CHECK
+if(localStorage.getItem("vaultAccess") !== "granted"){
+location.href="error.html";
+}
+
+// DIRECT LINK BLOCK
+if(!document.referrer.includes("warning.html")){
+location.href="error.html";
+}
+
+</script>
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#050505,#111111);
+color:white;
+min-height:100vh;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+h1{
+text-align:center;
+font-size:34px;
+letter-spacing:3px;
+margin-bottom:40px;
+background:linear-gradient(90deg,#ff0000,#ff5e5e);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+.vault{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+gap:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(8px);
+border:1px solid rgba(255,255,255,0.08);
+padding:20px;
+border-radius:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 0 20px rgba(255,0,0,0.4);
+}
+
+.card span{
+font-size:16px;
+font-weight:600;
+}
+
+.card a{
+background:#ff0000;
+padding:8px 18px;
+border-radius:6px;
+text-decoration:none;
+color:white;
+font-size:14px;
+transition:0.3s;
+}
+
+.card a:hover{
+background:#ff3b3b;
+box-shadow:0 0 10px #ff0000;
+}
+
+.vault-footer{
+width:100%;
+text-align:center;
+padding:18px;
+background:linear-gradient(90deg,#000,#111,#000);
+color:#888;
+font-size:14px;
+letter-spacing:1px;
+margin-top:40px;
+border-top:1px solid #333;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🤗 Reels Bundles Vault 🤗</h1>
+
+<div class="vault" id="vaultList"></div>
+
+</div>
+
+<script>
+
+const files=[
+
+"ANIME REELS",
+"AI MINIATURE REELS",
+"AI ANIMALS REELS",
+"4K REELS BUNDLE",
+"AI VIRAL MONKEY VLOGGING REELS",
+"5000+ REELS",
+"MONEY MOTIVATIONAL REELS",
+"TRAVEL REELS BUNDLE",
+"AI MINIATURE REELS",
+"1400+ MOTIVATIONAL REELS",
+"1300+ MOTIVATIONAL REELS",
+"1000+ MOTIVATIONAL REELS",
+"500+ NATURE REELS",
+"500+ AI TECH REELS",
+"500+ FITNESS REELS",
+"1000+ ART & CRAFT REELS",
+"500+ CARS REELS",
+"10000+ LUXURY REELS",
+"500+ LUXURY REELS",
+"1000+ WOOD WORK REELS",
+"2000+ TOOLS REELS",
+"1000+ TIPS & TRICKS REELS",
+"1000+ SATISFYING REELS",
+"1400+ FUNNY REELS",
+"1000+ COMEDY REELS",
+"3500+ SHARK TANK REELS",
+"500+ OMEGLE REELS",
+"2000+ GYM REELS",
+"3000+ USEFUL GADGETS REELS",
+"1000+ EMOTIONAL REELS",
+"1500+ AI DOCTOR REELS",
+"500+ AI BUSINESS REELS",
+"MORE CARS REELS",
+"SHAYARI REELS",
+"MORE MOTIVATIONAL REELS",
+"AI HINDI KAHANI BUNDLE",
+"STUDY REELS BUNDLE",
+"SUPERHERO REELS",
+"LOFI EMOTIONAL SONGS REELS",
+"SOCIAL MEDIA PLANNER",
+"FACELESS INSTAGRAM MARKETING EBOOK",
+"CANVA CRASH COURSE EBOOK",
+"50 TIPS OF USING CHATGPT EBOOK",
+"500+ FREE BONUS"
+
+]
+
+const links=[
+
+"https://drive.google.com/drive/folders/1a88nvuhgSl_zOhWfd6ymZR3S3Btqa_Yl",
+"https://drive.google.com/drive/folders/1wfKMk-zvCw-iaKDX8Kb0JkbCx9dUg9ug",
+"https://drive.google.com/drive/folders/1UTdDNd0ad4rY_FtG3laCO7xZpnE9IBU5",
+"https://drive.google.com/drive/folders/1C8A3QCVSblSK_Bj4KTGNkmF83avIcGIL",
+"https://drive.google.com/drive/folders/1B_70KmPYOLovf-HW23QAO1-gJFZcxPzL",
+"https://mega.nz/folder/BBpxDYQQ#OLyaL1a0vDXxG__ddzyxoQ",
+"https://drive.google.com/drive/folders/1WonooF1nCX4aPtSpHjr_fpichdMOzTA8",
+"https://drive.google.com/drive/folders/1UWRU6AtXQtpug36uWv4KXGw74D9UBRrb",
+"https://drive.google.com/drive/folders/1wfKMk-zvCw-iaKDX8Kb0JkbCx9dUg9ug",
+"https://drive.google.com/drive/folders/1XZ00wKCxPruEpTyDmRxtLzP3GxPG3N1W",
+"https://drive.google.com/drive/folders/187a-ja5HS16Quki6JnsAxeXJayd4QlOd",
+"https://drive.google.com/drive/folders/1AZgXm_-4wcHoRVSc0hNYtBPTmiYyvjKU",
+"https://drive.google.com/drive/folders/1maID_DgrGhrXMvCs7d7JtGPorOmMfbKH",
+"https://drive.google.com/drive/folders/1YKqZJe120qfeXoGIflkgjRC8z4-pdVks",
+"https://drive.google.com/drive/folders/17TZxcANBRfCZQL0G0ZUnIeQ2FyVElq6A",
+"https://drive.google.com/drive/folders/1uvX4I50ffSWSI4I0391SHuMA87ap8MEL",
+"https://drive.google.com/drive/folders/1hpwetf4zqIs1Yt0R0g8dBREDJ_oN61oW",
+"https://mega.nz/folder/prswiAJZ#HQCZO6eggAThfgY2eaVRCA/folder/BzkHBYDY",
+"https://drive.google.com/drive/folders/1q06oyJq5SXegTeRnl_CRY0_nbttX_P62",
+"https://drive.google.com/drive/folders/1gkr0RrKbrz5yXGqBmWkbCu4L5PbFSam3",
+"https://drive.google.com/drive/folders/1_JDuQqRyk5hDe6JiTVHwRx3c51BtHWQu",
+"https://drive.google.com/drive/folders/1V43pBAdaa4Xhtzvc5blXkeYMDr7RSa7l",
+"https://drive.google.com/drive/folders/1jzhyjsiKPRWJSZZSsasz4qq8Kq9qapV5",
+"https://drive.google.com/drive/folders/1QREdguUC-VAZ-Me_kPbbJ1u3xjc-jf6K",
+"https://mega.nz/folder/MTxTBDgS#nLYmd-Q8qzpOROoKG0_UEA/folder/xP4WmaJL",
+"https://mega.nz/folder/MeZGAbjI#EKijxmWdI6WC89SLqc2GQg",
+"https://drive.google.com/drive/folders/13Q-cmXN6XT88BAkGTDgybUiZr06IiQzK",
+"https://drive.google.com/drive/folders/1jesQ7V_duScTQ9W02bCPsvc8ffXSabxP",
+"https://drive.google.com/drive/folders/1buFdIWsi_MbcxMN8b9WK2qANHKGxlMWe",
+"https://drive.google.com/drive/folders/191Oh9QVYDCXKX0yIoy7_mGV7-D6BT9Jy",
+"https://drive.google.com/drive/folders/1DygXheyCQ86d00C4AtZNj5ltVK_5D4yf",
+"https://drive.google.com/drive/u/0/folders/1YKqZJe120qfeXoGIflkgjRC8z4-pdVks",
+"https://drive.google.com/drive/folders/1d3nz5s_qdCtuP_W_A5pEdWLkV7Gw2Vzs",
+"https://drive.google.com/drive/folders/1vp1RfFk0g3BQjXMo3QMbddgmm0Y3fNUO",
+"https://drive.google.com/drive/folders/1Bb3o-hkqY4Qs5sKI1u2Xz3LtsSXAMiOz",
+"https://drive.google.com/drive/folders/1I0wB7nZr7xOhzGIhfGDV6eRfa7VNd6hp",
+"https://drive.google.com/drive/folders/1oJbBwL1uYUPX0QsApXpGzEmaJGNAzm-o",
+"https://drive.google.com/drive/folders/17GPrwy7368Yq_L_gZ25ify04eRx9YZM6",
+"https://drive.google.com/drive/folders/1jHPbeJdDEfo4DrW2KOxNgTphQhbSim6x",
+"https://drive.google.com/file/d/1JC0KE-Xu3RVJABYnd_lzr3bAxKRYIIXx/view",
+"https://drive.google.com/file/d/1fUAub_t_ibsNJOx2xNJVN00qtPWZsINa/view",
+"https://drive.google.com/file/d/1P9jhZb2rAhO7_wCRcBOsGPlfaSd1H-zC/view",
+"https://drive.google.com/file/d/1RT_b4Nq6PNQb5muqUmLO_6KF2sMG_MES/view",
+"https://drive.google.com/drive/folders/1caLlhi56DfeNIJsoySa6Zh7G_tT3sujm"
+
+]
+
+const container=document.getElementById("vaultList")
+
+files.forEach((file,i)=>{
+
+container.innerHTML+=`
+
+<div class="card">
+
+<span>${file}</span>
+
+<a href="${links[i]}" target="_blank">OPEN</a>
+
+</div>
+
+`
+
+})
+
+</script>
+<script>
+
+// 🚫 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U block
+document.addEventListener('keydown', function(e) {
+
+  // F12
+  if (e.key === "F12") {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+U (View Source)
+  if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+I (Inspect)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+J (Console)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+    e.preventDefault();
+    return false;
+  }
+
+  // Ctrl+Shift+C (Inspect Element)
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
+    e.preventDefault();
+    return false;
+  }
+
+});
+
+// 🚫 Right click block
+document.addEventListener("contextmenu", function(e){
+  e.preventDefault();
+});
+
+// 🚫 DevTools open detect (advanced trick)
+setInterval(function() {
+  let before = new Date().getTime();
+  debugger;
+  let after = new Date().getTime();
+
+  if (after - before > 100) {
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:20%">
+      ⚠ DevTools Detected <br> Access Blocked
+      </h1>
+    `;
+  }
+}, 1000);
+
+</script>
+<script>
+// tab switch detect (suspicious activity)
+document.addEventListener("visibilitychange", function() {
+  if (document.hidden) {
+    document.body.innerHTML = "⚠ Suspicious Activity Detected";
+  }
+});
+</script>
+
+<script>
+
+document.addEventListener('keydown', function(e) {
+
+if (e.ctrlKey && e.key.toLowerCase() === 'u') {
+e.preventDefault();
+alert("Source view disabled");
+}
+
+if (e.key === "F12") {
+e.preventDefault();
+}
+
+if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
+e.preventDefault();
+}
+
+if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
+e.preventDefault();
+}
+
+});
+
+</script>
+
+<footer class="vault-footer">
+© 2026 Reels Bundles. All Rights Reserved
+</footer>
+
+</body>
+</html>
