@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reels Bundles Demo</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: black;
+  color: white;
+}
+
+/* NAVBAR */
+.navbar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 15px 25px;
+  font-size: 24px;
+  font-weight: bold;
+  color: red;
+  z-index: 10;
+}
+
+/* HERO */
+.hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+/* BLUR BACKGROUND */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('product.png') center/cover no-repeat;
+  filter: blur(8px) brightness(0.4);
+  transform: scale(1.1);
+  z-index: 0;
+}
+
+/* DARK OVERLAY */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.9), rgba(0,0,0,0.3));
+  z-index: 1;
+}
+
+/* CONTENT */
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+}
+
+.content h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.content p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+/* PRICE */
+.old-price {
+  text-decoration: line-through;
+  color: #aaa;
+}
+
+.price {
+  color: #ffd700;
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+/* BUTTON GROUP */
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* PAY BUTTON */
+.pay-btn {
+  background: linear-gradient(45deg, #ff0000, #ff4d4d);
+  color: white;
+  padding: 14px 30px;
+  font-size: 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 10px;
+  box-shadow: 0 0 15px red;
+}
+
+/* SECOND BUTTON */
+.secondary-btn {
+  background: transparent;
+  color: #ccc;
+  padding: 8px 15px;
+  font-size: 13px;
+  border-radius: 5px;
+  text-decoration: none;
+  border: 1px solid #444;
+}
+
+/* PRODUCT IMAGE CENTER */
+.product-img {
+  position: absolute;
+  right: 5%;
+  bottom: 50%;
+  transform: translateY(50%);
+  z-index: 2;
+}
+
+.product-img img {
+  width: 320px;
+  max-width: 90vw;
+
+  filter: drop-shadow(0 0 20px rgba(0,255,100,0.6))
+          drop-shadow(0 0 40px rgba(255,0,0,0.5));
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+  border-radius: 10px;
+}
+
+/* VIDEO MODAL */
+#videoModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#videoModal video {
+  width: 90%;
+  max-width: 600px;
+  border-radius: 10px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+  .content h1 {
+    font-size: 28px;
+  }
+
+  .product-img {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    transform: none;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .product-img img {
+    width: 220px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">Reels Bundles</div>
+
+<div class="hero">
+
+  <!-- LEFT CONTENT -->
+  <div class="content">
+    <h1>Viral Reels Bundle</h1>
+    <p>200,000+ ready-to-post reels 🚀</p>
+
+    <p class="old-price">₹999</p>
+    <p class="price">🔥 Today Only ₹69</p>
+
+    <div class="btn-group">
+      <a href="payment.html" class="pay-btn">Pay Now</a>
+      <a href="#features" class="secondary-btn">See What You Get</a>
+    </div>
+
+    <br>
+
+    <button onclick="openVideo()" class="secondary-btn">▶ Watch Demo</button>
+  </div>
+
+  <!-- PRODUCT IMAGE -->
+  <div class="product-img">
+    <img src="product.png" alt="Product">
+  </div>
+
+</div>
+
+<!-- FEATURES -->
+<section id="features" style="padding:40px; text-align:center;">
+  <h2>What You Get</h2>
+  <p>✔ 200,000+ reels<br>
+     ✔ No watermark<br>
+     ✔ Instant access<br>
+     ✔ Lifetime use</p>
+</section>
+
+<!-- VIDEO POPUP -->
+<div id="videoModal" onclick="closeVideo()">
+  <video controls autoplay>
+    <source src="demo.mp4" type="video/mp4">
+  </video>
+</div>
+
+<script>
+function openVideo() {
+  document.getElementById("videoModal").style.display = "flex";
+}
+
+function closeVideo() {
+  document.getElementById("videoModal").style.display = "none";
+}
+</script>
+
+</body>
+</html>
