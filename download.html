@@ -9,13 +9,20 @@
 body{
 margin:0;
 background:#000;
-font-family:Arial;
+font-family:Arial, sans-serif;
 color:white;
+display:flex;
+flex-direction:column;
+min-height:100vh;
+text-align:center;
+}
+
+/* center content */
+.main{
+flex:1;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-text-align:center;
 }
 
 .box{
@@ -63,6 +70,8 @@ border-radius:8px;
 cursor:pointer;
 margin-top:15px;
 }
+
+/* Footer */
 .success-footer{
 width:100%;
 text-align:center;
@@ -71,30 +80,32 @@ background:linear-gradient(90deg,#000,#111,#000);
 color:#aaa;
 font-size:13px;
 border-top:1px solid #333;
-margin-top:auto;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="main">
+  <div class="box">
 
-<div id="loader" class="loader"></div>
+    <div id="loader" class="loader"></div>
 
-<div id="tick" class="tick">✔</div>
+    <div id="tick" class="tick">✔</div>
 
-<h2 id="text">Processing your access...</h2>
+    <h2 id="text">Processing your access...</h2>
 
-<p id="timerText"></p>
+    <p id="timerText"></p>
 
-<button id="btn" class="btn" onclick="goNext()">Continue</button>
+    <button id="btn" class="btn" onclick="goNext()">Continue</button>
 
+  </div>
 </div>
+
 <footer class="success-footer">
   © 2026 Reels Bundles | Developed by Santosh Koli
 </footer>
-  
+
 <script>
 
 // ❌ same logic (unchanged)
@@ -106,8 +117,7 @@ if(localStorage.getItem("payment") !== "done"){
 localStorage.setItem("downloadAccess","yes");
 localStorage.setItem("goWarning","yes");
 
-
-// ⏳ Loader → Tick (fixed timing)
+// ⏳ Loader → Tick
 setTimeout(()=>{
   document.getElementById("loader").style.display="none";
   document.getElementById("tick").style.display="block";
@@ -117,8 +127,7 @@ setTimeout(()=>{
 
 },2500);
 
-
-// ⏱ FIXED TIMER (tumhara main bug yahi tha)
+// ⏱ TIMER
 function startTimer(){
   let t = 5;
   let timerText = document.getElementById("timerText");
@@ -138,8 +147,7 @@ function startTimer(){
   },1000);
 }
 
-
-// ➡ SAME redirect logic
+// ➡ redirect
 function goNext(){
   window.location.href="warning.html";
 }
