@@ -6,13 +6,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Reels Bundles Vault</title>
-
 <style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial, sans-serif;
+font-family: Arial, sans-serif, 'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji';
 }
 
 body{
@@ -65,19 +64,34 @@ font-size:16px;
 font-weight:600;
 }
 
+/* 🔥 3D GLOW BUTTON */
 .card a{
-background:#ff0000;
-padding:8px 18px;
-border-radius:6px;
+background: linear-gradient(145deg,#ff1a1a,#cc0000);
+padding:10px 20px;
+border-radius:8px;
 text-decoration:none;
 color:white;
 font-size:14px;
-transition:0.3s;
+font-weight:600;
+transition: all 0.3s ease;
+box-shadow: 
+0 4px 10px rgba(0,0,0,0.5),
+0 0 10px rgba(255,0,0,0.6),
+inset 0 2px 5px rgba(255,255,255,0.2);
 }
 
 .card a:hover{
-background:#ff3b3b;
-box-shadow:0 0 10px #ff0000;
+transform: translateY(-3px) scale(1.05);
+box-shadow: 
+0 6px 15px rgba(0,0,0,0.6),
+0 0 20px rgba(255,0,0,0.9),
+0 0 40px rgba(255,0,0,0.7),
+inset 0 2px 5px rgba(255,255,255,0.3);
+}
+
+.card a:active{
+transform: scale(0.95);
+box-shadow: inset 0 3px 8px rgba(0,0,0,0.7);
 }
 
 .vault-footer{
@@ -87,12 +101,10 @@ padding:18px;
 background:linear-gradient(90deg,#000,#111,#000);
 color:#888;
 font-size:14px;
-letter-spacing:1px;
 margin-top:40px;
 border-top:1px solid #333;
 }
 </style>
-
 </head>
 
 <body>
