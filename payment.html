@@ -1,170 +1,145 @@
-<!DOCTYPE html
-><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Product Payment</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: white;
-    }
-    .header {
-      padding: 20px;
-      font-size: 24px;
-      font-weight: bold;
-      color: red;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 85vh;
-    }
-    .card {
-      background: #111;
-      padding: 25px;
-      border-radius: 12px;
-      width: 320px;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(255,0,0,0.4);
-    }
-    img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-    .price {
-      font-size: 20px;
-      margin: 10px 0;
-      color: #0f0;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: red;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .main-content{
-      flex:1;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      flex-direction:column;
+<meta charset="UTF-8">
+<title>Product Payment</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#000;
+color:white;
+display:flex;
+flex-direction:column;
+min-height:100vh;
 }
-    .success-footer{
-     width:100%;
-     text-align:center;
-     padding:15px;
-     background:linear-gradient(90deg,#000,#111,#000);
-     color:#aaa;
-     font-size:13px;
-     border-top:1px solid #333;
+
+/* Header */
+.header{
+padding:20px;
+font-size:24px;
+font-weight:bold;
+color:red;
 }
-  </style>
+
+/* Center content */
+.main{
+flex:1;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* Card */
+.card{
+background:#111;
+padding:25px;
+border-radius:12px;
+width:320px;
+text-align:center;
+box-shadow:0 0 15px rgba(255,0,0,0.4);
+}
+
+img{
+width:100%;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+.price{
+font-size:20px;
+margin:10px 0;
+color:#0f0;
+}
+
+button{
+width:100%;
+padding:12px;
+background:red;
+border:none;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* Footer */
+.success-footer{
+width:100%;
+text-align:center;
+padding:15px;
+background:linear-gradient(90deg,#000,#111,#000);
+color:#aaa;
+font-size:13px;
+border-top:1px solid #333;
+}
+</style>
 </head>
+
 <body>
-<footer class="success-footer">
-  © 2026 Reels Bundles | Developed by Santosh Koli
-</footer>
-  <script>
 
-// 🚫 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U block
-document.addEventListener('keydown', function(e) {
+<div class="header">REELS BUNDLES STORE</div>
 
-  // F12
-  if (e.key === "F12") {
-    e.preventDefault();
-    return false;
-  }
+<div class="main">
+  <div class="card">
 
-  // Ctrl+U (View Source)
-  if (e.ctrlKey && e.key.toLowerCase() === 'u') {
-    e.preventDefault();
-    return false;
-  }
+    <img src="product.png" alt="Product Image">
 
-  // Ctrl+Shift+I (Inspect)
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') {
-    e.preventDefault();
-    return false;
-  }
+    <h2>Premium Reels Bundle</h2>
 
-  // Ctrl+Shift+J (Console)
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'j') {
-    e.preventDefault();
-    return false;
-  }
+    <div class="price">₹69</div>
 
-  // Ctrl+Shift+C (Inspect Element)
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'c') {
-    e.preventDefault();
-    return false;
-  }
+    <button onclick="goMaintenance()">Buy Now</button>
 
-});
-
-// 🚫 Right click block
-document.addEventListener("contextmenu", function(e){
-  e.preventDefault();
-});
-
-// 🚫 DevTools open detect (advanced trick)
-setInterval(function() {
-  let before = new Date().getTime();
-  debugger;
-  let after = new Date().getTime();
-
-  if (after - before > 100) {
-    document.body.innerHTML = `
-      <h1 style="color:red;text-align:center;margin-top:20%">
-      ⚠ DevTools Detected <br> Access Blocked
-      </h1>
-    `;
-  }
-}, 1000);
-
-</script>
-  <script>
-// tab switch detect (suspicious activity)
-document.addEventListener("visibilitychange", function() {
-  if (document.hidden) {
-    document.body.innerHTML = "⚠ Suspicious Activity Detected";
-  }
-});
-</script>
-  <script>
-if(location.hostname !== "reelsbundles.github.io"){
-  document.body.innerHTML = "❌ Unauthorized Access";
-}
-</script>
-  <div class="header">REELS BUNDLES STORE</div><div class="container">
-  <div class="card"><!-- PRODUCT IMAGE (PNG) -->
-<img src="product.png" alt="Product Image">
-
-<!-- PRODUCT NAME -->
-<h2>Premium Reels Bundle</h2>
-
-<!-- FIXED PRICE -->
-<div class="price">₹69</div>
-<button onclick="goMaintenance()">Buy Now</button>
-
-<script>
-function goMaintenance() {
-  alert("🚧 Website is under maintenance\nPlease come back on Monday");
-
-  // redirect to maintenance page
-  window.location.href = "maintenance.html";
-}
-</script>
- 
   </div>
-    
+</div>
+
+<footer class="success-footer">
+© 2026 Reels Bundles | Developed by Santosh Koli
+</footer>
+
+<!-- 🔐 SECURITY (same logic untouched) -->
+<script>
+// 🚫 Keys block
+document.addEventListener('keydown', function(e){
+if (e.key==="F12") e.preventDefault();
+if (e.ctrlKey && e.key.toLowerCase()==='u') e.preventDefault();
+if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) e.preventDefault();
+});
+
+// 🚫 Right click
+document.addEventListener("contextmenu", e=>e.preventDefault());
+
+// 🚫 DevTools detect
+setInterval(function(){
+let before=new Date().getTime();
+debugger;
+let after=new Date().getTime();
+if(after-before>100){
+document.body.innerHTML=`<h1 style="color:red;text-align:center;margin-top:20%">⚠ DevTools Detected<br>Access Blocked</h1>`;
+}
+},1000);
+
+// 🚫 Tab switch
+document.addEventListener("visibilitychange", function(){
+if(document.hidden){
+document.body.innerHTML="⚠ Suspicious Activity Detected";
+}
+});
+
+// 🚫 Domain check
+if(location.hostname!=="reelsbundles.github.io"){
+document.body.innerHTML="❌ Unauthorized Access";
+}
+
+// button action
+function goMaintenance(){
+alert("🚧 Website is under maintenance\nPlease come back on Monday");
+window.location.href="maintenance.html";
+}
+</script>
+
 </body>
 </html>
