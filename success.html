@@ -4,33 +4,48 @@
 <meta charset="UTF-8">
 <title>Payment Success</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial, sans-serif;
 background:#000;
 color:white;
 display:flex;
+flex-direction:column;
+min-height:100vh;
+}
+
+/* center card */
+.main{
+flex:1;
+display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
 }
+
 .card{
 background:#111;
 padding:30px;
 border-radius:12px;
 text-align:center;
 box-shadow:0 0 30px rgba(255,0,0,0.6);
+max-width:90%;
 }
-#timer{color:red;font-size:20px;}
+
+#timer{
+color:red;
+font-size:20px;
+}
+
+/* footer */
 .success-footer{
 width:100%;
 text-align:center;
-padding:18px;
+padding:15px;
 background:linear-gradient(90deg,#000,#111,#000);
-color:#888;
-font-size:14px;
-margin-top:40px;
+color:#aaa;
+font-size:13px;
 border-top:1px solid #333;
 }
 </style>
@@ -38,10 +53,16 @@ border-top:1px solid #333;
 
 <body>
 
-<div class="card">
-<h2>✔ Payment Successful</h2>
-<p>Redirecting in <span id="timer">5</span> sec...</p>
+<div class="main">
+  <div class="card">
+    <h2>✔ Payment Successful</h2>
+    <p>Redirecting in <span id="timer">5</span> sec...</p>
+  </div>
 </div>
+
+<footer class="success-footer">
+© 2026 Reels Bundles | Developed by Santosh Koli
+</footer>
 
 <script>
 // payment done
@@ -62,26 +83,18 @@ localStorage.setItem("tokenExpiry", Date.now() + (10*60*1000));
 localStorage.removeItem("downloadAccess");
 localStorage.removeItem("vaultAccess");
 
-// redirect
-window.location.href = "download.html?token=" + token;
-</script>
-<script>
-localStorage.setItem("payment","done");
-
+// timer + redirect (single clean logic)
 let t=5;
 let x=setInterval(()=>{
-t--;
-document.getElementById("timer").innerText=t;
-if(t<=0){
-clearInterval(x);
-window.location.href="download.html?access=yes";
-}
+  t--;
+  document.getElementById("timer").innerText=t;
+
+  if(t<=0){
+    clearInterval(x);
+    window.location.href = "download.html?token=" + token;
+  }
 },1000);
 </script>
 
-<footer class="success-footer">
-© 2026 Reels Bundles | Developed by Santosh Koli
-</footer>
-  
 </body>
 </html>
