@@ -70,6 +70,8 @@ if(Date.now() > expiry){
 
 // ❌ payment check
 let isPaid = localStorage.getItem("payment")==="done";
+localStorage.setItem("downloadAccess","yes");
+localStorage.setItem("goWarning","yes");
 
 countBox.style.display="block";
 let time=5;
@@ -107,6 +109,6 @@ e.preventDefault();
 }
 });
 </script>
-
+  
 </body>
 </html>
