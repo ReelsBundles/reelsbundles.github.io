@@ -4,19 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reels Bundles Vault Warning</title>
+ <script> 
+// 🔐 TOKEN CHECK
+let params = new URLSearchParams(window.location.search);
+let urlToken = params.get("token");
 
-<script>
-// ❌ payment check
-if(localStorage.getItem("payment") !== "done"){
-  window.location.href="error.html";
+let savedToken = localStorage.getItem("secureToken");
+let expiry = localStorage.getItem("tokenExpiry");
+
+if(!urlToken || urlToken !== savedToken){
+  alert("Invalid access!");
+  window.location.href = "index.html";
 }
 
-// ❌ must come from download
-if(localStorage.getItem("downloadAccess") !== "yes"){
-  window.location.href="error.html";
+if(Date.now() > expiry){
+  alert("Session expired!");
+  localStorage.clear();
+  window.location.href = "index.html";
 }
-</script>
 
+// ✅ ONLY THIS FLOW FLAG (optional)
+localStorage.setItem("downloadAccess","yes");
+ </script> 
 <style>
 *{
 margin:0;
