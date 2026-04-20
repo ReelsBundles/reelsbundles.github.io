@@ -106,17 +106,39 @@ border-top:1px solid #333;
   © 2026 Reels Bundles | Developed by Santosh Koli
 </footer>
 
-<script>
+<Script>
+  
+// 🔐 GET TOKEN FROM URL
+let params = new URLSearchParams(window.location.search);
+let urlToken = params.get("token");
 
-// ❌ same logic (unchanged)
-if(localStorage.getItem("payment") !== "done"){
-  window.location.href="error.html";
+// 🔐 GET STORED DATA
+let savedToken = localStorage.getItem("secureToken");
+let expiry = localStorage.getItem("tokenExpiry");
+
+// ❌ INVALID TOKEN
+if(!urlToken || urlToken !== savedToken){
+  alert("Invalid access!");
+  window.location.href = "index.html";
 }
 
-// ✅ same flow continue
-localStorage.setItem("downloadAccess","yes");
-localStorage.setItem("goWarning","yes");
+// ❌ EXPIRED TOKEN (10 min)
+if(Date.now() > expiry){
+  alert("Session expired! Please pay again.");
 
+  localStorage.removeItem("secureToken");
+  localStorage.removeItem("tokenExpiry");
+
+  window.location.href = "index.html";
+}
+
+// 🔐 SINGLE USE (optional but strong)
+if(localStorage.getItem("usedToken") === urlToken){
+  alert("Link already used!");
+  window.location.href="index.html";
+}
+
+localStorage.setItem("usedToken", urlToken);
 // ⏳ Loader → Tick
 setTimeout(()=>{
   document.getElementById("loader").style.display="none";
