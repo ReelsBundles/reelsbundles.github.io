@@ -135,14 +135,14 @@ document.body.innerHTML="❌ Unauthorized Access";
 }
 </script>
 <script>
-// ✅ POPUP FUNCTION (same alert message)
+// ✅ TOP POPUP FUNCTION
 function showPopup(){
   const popup = document.createElement("div");
 
   popup.innerText = "🚀 Your website is now live!\nEverything is set up and ready to go.\nEnjoy your new site and start growing 🎉";
 
   popup.style.position = "fixed";
-  popup.style.bottom = "20px";
+  popup.style.top = "20px"; // 🔥 TOP position
   popup.style.left = "50%";
   popup.style.transform = "translateX(-50%)";
   popup.style.background = "#111";
@@ -152,7 +152,9 @@ function showPopup(){
   popup.style.boxShadow = "0 0 15px rgba(0,255,150,0.4)";
   popup.style.zIndex = "9999";
   popup.style.fontSize = "14px";
-  popup.style.whiteSpace = "pre-line"; // 🔥 multiline support
+  popup.style.whiteSpace = "pre-line";
+  popup.style.textAlign = "center";
+  popup.style.minWidth = "250px";
 
   document.body.appendChild(popup);
 
@@ -161,7 +163,7 @@ function showPopup(){
   },2500);
 }
 
-// ✅ BUTTON ACTION (FIXED)
+// ✅ BUTTON ACTION
 function goToPayment(){
   showPopup();
 
