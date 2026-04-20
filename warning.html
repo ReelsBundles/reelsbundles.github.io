@@ -4,28 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reels Bundles Vault Warning</title>
- <script> 
-// 🔐 TOKEN CHECK
-let params = new URLSearchParams(window.location.search);
-let urlToken = params.get("token");
 
-let savedToken = localStorage.getItem("secureToken");
-let expiry = localStorage.getItem("tokenExpiry");
-
-if(!urlToken || urlToken !== savedToken){
-  alert("Invalid access!");
-  window.location.href = "index.html";
-}
-
-if(Date.now() > expiry){
-  alert("Session expired!");
-  localStorage.clear();
-  window.location.href = "index.html";
-}
-
-// ✅ ONLY THIS FLOW FLAG (optional)
-localStorage.setItem("downloadAccess","yes");
- </script> 
 <style>
 *{
 margin:0;
@@ -164,20 +143,29 @@ let countdown = setInterval(()=>{
   }
 },1000);
   
-// ❌ must come from download
-if(localStorage.getItem("goWarning") !== "yes"){
-  location.href="error.html";
-}
-</script>
+// 🔐 TOKEN GET
+let params = new URLSearchParams(window.location.search);
+let urlToken = params.get("token");
 
-<script>
+// ❌ INVALID TOKEN
+let savedToken = localStorage.getItem("secureToken");
+let expiry = localStorage.getItem("tokenExpiry");
+
+if(!urlToken || urlToken !== savedToken){
+  location.href="index.html";
+}
+
+if(Date.now() > expiry){
+  alert("Session expired!");
+  localStorage.clear();
+  location.href="index.html";
+}
+
+// ✅ ENTER VAULT WITH TOKEN
 function enterVault(){
   localStorage.setItem("vaultAccess","yes");
-  location.href="vault.html";
+  location.href="vault.html?token=" + urlToken;
 }
-// 🔒 Basic protection (safe)
-document.addEventListener("contextmenu", e => e.preventDefault());
-
 document.addEventListener("keydown", function(e){
   if(e.key === "F12") e.preventDefault();
   if(e.ctrlKey && e.key.toLowerCase() === "u") e.preventDefault();
