@@ -226,15 +226,26 @@ const links=[
 
 ]
 
-  
-// ❌ payment check
-if(localStorage.getItem("payment") !== "done"){
-  location.href="error.html";
+// 🔐 TOKEN CHECK
+let params = new URLSearchParams(window.location.search);
+let urlToken = params.get("token");
+
+let savedToken = localStorage.getItem("secureToken");
+let expiry = localStorage.getItem("tokenExpiry");
+
+if(!urlToken || urlToken !== savedToken){
+  location.href="index.html";
 }
 
-// ❌ must pass flow
+if(Date.now() > expiry){
+  alert("Session expired!");
+  localStorage.clear();
+  location.href="index.html";
+}
+
+// flow check
 if(localStorage.getItem("vaultAccess") !== "yes"){
-  location.href="warning.html";
+  location.href="warning.html?token=" + urlToken;
 }
 const container = document.getElementById("vaultList");
 
