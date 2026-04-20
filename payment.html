@@ -133,12 +133,42 @@ document.body.innerHTML="⚠ Suspicious Activity Detected";
 if(location.hostname!=="reelsbundles.github.io"){
 document.body.innerHTML="❌ Unauthorized Access";
 }
-
-// button action
-function goToPayment(){
-alert("🚀 Your website is now live!/nEverything is set up and ready to go./nEnjoy your new site and start growing 🎉");
-  window.location.href = "https://payments.cashfree.com/forms?code=Reels-Bundles";
 </script>
+<script>
+// ✅ POPUP FUNCTION (same alert message)
+function showPopup(){
+  const popup = document.createElement("div");
 
+  popup.innerText = "🚀 Your website is now live!\nEverything is set up and ready to go.\nEnjoy your new site and start growing 🎉";
+
+  popup.style.position = "fixed";
+  popup.style.bottom = "20px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#111";
+  popup.style.color = "#fff";
+  popup.style.padding = "12px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.boxShadow = "0 0 15px rgba(0,255,150,0.4)";
+  popup.style.zIndex = "9999";
+  popup.style.fontSize = "14px";
+  popup.style.whiteSpace = "pre-line"; // 🔥 multiline support
+
+  document.body.appendChild(popup);
+
+  setTimeout(()=>{
+    popup.remove();
+  },2500);
+}
+
+// ✅ BUTTON ACTION (FIXED)
+function goToPayment(){
+  showPopup();
+
+  setTimeout(()=>{
+    window.location.href = "https://payments.cashfree.com/forms?code=Reels-Bundles";
+  },2500);
+}
+</script>
 </body>
 </html>
