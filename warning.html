@@ -152,13 +152,13 @@ let savedToken = localStorage.getItem("secureToken");
 let expiry = localStorage.getItem("tokenExpiry");
 
 if(!urlToken || urlToken !== savedToken){
-  location.href="index.html";
+  location.href="error.html";
 }
 
 if(Date.now() > expiry){
   alert("Session expired!");
   localStorage.clear();
-  location.href="index.html";
+  location.href="error.html";
 }
 
 // ✅ ENTER VAULT WITH TOKEN
