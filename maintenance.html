@@ -54,7 +54,7 @@ body {
 
 /* Loader */
 .loader {
-  margin: 20px auto;   /* 👈 center karne ke liye */
+  margin: 20px auto;
   width: 250px;
   height: 5px;
   background: #333;
@@ -83,30 +83,6 @@ h1 {
 p {
   color: #ccc;
 }
-
-/* Countdown */
-#countdown {
-  margin-top: 15px;
-  font-size: 22px;
-  color: #e50914;
-  font-weight: bold;
-}
-.home-btn {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #e50914;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.home-btn:hover {
-  background: #ff1a1a;
-  transform: scale(1.05);
-}
 </style>
 </head>
 
@@ -128,10 +104,7 @@ p {
   <p>Sorry for the inconvenience</p>
   <p>This website is currently not working</p>
 
-  <p><strong>We will be back from Monday</strong></p>
-
-  <!-- Countdown -->
-  <div id="countdown">Loading...</div>
+  <p><strong>We will be back soon</strong></p>
 
   <!-- Loader -->
   <div class="loader">
@@ -140,48 +113,5 @@ p {
 
 </div>
 
-<script>
-function getNextMonday() {
-  let now = new Date();
-  let day = now.getDay();
-  let diff = (8 - day) % 7;
-  if(diff === 0) diff = 7;
-  now.setDate(now.getDate() + diff);
-  now.setHours(0,0,0,0);
-  return now;
-}
-
-let targetDate = getNextMonday();
-
-// ✅ PAGE LOAD PE CHECK
-let now = new Date();
-if(now >= targetDate){
-  // 👉 Maintenance khatam ho gaya → wapas mat dikhao
-  window.location.href = "#";
-}
-
-function updateCountdown() {
-  let now = new Date();
-  let diff = targetDate - now;
-
-  if(diff <= 0) {
-    document.getElementById("countdown").innerHTML = "Opening payment page... 💳";
-
-    window.location.href = "#";
-    return;
-  }
-
-  let days = Math.floor(diff / (1000*60*60*24));
-  let hours = Math.floor((diff / (1000*60*60)) % 24);
-  let minutes = Math.floor((diff / (1000*60)) % 60);
-  let seconds = Math.floor((diff / 1000) % 60);
-
-  document.getElementById("countdown").innerHTML =
-    days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-}
-
-setInterval(updateCountdown, 1000);
-updateCountdown();
-</script>
 </body>
 </html>
