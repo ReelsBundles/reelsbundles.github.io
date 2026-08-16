@@ -905,9 +905,13 @@ async function createPaymentOrder(customer) {
         !data.success
     ) {
 
+        let msg = data?.message || "Unable to create payment order.";
+        if (String(msg).toLowerCase().includes("authentication failed")) {
+            msg = "Payment Gateway Credentials Error: Please check Cashfree API Keys on server.";
+        }
+
         throw new Error(
-            data?.message ||
-            "Unable to create payment order."
+            msg
         );
 
     }
