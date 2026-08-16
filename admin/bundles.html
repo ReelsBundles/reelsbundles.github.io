@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Bundle Manager | ReelsBundles Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="assets/css/admin-dashboard.css">
+
+<link
+rel="stylesheet"
+href="assets/css/admin-bundles.css">
+
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="admin-sidebar">
+
+<div class="admin-brand">
+
+<div class="admin-brand-icon">
+▶
+</div>
+
+<div>
+
+<strong>ReelsBundles</strong>
+
+<span>ADMIN PANEL</span>
+
+</div>
+
+</div>
+
+<nav class="admin-nav">
+
+<a href="dashboard.html" class="admin-nav-item">
+<span>📊</span> Dashboard
+</a>
+
+<a href="bundles.html" class="admin-nav-item active">
+<span>📦</span> Bundles
+</a>
+
+<a href="orders.html" class="admin-nav-item">
+<span>🧾</span> Orders
+</a>
+
+<a href="download.html" class="admin-nav-item">
+<span>⬇️</span> Downloads
+</a>
+
+<a href="storage.html" class="admin-nav-item">
+<span>☁️</span> Storage
+</a>
+
+</nav>
+
+<div class="admin-sidebar-footer">
+    <button type="button" id="adminLogoutBtn" onclick="localStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; margin-bottom:12px;">
+        🚪 Logout
+    </button>
+    <div class="footer-meta">
+        <span>ReelsBundles Admin v2.0</span>
+        <small>Secure Control Panel</small>
+    </div>
+</div>
+
+</aside>
+
+<!-- ================= CONTENT ================= -->
+
+<main class="admin-main">
+
+<header class="topbar">
+
+<div>
+
+<h1>
+
+Bundle Manager
+
+</h1>
+
+<p>
+
+Manage Instagram Reels Bundles
+
+</p>
+
+</div>
+
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+
+<button
+    type="button"
+    id="addBundleBtn"
+    class="btn btn-primary">
+
+<svg class="btn-icon" viewBox="0 0 24 24">
+
+<path d="M12 5v14"/>
+
+<path d="M5 12h14"/>
+
+</svg>
+
+<span>+ Add Single Bundle</span>
+
+</button>
+
+<button
+    type="button"
+    id="bulkAddBtn"
+    class="btn btn-primary"
+    style="background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);">
+
+<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+<polyline points="14 2 14 8 20 8"/>
+<line x1="12" y1="18" x2="12" y2="12"/>
+<line x1="9" y1="15" x2="15" y2="15"/>
+
+</svg>
+
+<span>📦 Bulk Add Bundles</span>
+
+</button>
+
+<button
+    type="button"
+    id="deleteAllBundlesBtn"
+    class="btn btn-secondary"
+    style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+
+<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+<polyline points="3 6 5 6 21 6"/>
+<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+
+</svg>
+
+<span>🗑️ Delete All</span>
+
+</button>
+
+</div>
+
+</header>
+
+<section class="stats">
+
+<div class="card">
+
+<span>Total Bundles</span>
+
+<h2 id="totalBundles">0</h2>
+
+</div>
+
+<div class="card">
+
+<span>Active</span>
+
+<h2 id="activeBundles">0</h2>
+
+</div>
+
+<div class="card">
+
+<span>Inactive</span>
+
+<h2 id="inactiveBundles">0</h2>
+
+</div>
+
+<div class="card">
+
+<span>Total Pages</span>
+
+<h2 id="totalPages">0</h2>
+
+</div>
+
+</section>
+
+<section class="toolbar">
+
+<div class="search">
+
+<svg viewBox="0 0 24 24">
+
+<circle cx="11" cy="11" r="7"/>
+
+<path d="M20 20l-3.5-3.5"/>
+
+</svg>
+
+<input
+
+id="search"
+
+type="text"
+
+placeholder="Search Bundles...">
+
+</div>
+
+<select id="filterPlan">
+
+<option value="all">All Plans</option>
+
+<option value="basic">Basic</option>
+
+<option value="premium">Premium</option>
+
+</select>
+
+</section>
+<!-- ==========================================
+TABLE
+========================================== -->
+
+<section class="table-container">
+
+<div class="table-header">
+
+<h2>
+
+All Bundles
+
+</h2>
+
+<span id="bundleCount">
+
+0 Bundles
+
+</span>
+
+</div>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th width="90">
+
+Thumbnail
+
+</th>
+
+<th>
+
+Bundle Name
+
+</th>
+
+<th width="120">
+
+Plan
+
+</th>
+
+<th width="100">
+
+Page
+
+</th>
+
+<th width="120">
+
+Status
+
+</th>
+
+<th width="200">
+
+Actions
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="bundleTable">
+
+<!-- Dynamic Data -->
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+EMPTY STATE
+========================================== -->
+
+<section
+id="emptyState"
+class="empty-state">
+
+<div class="empty-icon">
+
+<svg viewBox="0 0 24 24">
+
+<path d="M21 16V8l-9-5-9 5v8l9 5z"/>
+
+</svg>
+
+</div>
+
+<h2>
+
+No Bundles Found
+
+</h2>
+
+<p>
+
+Create your first bundle to get started.
+
+</p>
+
+<button
+id="emptyAddBundle"
+class="btn btn-primary">
+
+<svg
+class="btn-icon"
+viewBox="0 0 24 24">
+
+<path d="M12 5v14"/>
+
+<path d="M5 12h14"/>
+
+</svg>
+
+<span>
+
+Create Bundle
+
+</span>
+
+</button>
+
+</section>
+
+<!-- ==========================================
+PAGINATION
+========================================== -->
+
+<section class="pagination">
+
+<button
+
+id="prevPage"
+
+class="btn btn-secondary">
+
+<svg
+class="btn-icon"
+viewBox="0 0 24 24">
+
+<path d="M15 18l-6-6 6-6"/>
+
+</svg>
+
+<span>
+
+Previous
+
+</span>
+
+</button>
+
+<div
+id="pageNumber"
+class="page-number">
+
+Page 1 of 1
+
+</div>
+
+<button
+
+id="nextPage"
+
+class="btn btn-secondary">
+
+<span>
+
+Next
+
+</span>
+
+<svg
+class="btn-icon"
+viewBox="0 0 24 24">
+
+<path d="M9 18l6-6-6-6"/>
+
+</svg>
+
+</button>
+
+</section>
+
+<<!-- ==========================================
+     ADD / EDIT BUNDLE MODAL
+========================================== -->
+
+<div id="bundleModal" class="modal">
+
+    <div class="modal-content bundle-form-modal">
+
+        <!-- HEADER -->
+        <div class="modal-header bundle-form-header">
+
+            <div class="bundle-form-heading">
+
+                <div class="bundle-form-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 16V8l-9-5-9 5v8l9 5z"/>
+                        <path d="M3.3 7.5 12 12l8.7-4.5"/>
+                        <path d="M12 22V12"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2 id="modalTitle">
+                        Add Bundle
+                    </h2>
+
+                    <p>
+                        Create and manage your Reels Bundle
+                    </p>
+                </div>
+
+            </div>
+
+            <button
+                id="closeModal"
+                class="close-btn"
+                type="button">
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 6L6 18"/>
+                    <path d="M6 6l12 12"/>
+                </svg>
+
+            </button>
+
+        </div>
+
+
+        <!-- FORM -->
+        <form id="bundleForm">
+
+
+            <!-- ======================================
+                 BASIC INFORMATION
+            ======================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-heading">
+
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 4h16v16H4z"/>
+                            <path d="M8 8h8"/>
+                            <path d="M8 12h8"/>
+                            <path d="M8 16h5"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3>Bundle Information</h3>
+                        <p>Basic details of your bundle</p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <!-- BUNDLE NAME -->
+                    <div class="form-group">
+
+                        <label for="bundleName">
+                            Bundle Name
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 4h16v16H4z"/>
+                                <path d="M8 8h8"/>
+                                <path d="M8 12h6"/>
+                            </svg>
+
+                            <input
+                                id="bundleName"
+                                type="text"
+                                placeholder="Enter bundle name"
+                                required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PLAN -->
+                    <div class="form-group">
+
+                        <label for="plan">
+                            Plan
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 17l-6.5 4L7.5 13.5 2 9h7z"/>
+                            </svg>
+
+                            <select id="plan">
+
+                                <option value="basic">
+                                    Basic
+                                </option>
+
+                                <option value="premium">
+                                    Premium
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PAGE -->
+                    <div class="form-group">
+
+                        <label for="page">
+                            Page
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 5h16v14H4z"/>
+                                <path d="M8 9h8"/>
+                                <path d="M8 13h5"/>
+                            </svg>
+
+                            <select id="page">
+
+                                <option value="1">Page 1</option>
+                                <option value="2">Page 2</option>
+                                <option value="3">Page 3</option>
+                                <option value="4">Page 4</option>
+                                <option value="5">Page 5</option>
+                                <option value="6">Page 6</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+                    <div class="form-group">
+
+                        <label for="active">
+                            Status
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M8 12l2.5 2.5L16 9"/>
+                            </svg>
+
+                            <select id="active">
+
+                                <option value="true">
+                                    Active
+                                </option>
+
+                                <option value="false">
+                                    Inactive
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ======================================
+                 THUMBNAIL
+            ======================================= -->
+
+            <div class="form-section">
+
+                <div class="form-section-heading">
+
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="16" rx="2"/>
+                            <circle cx="8.5" cy="9" r="1.5"/>
+                            <path d="M21 15l-5-5L5 20"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h3>Bundle Thumbnail</h3>
+                        <p>Add a preview image for your bundle</p>
+                    </div>
+
+                </div>
+
+
+                <div class="thumbnail-form-layout">
+
+                    <div class="form-group thumbnail-input-group">
+
+                        <label for="thumbnail">
+                            Thumbnail URL
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 4h16v16H4z"/>
+                                <circle cx="9" cy="9" r="2"/>
+                                <path d="M21 15l-5-5L5 20"/>
+                            </svg>
+
+                            <input
+                                id="thumbnail"
+                                type="url"
+                                placeholder="https://example.com/image.jpg"
+                                required>
+
+                        </div>
+
+                        <small>
+                            Use a direct image URL for the bundle thumbnail.
+                        </small>
+
+                    </div>
+
+
+                    <div class="thumbnail-preview">
+
+                        <div class="preview-label">
+                            Preview
+                        </div>
+
+                        <div class="preview-image-box">
+
+                            <img
+                                id="thumbPreview"
+                                src=""
+                                alt="Thumbnail Preview">
+
+                            <div class="preview-placeholder">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="4" width="18" height="16" rx="2"/>
+                                    <circle cx="8.5" cy="9" r="1.5"/>
+                                    <path d="M21 15l-5-5L5 20"/>
+                                </svg>
+
+                                <span>
+                                    Image Preview
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ======================================
+                 SLUG
+            ======================================= -->
+
+            <div class="slug-card">
+
+                <div class="slug-card-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"/>
+                        <path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/>
+                    </svg>
+                </div>
+
+                <div class="slug-content">
+
+                    <div class="slug-label">
+                        Bundle Slug
+                    </div>
+
+                    <div
+                        id="slugPreview"
+                        class="slug-box">
+                        bundle-slug
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+           <!-- =========================================================
+     PLAN BUNDLE SECTION
+     BASIC / PREMIUM
+========================================================= -->
+
+<!-- ===================== BASIC BUNDLE ===================== -->
+
+<div id="basicBundleSection">
+
+    <div class="bundle-plan-card basic-plan-card">
+
+        <!-- HEADER -->
+        <div class="plan-card-header">
+
+            <div class="plan-card-icon">
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 3l8 4v6c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
+
+            </div>
+
+            <div class="plan-card-title">
+
+                <h3>
+                    Basic Bundle
+                </h3>
+
+                <p>
+                    Configure your basic bundle access
+                </p>
+
+            </div>
+
+            <span class="plan-badge basic">
+                BASIC
+            </span>
+
+        </div>
+
+
+        <!-- BASIC FIELDS -->
+        <div class="form-grid">
+
+            <!-- BASIC TITLE -->
+            <div class="form-group">
+
+                <label for="basicTitle">
+                    Bundle Title
+                </label>
+
+                <div class="input-wrapper">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 5h16"/>
+                        <path d="M4 12h16"/>
+                        <path d="M4 19h10"/>
+                    </svg>
+
+                    <input
+                        id="basicTitle"
+                        type="text"
+                        placeholder="Basic Bundle Title">
+
+                </div>
+
+            </div>
+
+
+            <!-- BASIC GOOGLE DRIVE -->
+            <div class="form-group">
+
+                <label for="basicFileId">
+                    Google Drive Link
+                </label>
+
+                <div class="input-wrapper">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 12h8"/>
+                        <path d="M12 8l4 4-4 4"/>
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="16"
+                            rx="2"/>
+                    </svg>
+
+                    <input
+                        id="basicFileId"
+                        type="url"
+                        placeholder="https://drive.google.com/...">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================== PREMIUM BUNDLE ===================== -->
+
+<div id="premiumBundleSection">
+
+    <div class="bundle-plan-card premium-plan-card">
+
+        <!-- HEADER -->
+        <div class="plan-card-header">
+
+            <div class="plan-card-icon premium-icon">
+
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 3l2.5 5.5L20 10l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-1.5z"/>
+                </svg>
+
+            </div>
+
+            <div class="plan-card-title">
+
+                <h3>
+                    Premium Bundle
+                </h3>
+
+                <p>
+                    Configure your premium bundle access
+                </p>
+
+            </div>
+
+            <span class="plan-badge premium">
+                PREMIUM
+            </span>
+
+        </div>
+
+
+        <!-- PREMIUM FIELDS -->
+        <div class="form-grid">
+
+            <!-- PREMIUM TITLE -->
+            <div class="form-group">
+
+                <label for="premiumTitle">
+                    Bundle Title
+                </label>
+
+                <div class="input-wrapper">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 5h16"/>
+                        <path d="M4 12h16"/>
+                        <path d="M4 19h10"/>
+                    </svg>
+
+                    <input
+                        id="premiumTitle"
+                        type="text"
+                        placeholder="Premium Bundle Title">
+
+                </div>
+
+            </div>
+
+
+            <!-- PREMIUM GOOGLE DRIVE -->
+            <div class="form-group">
+
+                <label for="premiumFileId">
+                    Google Drive Link
+                </label>
+
+                <div class="input-wrapper">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 12h8"/>
+                        <path d="M12 8l4 4-4 4"/>
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="16"
+                            rx="2"/>
+                    </svg>
+
+                    <input
+                        id="premiumFileId"
+                        type="url"
+                        placeholder="https://drive.google.com/...">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+            <!-- ======================================
+                 FOOTER
+            ======================================= -->
+
+            <div class="modal-footer bundle-form-footer">
+
+                <button
+                    type="button"
+                    id="cancelBtn"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="saveBundleBtn"
+                    class="btn btn-primary">
+
+                    <svg
+                        class="btn-icon"
+                        viewBox="0 0 24 24">
+
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11z"/>
+                        <path d="M17 21v-8H7v8"/>
+                        <path d="M7 3v5h8"/>
+
+                    </svg>
+
+                    <span>
+                        Save Bundle
+                    </span>
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<!-- ==========================================
+DELETE MODAL
+========================================== -->
+
+<div
+id="deleteModal"
+class="modal">
+
+<div class="modal-content delete-modal">
+
+<div class="delete-icon">
+
+<svg viewBox="0 0 24 24">
+
+<polyline points="3 6 5 6 21 6"/>
+
+<path d="M19 6l-1 14H6L5 6"/>
+
+<path d="M10 11v6"/>
+
+<path d="M14 11v6"/>
+
+<path d="M9 6V4h6v2"/>
+
+</svg>
+
+</div>
+
+<h2>
+
+Delete Bundle?
+
+</h2>
+
+<p>
+
+This action cannot be undone.
+
+</p>
+
+<div class="modal-footer">
+
+<button
+id="cancelDelete"
+class="btn btn-secondary">
+
+Cancel
+
+</button>
+
+<button
+id="confirmDelete"
+class="btn btn-danger">
+
+Delete
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ==========================================
+LOADING
+========================================== -->
+
+<div
+id="loadingOverlay"
+class="loading-overlay">
+
+<div class="loader-card">
+
+<div class="loader"></div>
+
+<h3>
+
+Loading...
+
+</h3>
+
+<p>
+
+Please wait
+
+</p>
+
+</div>
+
+</div>
+
+<!-- ==========================================
+     BULK BUNDLE MODAL
+========================================== -->
+<div id="bulkBundleModal" class="modal">
+    <div class="modal-content bundle-form-modal" style="max-width: 850px;">
+        <div class="modal-header bundle-form-header">
+            <div class="bundle-form-heading">
+                <div class="bundle-form-icon" style="background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);">
+                    📦
+                </div>
+                <div>
+                    <h2>Bulk Add Bundles</h2>
+                    <p>Paste multiple bundles or add multiple rows at once</p>
+                </div>
+            </div>
+            <button id="closeBulkModal" class="close-btn" type="button">✕</button>
+        </div>
+
+        <div style="padding: 20px 28px;">
+            <!-- MODE TABS -->
+            <div style="display: flex; gap: 12px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+                <button type="button" id="bulkTabPaste" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;">📋 Quick Paste Text</button>
+                <button type="button" id="bulkTabRows" class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;">➕ Multi-Row Builder</button>
+            </div>
+
+            <!-- MODE 1: PASTING TEXTAREA -->
+            <div id="bulkPasteSection">
+                <p style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">
+                    Paste one bundle per line in format:<br>
+                    <code>Bundle Name, Plan (basic/premium), Page (1-6), Drive Link, Thumbnail Image URL (optional)</code>
+                </p>
+                <textarea id="bulkPasteInput" rows="10" placeholder="1000+ SATISFYING REELS, premium, 1, https://drive.google.com/drive/folders/XYZ123, https://example.com/thumb1.jpg
+4K REELS BUNDLE, basic, 1, https://drive.google.com/drive/folders/ABC456" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; padding:12px; font-family:monospace; font-size:13px; outline:none;"></textarea>
+            </div>
+
+            <!-- MODE 2: MULTI ROW BUILDER -->
+            <div id="bulkRowsSection" style="display: none;">
+                <div id="bulkRowsContainer" style="display:flex; flex-direction:column; gap:12px; max-height:320px; overflow-y:auto; padding-right:6px;">
+                    <!-- Dynamic rows populated via JS -->
+                </div>
+                <button type="button" id="addBulkRowBtn" class="btn btn-secondary" style="margin-top:12px; width:100%;">+ Add Another Bundle Row</button>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                <button type="button" id="cancelBulkBtn" class="btn btn-secondary">Cancel</button>
+                <button type="button" id="submitBulkBtn" class="btn btn-primary" style="background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);">🚀 Import All Bundles</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     DELETE ALL CONFIRMATION MODAL
+========================================== -->
+<div id="deleteAllModal" class="modal">
+    <div class="modal-content" style="max-width: 480px; text-align: center; padding: 32px 24px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+        <h2 style="margin-bottom: 8px; color: #f87171;">Delete All Bundles?</h2>
+        <p style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px;">
+            This action will permanently delete <strong>ALL bundles</strong> in your database.<br>Type <strong>DELETE ALL</strong> below to confirm.
+        </p>
+        <input type="text" id="deleteAllConfirmInput" placeholder="Type DELETE ALL" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; color: #fff; padding: 12px; text-align: center; margin-bottom: 20px; outline: none;">
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <button type="button" id="cancelDeleteAllBtn" class="btn btn-secondary">Cancel</button>
+            <button type="button" id="confirmDeleteAllBtn" class="btn btn-danger" disabled style="background: #ef4444; opacity: 0.5;">Delete Everything</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+TOAST
+========================================== -->
+
+<div
+id="toast"
+class="toast">
+
+</div>
+
+</main>
+
+</div>
+
+<script>
+
+window.APP_CONFIG={
+
+API_BASE:"/api/admin/bundles",
+
+TOKEN_KEY:"admin_token"
+
+};
+
+</script>
+
+<script
+type="module"
+src="assets/js/admin-bundles.js">
+
+</script>
+
+</body>
+
+</html>

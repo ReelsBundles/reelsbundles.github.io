@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Payment Successful • ReelsBundles
+    </title>
+
+
+    <!-- ======================================================
+         GOOGLE FONT
+    ======================================================= -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- ======================================================
+         EXISTING GLOBAL STYLES
+    ======================================================= -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/reset.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/global.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="assets/css/success.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================================
+     BACKGROUND
+=========================================================== -->
+
+<div class="success-bg"></div>
+
+
+<section class="success-page">
+
+
+    <div class="container">
+
+
+        <!-- ==================================================
+             HEADER
+        =================================================== -->
+
+        <header class="success-header">
+
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+                ▶ ReelsBundles
+            </a>
+
+
+            <div
+                class="secure-badge"
+                id="verificationBadge"
+            >
+                🛡 Payment Verification
+            </div>
+
+
+        </header>
+
+
+
+        <!-- ==================================================
+             PAYMENT VERIFICATION STATE
+        =================================================== -->
+
+        <div
+            id="verificationState"
+            class="verification-state"
+        >
+
+            <div class="verification-loader">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+
+            <h2>
+                Verifying Your Payment
+            </h2>
+
+
+            <p>
+                Please wait while we securely verify
+                your Cashfree payment.
+            </p>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             SUCCESS CONTENT
+        =================================================== -->
+
+        <main
+            id="successContent"
+            class="success-content hidden"
+        >
+
+
+            <!-- ==============================================
+                 HERO
+            =============================================== -->
+
+            <div class="success-hero">
+
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+
+                <h1>
+                    Payment Successful
+                </h1>
+
+
+                <p id="successMessage">
+                    Your payment has been verified successfully.
+                    Your bundle is now ready to download.
+                </p>
+
+
+            </div>
+
+
+
+            <!-- ==============================================
+                 MAIN GRID
+            =============================================== -->
+
+            <div class="success-grid">
+
+
+                <!-- ==========================================
+                     ORDER INFORMATION
+                =========================================== -->
+
+                <div class="success-card">
+
+
+                    <h2>
+                        Order Information
+                    </h2>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Order ID
+                        </span>
+
+                        <strong
+                            id="orderId"
+                        >
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Payment Status
+                        </span>
+
+                        <strong
+                            id="paymentStatus"
+                            class="status"
+                        >
+                            Verifying...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Payment Method
+                        </span>
+
+                        <strong>
+                            Cashfree Secure Checkout
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Purchase Date
+                        </span>
+
+                        <strong
+                            id="purchaseDate"
+                        >
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Amount Paid
+                        </span>
+
+                        <strong
+                            id="amountPaid"
+                        >
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ==========================================
+                     BUNDLE INFORMATION
+                =========================================== -->
+
+                <div class="success-card">
+
+
+                    <h2>
+                        Bundle Details
+                    </h2>
+
+
+                    <div class="bundle-card">
+
+
+                        <div
+                            class="bundle-icon"
+                            id="bundleIcon"
+                        >
+                            📦
+                        </div>
+
+
+                        <div>
+
+                            <h3
+                                id="bundleName"
+                            >
+                                Loading Bundle...
+                            </h3>
+
+
+                            <p
+                                id="bundleAccess"
+                            >
+                                Preparing your access...
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- ======================================
+                         DYNAMIC FEATURES
+                    ======================================= -->
+
+                    <ul
+                        id="bundleFeatures"
+                        class="bundle-features"
+                    >
+
+                        <li>
+                            ✓ Payment Verified
+                        </li>
+
+                        <li>
+                            ✓ Secure Download
+                        </li>
+
+                        <li>
+                            ✓ Instant Access
+                        </li>
+
+                    </ul>
+
+
+
+                    <!-- ======================================
+                         DOWNLOAD SECTION
+                    ======================================= -->
+
+                    <div class="download-section">
+
+
+                        <h2>
+                            Your Download is Ready
+                        </h2>
+
+
+                        <p
+                            id="downloadMessage"
+                        >
+                            Your payment has been verified.
+                            You can now securely access
+                            your purchased bundle.
+                        </p>
+
+
+                        <button
+                            id="downloadButton"
+                            class="download-btn"
+                            type="button"
+                            disabled
+                        >
+                            📦 Preparing Download...
+                        </button>
+
+
+                        <div
+                            id="downloadStatus"
+                            class="download-status"
+                        ></div>
+
+
+                    </div>
+
+
+
+                    <!-- ======================================
+                         INVOICE
+                    ======================================= -->
+
+                    <button
+                        id="invoiceButton"
+                        class="invoice-btn"
+                        type="button"
+                    >
+                        🧾 Download Invoice
+                    </button>
+
+
+
+                    <!-- ======================================
+                         SUPPORT
+                    ======================================= -->
+
+                    <div class="support-card">
+
+
+                        <h2>
+                            Need Help?
+                        </h2>
+
+
+                        <p>
+                            If you have any issue with your
+                            payment or download, contact our
+                            support team by email.
+                        </p>
+
+
+                        <div class="support-links">
+
+
+                            <a
+                                href="mailto:reelsbundles.support@gmail.com"
+                            >
+                                📧 Email Support
+                            </a>
+
+
+                            <a
+                                href="contact.html"
+                            >
+                                📝 Contact Support
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="support-note">
+                            We normally respond within 24 hours.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ==============================================
+                 ACTIONS
+            =============================================== -->
+
+            <div class="success-actions">
+
+
+                <a href="user/dashboard.html">
+                    Go to Dashboard
+                </a>
+
+
+                <a
+                    href="demo.html"
+                    class="secondary-btn"
+                >
+                    🎥 Watch Demo
+                </a>
+
+
+            </div>
+
+
+
+            <!-- ==============================================
+                 PAYMENT SECURITY
+            =============================================== -->
+
+            <div class="payment-info">
+
+
+                <div class="payment-box">
+
+
+                    <div>
+                        🔒 SSL Secured
+                    </div>
+
+
+                    <div>
+                        💳 Powered by Cashfree
+                    </div>
+
+
+                    <div>
+                        ⚡ Secure Download
+                    </div>
+
+
+                    <div>
+                        🛡 Payment Verified
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </main>
+
+
+
+        <!-- ==================================================
+             PAYMENT FAILED / INVALID STATE
+        =================================================== -->
+
+        <section
+            id="errorContent"
+            class="payment-error hidden"
+        >
+
+
+            <div class="error-icon">
+                !
+            </div>
+
+
+            <h1>
+                Payment Verification Failed
+            </h1>
+
+
+            <p
+                id="errorMessage"
+            >
+                We could not verify this payment.
+            </p>
+
+
+            <div class="error-actions">
+
+
+                <a
+                    href="index.html"
+                    class="primary-btn"
+                >
+                    🏠 Back to Home
+                </a>
+
+
+                <a
+                    href="contact.html"
+                    class="secondary-btn"
+                >
+                    📝 Contact Support
+                </a>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ==================================================
+             FOOTER
+        =================================================== -->
+
+        <footer class="success-footer">
+
+
+            <div class="footer-container">
+
+
+                <div class="footer-brand">
+
+
+                    <h3>
+                        ▶ ReelsBundles
+                    </h3>
+
+
+                    <p>
+                        200,000+ Ready-To-Post Instagram Reels
+                        for Creators, Businesses & Agencies.
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="footer-links">
+
+
+                    <a href="index.html">
+                        Home
+                    </a>
+
+
+                    <a href="privacy.html">
+                        Privacy Policy
+                    </a>
+
+
+                    <a href="terms.html">
+                        Terms & Conditions
+                    </a>
+
+
+                    <a href="refund.html">
+                        Refund Policy
+                    </a>
+
+
+                    <a href="contact.html">
+                        Contact
+                    </a>
+
+
+                </div>
+
+
+
+                <div class="footer-copy">
+
+                    © 2026 ReelsBundles
+
+                    <br>
+
+                    Made with ❤️ by Santosh Koli
+
+                </div>
+
+
+            </div>
+
+
+        </footer>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ==========================================================
+     SUCCESS JAVASCRIPT
+=========================================================== -->
+
+<script
+    type="module"
+    src="assets/js/success.js"
+></script>
+
+
+</body>
+
+</html>

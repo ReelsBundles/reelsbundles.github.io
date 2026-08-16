@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Orders | ReelsBundles Admin
+    </title>
+
+
+    <!-- Google Font -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         ADMIN DASHBOARD CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/admin-dashboard.css"
+    >
+
+
+    <!-- =====================================================
+         ORDERS CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/admin-orders.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         ADMIN LAYOUT
+    ====================================================== -->
+
+    <div class="admin-layout">
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="admin-sidebar">
+
+
+            <!-- BRAND -->
+
+            <div class="admin-brand">
+
+                <div class="admin-brand-icon">
+                    ▶
+                </div>
+
+                <div>
+
+                    <strong>
+                        ReelsBundles
+                    </strong>
+
+                    <span>
+                        ADMIN
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 NAVIGATION
+            ================================================== -->
+
+            <nav class="admin-nav">
+
+
+                <!-- Dashboard -->
+
+                <a
+                    href="dashboard.html"
+                    class="admin-nav-item"
+                >
+
+                    <span>
+                        📊
+                    </span>
+
+                    Dashboard
+
+                </a>
+
+
+
+                <!-- Orders -->
+
+                <a
+                    href="orders.html"
+                    class="admin-nav-item active"
+                >
+
+                    <span>
+                        🧾
+                    </span>
+
+                    Orders
+
+                </a>
+
+
+
+                <!-- Bundles -->
+
+                <a
+                    href="bundles.html"
+                    class="admin-nav-item"
+                >
+
+                    <span>
+                        📦
+                    </span>
+
+                    Bundles
+
+                </a>
+
+
+
+                <!-- Downloads -->
+
+                <a
+                    href="download.html"
+                    class="admin-nav-item"
+                >
+
+                    <span>
+                        ⬇️
+                    </span>
+
+                    Downloads
+
+                </a>
+
+
+
+                <!-- Storage -->
+
+                <a
+                    href="storage.html"
+                    class="admin-nav-item"
+                >
+
+                    <span>
+                        ☁️
+                    </span>
+
+                    Storage
+
+                </a>
+
+
+            </nav>
+
+
+
+            <!-- =================================================
+                 SIDEBAR FOOTER
+            ================================================== -->
+
+            <div class="admin-sidebar-footer">
+
+                <span>
+                    ReelsBundles Admin
+                </span>
+
+                <small>
+                    Secure Control Panel
+                </small>
+
+            </div>
+
+
+        </aside>
+
+
+
+        <!-- =================================================
+             MAIN CONTENT
+        ================================================== -->
+
+        <main class="admin-main">
+
+
+            <!-- =================================================
+                 ORDERS HEADER
+            ================================================== -->
+
+            <header class="admin-topbar">
+
+                <div>
+
+                    <span class="page-eyebrow">
+                        ADMIN PANEL
+                    </span>
+
+                    <h1>
+                        Orders
+                    </h1>
+
+                    <p>
+                        Manage customer orders and payment status.
+                    </p>
+
+                </div>
+
+
+                <!-- Existing Refresh Button -->
+
+                <div class="orders-header-actions">
+
+                     <button
+                    type="button"
+                     id="refresh"
+                   class="refresh-button"
+                  >
+                  ↻ Refresh
+                  </button>
+
+                 <button
+                  type="button"
+                id="deleteAllOrdersButton"
+                  class="delete-all-orders-btn"
+               >
+                  🗑️ Delete All
+             </button>
+
+        </div>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 SEARCH / FILTER
+            ================================================== -->
+
+            <section class="panel orders-filter-panel">
+
+
+                <div class="orders-filters">
+
+
+                    <!-- Search -->
+
+                    <div class="filter-group">
+
+                        <label for="search">
+                            Search
+                        </label>
+
+                        <input
+                            type="text"
+                            id="search"
+                            placeholder="Search Email / Order ID"
+                        >
+
+                    </div>
+
+
+
+                    <!-- Status -->
+
+                    <div class="filter-group">
+
+                        <label for="status">
+                            Status
+                        </label>
+
+                        <select id="status">
+
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option value="PAID">
+                                Paid
+                            </option>
+
+                            <option value="PENDING">
+                                Pending
+                            </option>
+
+                            <option value="FAILED">
+                                Failed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ORDERS TABLE
+            ================================================== -->
+
+            <section class="panel orders-table-panel">
+
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            CUSTOMER ORDERS
+                        </span>
+
+                        <h3>
+                            All Orders
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Order ID
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+                                <th>
+                                    Actions
+                                    
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="ordersBody">
+
+                            <!-- Orders loaded by JavaScript -->
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PAGINATION
+            ================================================== -->
+
+            <div class="pagination">
+
+
+                <button
+                    type="button"
+                    id="prev"
+                >
+                    Previous
+                </button>
+
+
+                <span id="pageNumber">
+                    1
+                </span>
+
+
+                <button
+                    type="button"
+                    id="next"
+                >
+                    Next
+                </button>
+
+
+            </div>
+
+
+        </main>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ORDERS JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="assets/js/admin-orders.js"
+    ></script>
+
+
+</body>
+
+</html>

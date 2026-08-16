@@ -1,0 +1,18 @@
+# Node & Dependencies
+node_modules/
+
+# Secrets & Environment
+.env
+.env.*
+!.env.example
+firebase-admin.json
+service-account.json
+*.pem
+*.key
+
+# System & OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

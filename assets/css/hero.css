@@ -1,0 +1,950 @@
+/* ==========================================
+   HERO SECTION
+========================================== */
+
+.hero{
+
+    position:relative;
+
+    padding-top:170px;
+
+    padding-bottom:120px;
+
+}
+
+.hero__container{
+
+    display:grid;
+
+    grid-template-columns:1.05fr .95fr;
+
+    align-items:center;
+
+    gap:70px;
+
+}
+
+/* ==========================================
+LEFT
+========================================== */
+
+.hero__rating{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid var(--border);
+
+    margin-bottom:22px;
+
+}
+
+.hero__badge{
+
+    display:inline-flex;
+
+    padding:12px 20px;
+
+    border-radius:999px;
+
+    margin-bottom:26px;
+
+    background:rgba(124,58,237,.18);
+
+    border:1px solid rgba(124,58,237,.28);
+
+}
+
+.hero__title{
+
+    font-size:clamp(3.8rem,7vw,5.8rem);
+
+    line-height:1;
+
+    margin-bottom:28px;
+
+}
+
+.hero__description{
+
+    max-width:620px;
+
+    font-size:20px;
+
+    margin-bottom:38px;
+
+}
+
+.hero__buttons{
+
+    display:flex;
+
+    gap:18px;
+
+    margin-bottom:40px;
+
+}
+
+.hero__chips{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:14px;
+
+    margin-bottom:48px;
+
+}
+
+.hero__chip{
+
+    padding:12px 18px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.04);
+
+    border:1px solid var(--border);
+
+}
+
+.hero__stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:24px;
+
+}
+
+.hero__stat h3{
+
+    font-size:34px;
+
+    margin-bottom:8px;
+
+}
+
+.hero__stat span{
+
+    color:var(--muted);
+
+}
+
+/* ==========================================
+RIGHT
+========================================== */
+
+.hero__preview{
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+}
+
+/* Phone */
+
+.phone{
+
+    width:360px;
+
+    height:720px;
+
+    padding:16px;
+
+    border-radius:44px;
+
+    background:linear-gradient(
+        180deg,
+        #202634,
+        #111827
+    );
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+
+    0 40px 90px rgba(0,0,0,.45),
+
+    0 0 80px rgba(124,58,237,.22);
+
+}
+
+.phone__screen{
+
+    width:100%;
+
+    height:100%;
+
+    border-radius:34px;
+
+    overflow:hidden;
+
+    background:
+
+    linear-gradient(
+        180deg,
+        #7C3AED,
+        #2563EB
+    );
+
+    position:relative;
+
+}
+
+/* Fake Reel */
+
+.phone__video{
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    radial-gradient(circle at top,#ffffff20,transparent 45%),
+
+    linear-gradient(
+        180deg,
+        #7C3AED,
+        #4F46E5,
+        #2563EB
+    );
+
+}
+
+/* Floating Cards */
+
+.floating-card{
+
+    position:absolute;
+
+    padding:16px 22px;
+
+    border-radius:20px;
+
+    background:rgba(17,24,39,.88);
+
+    backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    color:white;
+
+    font-weight:600;
+
+    box-shadow:
+
+    0 20px 40px rgba(0,0,0,.35);
+
+}
+
+/* Card Positions */
+
+.floating-card--one{
+
+    left:-40px;
+
+    top:90px;
+
+}
+
+.floating-card--two{
+
+    right:-50px;
+
+    top:280px;
+
+}
+
+.floating-card--three{
+
+    left:10px;
+
+    bottom:80px;
+
+}
+
+/* ==========================================
+Glow Behind Phone
+========================================== */
+
+.hero__preview::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:500px;
+
+    height:500px;
+
+    border-radius:50%;
+
+    background:
+
+    radial-gradient(
+
+    circle,
+
+    rgba(124,58,237,.30),
+
+    transparent 70%
+
+    );
+
+    filter:blur(60px);
+
+    z-index:-1;
+
+}
+
+/* ==========================================
+Responsive
+========================================== */
+
+@media(max-width:1100px){
+
+.hero__container{
+
+grid-template-columns:1fr;
+
+}
+
+.hero__preview{
+
+margin-top:80px;
+
+}
+
+.hero__stats{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:768px){
+
+.hero{
+
+padding-top:130px;
+
+}
+
+.hero__buttons{
+
+flex-direction:column;
+
+}
+
+.hero__stats{
+
+grid-template-columns:1fr 1fr;
+
+}
+
+.phone{
+
+width:300px;
+
+height:600px;
+
+}
+
+.floating-card{
+
+display:none;
+
+}
+
+}
+/* ==========================================
+   HERO PREMIUM EFFECTS
+========================================== */
+
+/* Gradient Title */
+
+.hero__title{
+
+    background:linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #d7d7ff 45%,
+        #9ca3ff 100%
+    );
+
+    -webkit-background-clip:text;
+    background-clip:text;
+
+    -webkit-text-fill-color:transparent;
+
+}
+
+/* Hero Content Animation */
+
+.hero__content{
+
+    animation:heroFade .9s ease forwards;
+
+}
+
+@keyframes heroFade{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(35px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* Phone Floating */
+
+.phone{
+
+    animation:phoneFloat 6s ease-in-out infinite;
+
+}
+
+@keyframes phoneFloat{
+
+    0%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(-18px);
+
+    }
+
+    100%{
+
+        transform:translateY(0px);
+
+    }
+
+}
+
+/* Floating Cards */
+
+.floating-card{
+
+    animation:floatingCard 5s ease-in-out infinite;
+
+}
+
+.floating-card--two{
+
+    animation-delay:1s;
+
+}
+
+.floating-card--three{
+
+    animation-delay:2s;
+
+}
+
+@keyframes floatingCard{
+
+    0%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(-12px);
+
+    }
+
+    100%{
+
+        transform:translateY(0px);
+
+    }
+
+}
+
+/* Card Hover */
+
+.floating-card:hover{
+
+    transform:translateY(-10px) scale(1.05);
+
+    box-shadow:
+
+    0 25px 60px rgba(124,58,237,.35);
+
+}
+
+/* Button Hover */
+
+.hero__buttons .btn{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.hero__buttons .btn::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:-120%;
+
+    width:100%;
+
+    height:100%;
+
+    background:
+
+    linear-gradient(
+
+        90deg,
+
+        transparent,
+
+        rgba(255,255,255,.25),
+
+        transparent
+
+    );
+
+    transition:.7s;
+
+}
+
+.hero__buttons .btn:hover::before{
+
+    left:120%;
+
+}
+
+/* Chips Hover */
+
+.hero__chip{
+
+    transition:.35s;
+
+}
+
+.hero__chip:hover{
+
+    transform:translateY(-5px);
+
+    background:rgba(124,58,237,.12);
+
+}
+
+/* Stats Hover */
+
+.hero__stat{
+
+    transition:.35s;
+
+}
+
+.hero__stat:hover{
+
+    transform:translateY(-8px);
+
+}
+
+/* Phone Glow Pulse */
+
+.phone::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-6px;
+
+    border-radius:48px;
+
+    background:
+
+    linear-gradient(
+
+        135deg,
+
+        rgba(124,58,237,.25),
+
+        rgba(37,99,235,.25)
+
+    );
+
+    filter:blur(18px);
+
+    z-index:-1;
+
+    animation:glowPulse 4s infinite;
+
+}
+
+@keyframes glowPulse{
+
+    0%{
+
+        opacity:.4;
+
+        transform:scale(.96);
+
+    }
+
+    50%{
+
+        opacity:.9;
+
+        transform:scale(1);
+
+    }
+
+    100%{
+
+        opacity:.4;
+
+        transform:scale(.96);
+
+    }
+
+}
+
+/* Aurora Background */
+
+.background::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:900px;
+
+    height:900px;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(124,58,237,.15),
+
+    transparent 70%);
+
+    top:-350px;
+
+    left:-250px;
+
+    animation:auroraOne 12s linear infinite alternate;
+
+}
+
+.background::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:900px;
+
+    height:900px;
+
+    background:
+
+    radial-gradient(circle,
+
+    rgba(37,99,235,.18),
+
+    transparent 70%);
+
+    bottom:-350px;
+
+    right:-250px;
+
+    animation:auroraTwo 14s linear infinite alternate;
+
+}
+
+@keyframes auroraOne{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(120px);
+
+    }
+
+}
+
+@keyframes auroraTwo{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(-120px);
+
+    }
+
+}
+/* ==========================================
+3D EFFECT
+========================================== */
+
+.phone{
+
+transform-style:preserve-3d;
+
+transition:
+
+transform .35s ease,
+
+box-shadow .35s ease;
+
+cursor:pointer;
+
+}
+
+.phone:hover{
+
+box-shadow:
+
+0 60px 120px rgba(124,58,237,.30),
+
+0 30px 80px rgba(37,99,235,.22);
+
+}
+
+/* ==========================================
+Reveal
+========================================== */
+
+.hero__content>*{
+
+opacity:0;
+
+transform:translateY(40px);
+
+animation:fadeUp .8s forwards;
+
+}
+
+.hero__content>*:nth-child(1){
+
+animation-delay:.15s;
+
+}
+
+.hero__content>*:nth-child(2){
+
+animation-delay:.25s;
+
+}
+
+.hero__content>*:nth-child(3){
+
+animation-delay:.35s;
+
+}
+
+.hero__content>*:nth-child(4){
+
+animation-delay:.45s;
+
+}
+
+.hero__content>*:nth-child(5){
+
+animation-delay:.55s;
+
+}
+
+.hero__content>*:nth-child(6){
+
+animation-delay:.65s;
+
+}
+
+@keyframes fadeUp{
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================================
+Stats
+========================================== */
+
+.hero__stat{
+
+padding:22px;
+
+border-radius:18px;
+
+background:rgba(255,255,255,.03);
+
+border:1px solid rgba(255,255,255,.05);
+
+backdrop-filter:blur(20px);
+
+}
+
+.hero__stat h3{
+
+font-size:40px;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#fff,
+
+#8ab4ff
+
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+/* ==========================================
+Phone Reflection
+========================================== */
+
+.phone::after{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:-140%;
+
+width:70%;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.15),
+
+transparent
+
+);
+
+transform:skewX(-20deg);
+
+animation:shine 6s infinite;
+
+}
+
+@keyframes shine{
+
+0%{
+
+left:-140%;
+
+}
+
+100%{
+
+left:180%;
+
+}
+
+}
+
+/* ==========================================
+Premium Hover
+========================================== */
+
+.phone:hover{
+
+transform:
+
+perspective(1200px)
+
+rotateX(5deg)
+
+rotateY(-5deg)
+
+translateY(-12px);
+
+}
+
+/* ==========================================
+Reduced Motion
+========================================== */
+
+@media (prefers-reduced-motion: reduce){
+
+*{
+
+animation:none !important;
+
+transition:none !important;
+
+}
+
+}

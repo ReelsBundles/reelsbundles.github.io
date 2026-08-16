@@ -1,0 +1,228 @@
+/* ==========================================
+   NAVBAR
+========================================== */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(3, 7, 18, 0.85);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.navbar__container {
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ==========================
+   Logo
+========================== */
+
+.navbar__logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+.navbar__logo-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+}
+
+/* ==========================
+   Menu (Desktop)
+========================== */
+
+.navbar__menu {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    margin-left: auto;
+}
+
+.navbar__menu a {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 15px;
+    position: relative;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.navbar__menu a:hover {
+    color: white;
+}
+
+.navbar__menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.3s ease;
+}
+
+.navbar__menu a:hover::after {
+    width: 100%;
+}
+
+/* ==========================
+   Buttons
+========================== */
+
+.navbar__buttons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: 10px;
+}
+
+/* ==========================
+   Mobile Toggle Button
+========================== */
+
+.navbar__toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.navbar__toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ==========================================
+   MOBILE & TABLET RESPONSIVE (<= 1024px)
+========================================== */
+
+@media (max-width: 1024px) {
+    .navbar {
+        background: rgba(3, 7, 18, 0.90);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+
+    .navbar.active-menu {
+        background: rgba(3, 7, 18, 0.98);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+    }
+
+    .navbar__container {
+        height: 80px;
+    }
+
+    .navbar__toggle {
+        display: flex;
+    }
+
+    .navbar__menu {
+        display: none;
+    }
+
+    .navbar__menu.active {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        height: calc(100vh - 80px);
+        background: rgba(3, 7, 18, 0.98);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        padding: 30px 24px 40px;
+        gap: 16px;
+        align-items: center;
+        justify-content: flex-start;
+        overflow-y: auto;
+        z-index: 99998;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        animation: slideNavDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .navbar__menu.active a {
+        font-size: 18px;
+        font-weight: 600;
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+        color: var(--muted);
+        transition: color 0.2s ease;
+    }
+
+    .navbar__menu.active a:hover {
+        color: white;
+    }
+
+    .navbar__menu.active .navbar__buttons {
+        display: flex !important;
+        flex-direction: column;
+        width: 100%;
+        margin-top: auto;
+        margin-left: 0;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 12px;
+        position: static !important;
+        transform: none !important;
+    }
+
+    .navbar__menu.active .navbar__buttons .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 20px;
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+        border-radius: 12px;
+    }
+
+    @keyframes slideNavDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}

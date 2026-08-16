@@ -1,0 +1,3192 @@
+/* ==========================================================
+   REELSBUNDLES
+   DOWNLOAD PAGE
+========================================================== */
+
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(124, 58, 237, 0.16),
+            transparent 35%
+        ),
+        #07070b;
+
+    color: #ffffff;
+
+    -webkit-font-smoothing: antialiased;
+}
+
+
+button,
+a {
+    font: inherit;
+}
+
+
+button {
+    border: 0;
+}
+
+
+/* ==========================================================
+   APP
+========================================================== */
+
+.download-app {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.download-header {
+    width: 100%;
+
+    min-height: 72px;
+
+    padding:
+        0 6%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    background:
+        rgba(7, 7, 11, 0.82);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 20;
+}
+
+
+.brand {
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 1.35rem;
+
+    font-weight: 800;
+
+    letter-spacing: -0.03em;
+}
+
+
+.header-status {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        8px 14px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    border-radius: 999px;
+
+    color:
+        rgba(255, 255, 255, 0.72);
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    font-size: 0.8rem;
+
+    font-weight: 600;
+}
+
+
+.header-status::before {
+    content: "";
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 12px
+        rgba(34, 197, 94, 0.8);
+}
+
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.download-main {
+    width: 100%;
+
+    max-width: 1120px;
+
+    margin: 0 auto;
+
+    padding:
+        70px 24px
+        80px;
+}
+
+
+/* ==========================================================
+   HERO
+========================================================== */
+
+.download-hero {
+    text-align: center;
+
+    max-width: 760px;
+
+    margin:
+        0 auto
+        45px;
+}
+
+
+.verification-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding:
+        9px 15px;
+
+    border:
+        1px solid
+        rgba(34, 197, 94, 0.25);
+
+    border-radius: 999px;
+
+    background:
+        rgba(34, 197, 94, 0.08);
+
+    color: #86efac;
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+    margin-bottom: 22px;
+}
+
+
+.verification-icon {
+    width: 19px;
+
+    height: 19px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    color: #ffffff;
+
+    font-size: 0.72rem;
+
+    font-weight: 900;
+}
+
+
+.download-eyebrow {
+    margin-bottom: 12px;
+
+    color:
+        rgba(167, 139, 250, 0.95);
+
+    font-size: 0.76rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.16em;
+}
+
+
+.download-hero h1 {
+    font-size:
+        clamp(
+            2.2rem,
+            5vw,
+            4rem
+        );
+
+    line-height: 1.05;
+
+    letter-spacing: -0.055em;
+
+    font-weight: 850;
+
+    margin-bottom: 18px;
+}
+
+
+.download-subtitle {
+    max-width: 620px;
+
+    margin: 0 auto;
+
+    color:
+        rgba(255, 255, 255, 0.58);
+
+    font-size: 1rem;
+
+    line-height: 1.7;
+}
+
+
+/* ==========================================================
+   STATE CARD
+========================================================== */
+
+.state-card {
+    width: 100%;
+
+    max-width: 650px;
+
+    margin:
+        0 auto;
+
+    padding:
+        45px 30px;
+
+    text-align: center;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    border-radius: 24px;
+
+    background:
+        rgba(255, 255, 255, 0.035);
+
+    box-shadow:
+        0 25px 80px
+        rgba(0, 0, 0, 0.35);
+}
+
+
+.state-card h2 {
+    margin-top: 20px;
+
+    font-size: 1.25rem;
+}
+
+
+.state-card p {
+    margin-top: 9px;
+
+    color:
+        rgba(255, 255, 255, 0.52);
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   LOADING SPINNER
+========================================================== */
+
+.spinner {
+    width: 42px;
+
+    height: 42px;
+
+    margin:
+        0 auto;
+
+    border:
+        3px solid
+        rgba(255, 255, 255, 0.12);
+
+    border-top-color:
+        #a78bfa;
+
+    border-radius: 50%;
+
+    animation:
+        downloadSpin
+        0.85s linear infinite;
+}
+
+
+@keyframes downloadSpin {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+/* ==========================================================
+   ERROR
+========================================================== */
+
+.error-state {
+    border-color:
+        rgba(239, 68, 68, 0.18);
+
+    background:
+        rgba(239, 68, 68, 0.045);
+}
+
+
+.state-icon {
+    width: 54px;
+
+    height: 54px;
+
+    margin:
+        0 auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 1.4rem;
+
+    font-weight: 800;
+}
+
+
+.error-icon {
+    color: #fecaca;
+
+    background:
+        rgba(239, 68, 68, 0.14);
+
+    border:
+        1px solid
+        rgba(239, 68, 68, 0.25);
+}
+
+
+.support-button {
+    display: inline-flex;
+
+    margin-top: 22px;
+
+    padding:
+        11px 18px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 0.88rem;
+
+    font-weight: 700;
+
+    transition:
+        0.2s ease;
+}
+
+
+.support-button:hover {
+    background:
+        rgba(255, 255, 255, 0.13);
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* ==========================================================
+   BUNDLE LIBRARY
+========================================================== */
+
+.bundle-section {
+    width: 100%;
+
+    max-width: 1180px;
+
+    margin:
+        0 auto;
+}
+
+
+/* ==========================================================
+   LIBRARY HEADER
+========================================================== */
+
+.library-header {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 24px;
+}
+
+
+.library-heading {
+    min-width: 0;
+}
+
+
+.library-eyebrow {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color:
+        rgba(167, 139, 250, 0.95);
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.15em;
+
+    text-transform: uppercase;
+}
+
+
+.library-heading h2 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size:
+        clamp(
+            1.45rem,
+            3vw,
+            2rem
+        );
+
+    line-height: 1.15;
+
+    letter-spacing: -0.035em;
+
+    font-weight: 850;
+}
+
+
+.library-heading p {
+    margin-top: 7px;
+
+    color:
+        rgba(255, 255, 255, 0.46);
+
+    font-size: 0.82rem;
+
+    line-height: 1.55;
+}
+
+
+.library-plan-badge {
+    flex:
+        0 0 auto;
+
+    padding:
+        8px 13px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.10);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    font-size: 0.68rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.06em;
+
+    text-transform: uppercase;
+}
+
+
+/* ==========================================================
+   BUNDLE GRID
+========================================================== */
+
+.bundle-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                270px,
+                1fr
+            )
+        );
+
+    gap: 20px;
+}
+
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.bundle-card {
+    overflow: hidden;
+
+    min-width: 0;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.065),
+            rgba(255, 255, 255, 0.018)
+        );
+
+    box-shadow:
+        0 25px 70px
+        rgba(0, 0, 0, 0.30);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    transition:
+        transform 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+
+.bundle-card:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(167, 139, 250, 0.22);
+
+    box-shadow:
+        0 30px 85px
+        rgba(0, 0, 0, 0.40);
+}
+
+
+/* ==========================================================
+   IMAGE
+========================================================== */
+
+.bundle-image-wrapper {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    overflow: hidden;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+}
+
+
+.bundle-thumbnail {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.45s ease;
+}
+
+
+.bundle-card:hover
+.bundle-thumbnail {
+    transform:
+        scale(1.035);
+}
+
+
+/* ==========================================================
+   CARD OVERLAY
+========================================================== */
+
+.bundle-image-wrapper::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(7, 7, 11, 0.78),
+            transparent 60%
+        );
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   PLAN BADGE
+========================================================== */
+
+.plan-badge {
+    position: absolute;
+
+    left: 14px;
+
+    bottom: 14px;
+
+    z-index: 2;
+
+    padding:
+        6px 10px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.13);
+
+    border-radius: 999px;
+
+    background:
+        rgba(7, 7, 11, 0.78);
+
+    backdrop-filter:
+        blur(10px);
+
+    color: #ffffff;
+
+    font-size: 0.64rem;
+
+    font-weight: 850;
+
+    letter-spacing: 0.08em;
+}
+
+
+/* ==========================================================
+   CARD CONTENT
+========================================================== */
+
+.bundle-content {
+    padding:
+        20px;
+}
+
+
+.bundle-meta {
+    margin-bottom: 7px;
+}
+
+
+.bundle-meta span {
+    color:
+        rgba(167, 139, 250, 0.88);
+
+    font-size: 0.62rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.10em;
+
+    text-transform: uppercase;
+}
+
+
+.bundle-name {
+    margin: 0;
+
+    font-size:
+        clamp(
+            1.15rem,
+            2.2vw,
+            1.45rem
+        );
+
+    line-height: 1.2;
+
+    letter-spacing: -0.025em;
+
+    font-weight: 800;
+}
+
+
+.bundle-title {
+    margin-top: 7px;
+
+    color:
+        rgba(255, 255, 255, 0.52);
+
+    font-size: 0.78rem;
+
+    line-height: 1.5;
+
+    font-weight: 500;
+}
+
+
+/* ==========================================================
+   FEATURES
+========================================================== */
+
+.features {
+    display: grid;
+
+    grid-template-columns:
+        1fr;
+
+    gap: 7px;
+
+    margin:
+        17px 0;
+}
+
+
+.feature {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    min-height: 34px;
+
+    padding:
+        7px 9px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.055);
+
+    border-radius: 9px;
+
+    background:
+        rgba(255, 255, 255, 0.022);
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    font-size: 0.68rem;
+}
+
+
+.feature-icon {
+    width: 17px;
+
+    height: 17px;
+
+    flex:
+        0 0 17px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(34, 197, 94, 0.13);
+
+    color:
+        #86efac;
+
+    font-size: 0.58rem;
+
+    font-weight: 900;
+}
+
+
+/* ==========================================================
+   DOWNLOAD BUTTON
+========================================================== */
+
+.download-button {
+    width: 100%;
+
+    min-height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #9333ea
+        );
+
+    color: #ffffff;
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 28px
+        rgba(124, 58, 237, 0.22);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.download-button:hover:not(:disabled) {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 17px 34px
+        rgba(124, 58, 237, 0.32);
+}
+
+
+.download-button:disabled {
+    opacity: 0.50;
+
+    cursor:
+        not-allowed;
+
+    box-shadow:
+        none;
+}
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+.download-status {
+    min-height: 20px;
+
+    margin-top: 9px;
+
+    text-align: center;
+
+    color:
+        rgba(255, 255, 255, 0.45);
+
+    font-size: 0.67rem;
+
+    line-height: 1.5;
+}
+
+
+.download-status.success {
+    color:
+        #86efac;
+}
+
+
+.download-status.error {
+    color:
+        #fca5a5;
+}
+
+
+/* ==========================================================
+   ORDER CARD
+========================================================== */
+
+.order-card {
+    margin-top: 20px;
+
+    padding:
+        20px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
+    border-radius: 17px;
+
+    background:
+        rgba(255, 255, 255, 0.022);
+}
+
+
+.order-card-header {
+    padding-bottom:
+        13px;
+
+    margin-bottom:
+        13px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+}
+
+
+.order-eyebrow {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color:
+        rgba(167, 139, 250, 0.80);
+
+    font-size: 0.60rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+
+    text-transform: uppercase;
+}
+
+
+.order-card-header h3 {
+    margin: 0;
+
+    font-size: 0.88rem;
+
+    font-weight: 800;
+}
+
+
+.order-details {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 12px;
+}
+
+
+.order-detail {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.order-detail span {
+    color:
+        rgba(255, 255, 255, 0.38);
+
+    font-size: 0.64rem;
+}
+
+
+.order-detail strong {
+    color:
+        rgba(255, 255, 255, 0.86);
+
+    font-size: 0.72rem;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+.payment-paid {
+    color:
+        #86efac !important;
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 850px) {
+
+    .bundle-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+    .order-details {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .library-header {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap: 12px;
+    }
+
+
+    .bundle-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .order-details {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .bundle-content {
+        padding:
+            17px;
+    }
+
+}
+
+
+/* ==========================================================
+   BUNDLE CARD
+========================================================== */
+
+.bundle-card {
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    box-shadow:
+        0 35px 100px
+        rgba(0, 0, 0, 0.45);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+}
+
+.bundle-card.requested-bundle {
+    outline: 2px solid #7c3aed;
+    box-shadow:
+        0 0 0 4px rgba(124, 58, 237, 0.15),
+        0 20px 60px rgba(124, 58, 237, 0.25);
+    transform: translateY(-3px);
+    transition:
+        outline 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* ==========================================================
+   BUNDLE IMAGE
+========================================================== */
+
+.bundle-image-wrapper {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 8;
+
+    overflow: hidden;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+}
+
+
+.bundle-thumbnail {
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+        transform 0.5s ease;
+}
+
+
+.bundle-card:hover
+.bundle-thumbnail {
+    transform:
+        scale(1.025);
+}
+
+
+.bundle-image-wrapper::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(7, 7, 11, 0.8),
+            transparent 55%
+        );
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   PLAN BADGE
+========================================================== */
+
+.plan-badge {
+    position: absolute;
+
+    left: 20px;
+
+    bottom: 18px;
+
+    z-index: 2;
+
+    padding:
+        8px 13px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(7, 7, 11, 0.78);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+    backdrop-filter:
+        blur(10px);
+
+    color: #ffffff;
+
+    font-size: 0.72rem;
+
+    font-weight: 850;
+
+    letter-spacing: 0.08em;
+}
+
+
+/* ==========================================================
+   BUNDLE CONTENT
+========================================================== */
+
+.bundle-content {
+    padding:
+        30px;
+}
+
+
+.bundle-meta {
+    margin-bottom: 9px;
+}
+
+
+.bundle-meta span {
+    color:
+        rgba(167, 139, 250, 0.9);
+
+    font-size: 0.72rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+
+    text-transform: uppercase;
+}
+
+
+.bundle-name {
+    font-size:
+        clamp(
+            1.6rem,
+            4vw,
+            2.35rem
+        );
+
+    line-height: 1.1;
+
+    letter-spacing: -0.04em;
+
+    font-weight: 850;
+}
+
+
+.bundle-title {
+    margin-top: 9px;
+
+    color:
+        rgba(255, 255, 255, 0.58);
+
+    font-size: 1rem;
+
+    line-height: 1.6;
+
+    font-weight: 500;
+}
+
+
+/* ==========================================================
+   FEATURES
+========================================================== */
+
+.features {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 11px;
+
+    margin:
+        26px 0;
+}
+
+
+.feature {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-height: 44px;
+
+    padding:
+        10px 12px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
+    border-radius: 12px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    color:
+        rgba(255, 255, 255, 0.72);
+
+    font-size: 0.82rem;
+
+    line-height: 1.35;
+}
+
+
+.feature-icon {
+    width: 20px;
+
+    height: 20px;
+
+    flex:
+        0 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(34, 197, 94, 0.13);
+
+    color: #86efac;
+
+    font-size: 0.7rem;
+
+    font-weight: 900;
+}
+
+
+/* ==========================================================
+   DOWNLOAD BUTTON
+========================================================== */
+
+.download-button {
+    width: 100%;
+
+    min-height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 11px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #9333ea
+        );
+
+    color: #ffffff;
+
+    font-size: 0.98rem;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 15px 35px
+        rgba(124, 58, 237, 0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+
+.download-button:hover:not(:disabled) {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 20px 42px
+        rgba(124, 58, 237, 0.35);
+}
+
+
+.download-button:active:not(:disabled) {
+    transform:
+        translateY(0);
+}
+
+
+.download-button:disabled {
+    opacity: 0.55;
+
+    cursor:
+        not-allowed;
+
+    box-shadow:
+        none;
+}
+
+
+.download-icon {
+    font-size: 1.35rem;
+
+    line-height: 1;
+}
+
+
+/* ==========================================================
+   DOWNLOAD STATUS
+========================================================== */
+
+.download-status {
+    min-height: 22px;
+
+    margin-top: 13px;
+
+    text-align: center;
+
+    color:
+        rgba(255, 255, 255, 0.5);
+
+    font-size: 0.82rem;
+
+    line-height: 1.5;
+}
+
+
+.download-status.success {
+    color: #86efac;
+}
+
+
+.download-status.error {
+    color: #fca5a5;
+}
+
+
+/* ==========================================================
+   SECURITY BOX
+========================================================== */
+
+.security-box {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 13px;
+
+    margin-top: 20px;
+
+    padding:
+        15px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
+    border-radius: 14px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+
+.security-icon {
+    font-size: 1.15rem;
+
+    line-height: 1.4;
+}
+
+
+.security-box strong {
+    display: block;
+
+    margin-bottom: 3px;
+
+    font-size: 0.82rem;
+}
+
+
+.security-box p {
+    color:
+        rgba(255, 255, 255, 0.45);
+
+    font-size: 0.75rem;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================================
+   EXPIRY
+========================================================== */
+
+.expiry-box {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 15px;
+
+    color:
+        rgba(255, 255, 255, 0.42);
+
+    font-size: 0.76rem;
+
+    text-align: center;
+}
+
+
+/* ==========================================================
+   ORDER CARD
+========================================================== */
+
+.order-card {
+    margin-top: 18px;
+
+    padding:
+        22px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    border-radius: 20px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+
+.order-card-header {
+    padding-bottom: 15px;
+
+    margin-bottom: 15px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+}
+
+
+.order-card-header h3 {
+    font-size: 0.9rem;
+
+    font-weight: 800;
+}
+
+
+.order-details {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 15px;
+}
+
+
+.order-detail {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.order-detail span {
+    color:
+        rgba(255, 255, 255, 0.4);
+
+    font-size: 0.72rem;
+}
+
+
+.order-detail strong {
+    color:
+        rgba(255, 255, 255, 0.85);
+
+    font-size: 0.8rem;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* ==========================================================
+   SUPPORT
+========================================================== */
+
+.support-section {
+    max-width: 620px;
+
+    margin:
+        45px auto 0;
+
+    text-align: center;
+}
+
+
+.support-section h3 {
+    font-size: 1rem;
+
+    margin-bottom: 7px;
+}
+
+
+.support-section p {
+    color:
+        rgba(255, 255, 255, 0.46);
+
+    font-size: 0.82rem;
+
+    line-height: 1.6;
+}
+
+
+.support-section a {
+    display: inline-block;
+
+    margin-top: 8px;
+
+    color:
+        #c4b5fd;
+
+    text-decoration: none;
+
+    font-size: 0.82rem;
+
+    font-weight: 650;
+}
+
+
+.support-section a:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.download-footer {
+    margin-top: auto;
+
+    padding:
+        25px 20px;
+
+    text-align: center;
+
+    border-top:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+
+    color:
+        rgba(255, 255, 255, 0.3);
+
+    font-size: 0.72rem;
+}
+
+
+/* ==========================================================
+   UTILITY
+========================================================== */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   FOCUS
+========================================================== */
+
+.download-button:focus-visible,
+.support-button:focus-visible,
+.brand:focus-visible {
+    outline:
+        2px solid
+        #a78bfa;
+
+    outline-offset:
+        3px;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (
+    max-width: 700px
+) {
+
+    .download-header {
+        min-height: 64px;
+
+        padding:
+            0 18px;
+    }
+
+
+    .brand {
+        font-size: 1.15rem;
+    }
+
+
+    .header-status {
+        padding:
+            7px 10px;
+
+        font-size: 0.7rem;
+    }
+
+
+    .download-main {
+        padding:
+            45px 15px
+            55px;
+    }
+
+
+    .download-hero {
+        margin-bottom: 30px;
+    }
+
+
+    .download-hero h1 {
+        font-size: 2.15rem;
+    }
+
+
+    .download-subtitle {
+        font-size: 0.88rem;
+    }
+
+
+    .bundle-card {
+        border-radius: 21px;
+    }
+
+
+    .bundle-content {
+        padding:
+            22px 18px;
+    }
+
+
+    .bundle-image-wrapper {
+        aspect-ratio: 16 / 10;
+    }
+
+
+    .features {
+        grid-template-columns:
+            1fr;
+
+        gap: 8px;
+
+        margin:
+            21px 0;
+    }
+
+
+    .feature {
+        min-height: 42px;
+    }
+
+
+    .order-details {
+        grid-template-columns:
+            1fr;
+
+        gap: 13px;
+    }
+
+
+    .download-button {
+        min-height: 55px;
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (
+    max-width: 420px
+) {
+
+    .header-status {
+        display: none;
+    }
+
+
+    .download-hero h1 {
+        font-size: 1.9rem;
+    }
+
+
+    .verification-badge {
+        font-size: 0.72rem;
+    }
+
+
+    .bundle-name {
+        font-size: 1.55rem;
+    }
+
+
+    .bundle-title {
+        font-size: 0.88rem;
+    }
+
+
+    .security-box {
+        padding:
+            13px;
+    }
+
+}
+/* ==========================================================
+   REELSBUNDLES - BUNDLE CARD UI FIX
+   Fixes broken card layout / default buttons / images
+========================================================== */
+
+
+/* ----------------------------------------------------------
+   BUNDLE GRID
+---------------------------------------------------------- */
+
+#basicBundleGrid,
+#premiumBundleGrid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 24px;
+
+    align-items: stretch;
+
+}
+
+
+/* ----------------------------------------------------------
+   BUNDLE CARD
+---------------------------------------------------------- */
+
+.bundle-card {
+
+    position: relative;
+
+    width: 100%;
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25, 27, 43, 0.98),
+            rgba(10, 12, 25, 0.98)
+        );
+
+    border: 1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.10
+        );
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(
+            0,
+            0,
+            0,
+            0.28
+        );
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+/* HOVER */
+
+.bundle-card:hover {
+
+    transform:
+        translateY(-5px);
+
+    border-color:
+        rgba(
+            139,
+            65,
+            255,
+            0.65
+        );
+
+    box-shadow:
+        0 18px 45px
+        rgba(
+            99,
+            40,
+            220,
+            0.22
+        );
+
+}
+
+
+/* ----------------------------------------------------------
+   CARD IMAGE AREA
+---------------------------------------------------------- */
+
+.bundle-card-media {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 210px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            #17182a,
+            #090a14
+        );
+
+}
+
+
+/* IMAGE */
+
+.bundle-card-media img {
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    transition:
+        transform 0.35s ease;
+
+}
+
+
+/* IMAGE HOVER */
+
+.bundle-card:hover
+.bundle-card-media img {
+
+    transform:
+        scale(1.05);
+
+}
+
+
+/* ----------------------------------------------------------
+   IMAGE FALLBACK
+---------------------------------------------------------- */
+
+.bundle-placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 58px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(
+                139,
+                65,
+                255,
+                0.20
+            ),
+            transparent 65%
+        );
+
+}
+
+
+/* ----------------------------------------------------------
+   PLAN BADGE
+---------------------------------------------------------- */
+
+.bundle-plan-badge {
+
+    position: absolute;
+
+    top: 14px;
+
+    left: 14px;
+
+    z-index: 2;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding:
+        7px 12px;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #9333ea
+        );
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing:
+        0.8px;
+
+    text-transform:
+        uppercase;
+
+    box-shadow:
+        0 5px 15px
+        rgba(
+            124,
+            58,
+            237,
+            0.35
+        );
+
+}
+
+
+/* ----------------------------------------------------------
+   CARD CONTENT
+---------------------------------------------------------- */
+
+.bundle-card-content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    flex: 1;
+
+    padding:
+        20px;
+
+}
+
+
+/* ----------------------------------------------------------
+   TITLE
+---------------------------------------------------------- */
+
+.bundle-card-title {
+
+    margin:
+        0 0 8px;
+
+    color:
+        #ffffff;
+
+    font-size:
+        21px;
+
+    line-height:
+        1.25;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.2px;
+
+}
+
+
+/* ----------------------------------------------------------
+   DESCRIPTION
+---------------------------------------------------------- */
+
+.bundle-card-description {
+
+    margin:
+        0;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.62
+        );
+
+    font-size:
+        14px;
+
+    line-height:
+        1.6;
+
+}
+
+
+/* ----------------------------------------------------------
+   CARD FOOTER
+---------------------------------------------------------- */
+
+.bundle-card-footer {
+
+    margin-top:
+        auto;
+
+    padding-top:
+        20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 14px;
+
+}
+
+
+/* ----------------------------------------------------------
+   ACCESS STATUS
+---------------------------------------------------------- */
+
+.bundle-access-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color:
+        #d7d7df;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    white-space:
+        nowrap;
+
+}
+
+
+/* ----------------------------------------------------------
+   DOWNLOAD BUTTON
+---------------------------------------------------------- */
+
+.bundle-download-button {
+
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    border: 0;
+
+    outline: none;
+
+    cursor: pointer;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width:
+        135px;
+
+    height:
+        44px;
+
+    padding:
+        0 18px;
+
+    border-radius:
+        12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #9333ea
+        );
+
+    color:
+        #ffffff;
+
+    font-family:
+        inherit;
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.2px;
+
+    white-space:
+        nowrap;
+
+    box-shadow:
+        0 8px 22px
+        rgba(
+            124,
+            58,
+            237,
+            0.28
+        );
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+/* BUTTON HOVER */
+
+.bundle-download-button:hover:not(:disabled) {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 28px
+        rgba(
+            124,
+            58,
+            237,
+            0.42
+        );
+
+}
+
+
+/* BUTTON ACTIVE */
+
+.bundle-download-button:active:not(:disabled) {
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* DISABLED */
+
+.bundle-download-button:disabled {
+
+    cursor:
+        not-allowed;
+
+    opacity:
+        0.55;
+
+    background:
+        linear-gradient(
+            135deg,
+            #303044,
+            #202031
+        );
+
+    box-shadow:
+        none;
+
+}
+
+
+/* ----------------------------------------------------------
+   EMPTY STATE
+---------------------------------------------------------- */
+
+.bundle-empty-state {
+
+    grid-column:
+        1 / -1;
+
+    min-height:
+        220px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding:
+        30px;
+
+    border:
+        1px dashed
+        rgba(
+            255,
+            255,
+            255,
+            0.14
+        );
+
+    border-radius:
+        18px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.02
+        );
+
+}
+
+
+.bundle-empty-icon {
+
+    font-size:
+        38px;
+
+    margin-bottom:
+        10px;
+
+}
+
+
+.bundle-empty-state h3 {
+
+    margin:
+        0 0 7px;
+
+    color:
+        #ffffff;
+
+    font-size:
+        18px;
+
+}
+
+
+.bundle-empty-state p {
+
+    margin:
+        0;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.55
+        );
+
+    font-size:
+        14px;
+
+}
+
+
+/* ----------------------------------------------------------
+   FOLDER BROWSER
+---------------------------------------------------------- */
+
+.reelsbundles-folder-browser {
+
+    width:
+        100%;
+
+    margin:
+        0 0 28px;
+
+    padding:
+        26px;
+
+    border:
+        1px solid
+        rgba(
+            139,
+            92,
+            246,
+            0.25
+        );
+
+    border-radius:
+        20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(
+                18,
+                20,
+                36,
+                0.98
+            ),
+            rgba(
+                8,
+                10,
+                20,
+                0.98
+            )
+        );
+
+}
+
+
+/* ----------------------------------------------------------
+   FOLDER HEADER
+---------------------------------------------------------- */
+
+.folder-browser-header {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    margin-bottom:
+        22px;
+
+}
+
+
+.folder-browser-kicker {
+
+    margin-bottom:
+        6px;
+
+    color:
+        #a78bfa;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        1.5px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.folder-browser-title {
+
+    margin:
+        0;
+
+    color:
+        #ffffff;
+
+    font-size:
+        25px;
+
+    font-weight:
+        800;
+
+}
+
+
+.folder-browser-subtitle {
+
+    margin:
+        6px 0 0;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.55
+        );
+
+    font-size:
+        13px;
+
+}
+
+
+.folder-browser-status {
+
+    flex-shrink:
+        0;
+
+    padding:
+        8px 13px;
+
+    border-radius:
+        999px;
+
+    color:
+        #86efac;
+
+    background:
+        rgba(
+            34,
+            197,
+            94,
+            0.10
+        );
+
+    border:
+        1px solid
+        rgba(
+            34,
+            197,
+            94,
+            0.25
+        );
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+}
+
+
+/* ----------------------------------------------------------
+   FOLDER GRID
+---------------------------------------------------------- */
+
+.folder-browser-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fill,
+            minmax(
+                220px,
+                1fr
+            )
+        );
+
+    gap:
+        16px;
+
+}
+
+
+/* ----------------------------------------------------------
+   DRIVE ITEM
+---------------------------------------------------------- */
+
+.drive-item-card {
+
+    min-width:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    padding:
+        15px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+    border-radius:
+        15px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.drive-item-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(
+            139,
+            92,
+            246,
+            0.45
+        );
+
+    background:
+        rgba(
+            139,
+            92,
+            246,
+            0.07
+        );
+
+}
+
+
+.drive-item-icon {
+
+    width:
+        42px;
+
+    height:
+        42px;
+
+    flex-shrink:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        11px;
+
+    background:
+        rgba(
+            124,
+            58,
+            237,
+            0.14
+        );
+
+    font-size:
+        21px;
+
+}
+
+
+.drive-item-info {
+
+    min-width:
+        0;
+
+    flex:
+        1;
+
+}
+
+
+.drive-item-name {
+
+    margin:
+        0;
+
+    overflow:
+        hidden;
+
+    color:
+        #ffffff;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    text-overflow:
+        ellipsis;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.drive-item-type {
+
+    margin:
+        4px 0 0;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.48
+        );
+
+    font-size:
+        12px;
+
+}
+
+
+.drive-item-action {
+
+    flex-shrink:
+        0;
+
+    border:
+        1px solid
+        rgba(
+            139,
+            92,
+            246,
+            0.45
+        );
+
+    border-radius:
+        9px;
+
+    padding:
+        8px 11px;
+
+    background:
+        rgba(
+            124,
+            58,
+            237,
+            0.10
+        );
+
+    color:
+        #c4b5fd;
+
+    font-family:
+        inherit;
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+}
+
+
+.drive-item-action:hover {
+
+    background:
+        rgba(
+            124,
+            58,
+            237,
+            0.22
+        );
+
+}
+
+
+.drive-item-error {
+
+    position:
+        absolute;
+
+    margin-top:
+        55px;
+
+    color:
+        #fda4af;
+
+    font-size:
+        11px;
+
+}
+
+
+/* ----------------------------------------------------------
+   EMPTY FOLDER
+---------------------------------------------------------- */
+
+.folder-browser-empty {
+
+    grid-column:
+        1 / -1;
+
+    padding:
+        45px 20px;
+
+    text-align:
+        center;
+
+    border:
+        1px dashed
+        rgba(
+            255,
+            255,
+            255,
+            0.12
+        );
+
+    border-radius:
+        15px;
+
+}
+
+
+.folder-empty-icon {
+
+    margin-bottom:
+        10px;
+
+    font-size:
+        38px;
+
+}
+
+
+.folder-browser-empty h3 {
+
+    margin:
+        0 0 7px;
+
+    color:
+        #ffffff;
+
+    font-size:
+        17px;
+
+}
+
+
+.folder-browser-empty p {
+
+    margin:
+        0;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.5
+        );
+
+    font-size:
+        13px;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+
+/* TABLET */
+
+@media (
+    max-width: 1200px
+) {
+
+    #basicBundleGrid,
+    #premiumBundleGrid {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+    }
+
+}
+
+
+/* MOBILE */
+
+@media (
+    max-width: 700px
+) {
+
+    #basicBundleGrid,
+    #premiumBundleGrid {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            16px;
+
+    }
+
+
+    .bundle-card-media {
+
+        height:
+            190px;
+
+    }
+
+
+    .bundle-card-content {
+
+        padding:
+            17px;
+
+    }
+
+
+    .bundle-card-title {
+
+        font-size:
+            19px;
+
+    }
+
+
+    .bundle-card-footer {
+
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .bundle-download-button {
+
+        width:
+            100%;
+
+    }
+
+
+    .folder-browser-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .folder-browser-status {
+
+        align-self:
+            flex-start;
+
+    }
+
+
+    .folder-browser-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+/* SMALL MOBILE */
+
+@media (
+    max-width: 420px
+) {
+
+    .bundle-card-media {
+
+        height:
+            170px;
+
+    }
+
+
+    .bundle-card-title {
+
+        font-size:
+            18px;
+
+    }
+
+
+    .bundle-card-description {
+
+        font-size:
+            13px;
+
+    }
+
+}

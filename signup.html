@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account | ReelsBundles</title>
+
+    <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <a href="index.html">
+                ReelsBundles
+            </a>
+        </div>
+
+        <div class="auth-header">
+            <h1>Create Account</h1>
+
+            <p>
+                Create your ReelsBundles account.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            id="googleSignupBtn"
+            class="google-btn"
+        >
+            <span class="google-icon">G</span>
+            Continue with Google
+        </button>
+
+        <div class="divider">
+            <span>or sign up with email</span>
+        </div>
+
+        <form id="signupForm">
+
+            <div class="form-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Minimum 6 characters"
+                        autocomplete="new-password"
+                        minlength="6"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="password-toggle"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="confirmPassword">
+                    Confirm Password
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    autocomplete="new-password"
+                    minlength="6"
+                    required
+                >
+
+            </div>
+
+            <div
+                id="authMessage"
+                class="auth-message"
+            ></div>
+
+            <button
+                type="submit"
+                id="signupBtn"
+                class="primary-btn"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+
+            <p>
+                Already have an account?
+                <a href="login.html">
+                    Sign In
+                </a>
+            </p>
+
+            <a
+                href="index.html"
+                class="back-home"
+            >
+                ← Back to ReelsBundles
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script
+    type="module"
+    src="assets/js/signup.js"
+></script>
+
+</body>
+</html>

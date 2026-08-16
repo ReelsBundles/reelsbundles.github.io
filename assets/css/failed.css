@@ -1,0 +1,944 @@
+/* ==========================================================
+   REELSBUNDLES
+   FAILED PAYMENT PAGE
+========================================================== */
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        "Inter",
+        sans-serif;
+
+    background:
+        #05050d;
+
+    color:
+        #ffffff;
+
+}
+
+
+.failed-bg {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: -1;
+
+    background:
+
+        radial-gradient(
+            circle at 20% 15%,
+            rgba(255, 70, 100, 0.12),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            circle at 80% 70%,
+            rgba(110, 70, 255, 0.10),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            135deg,
+            #05050d,
+            #080817,
+            #05050d
+        );
+
+}
+
+
+.failed-page {
+
+    min-height: 100vh;
+
+    padding:
+        28px 20px 40px;
+
+}
+
+
+.container {
+
+    width: 100%;
+
+    max-width:
+        1100px;
+
+    margin:
+        0 auto;
+
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.failed-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        8px 0 28px;
+
+    border-bottom:
+        1px solid rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+}
+
+
+.failed-logo {
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size:
+        22px;
+
+    font-weight:
+        800;
+
+}
+
+
+.failed-badge {
+
+    padding:
+        10px 16px;
+
+    border-radius:
+        999px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.10
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.04
+        );
+
+    color:
+        #b8b8ff;
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+}
+
+
+/* ==========================================================
+   FAILED CARD
+========================================================== */
+
+.failed-card {
+
+    max-width:
+        720px;
+
+    margin:
+        70px auto 50px;
+
+    padding:
+        48px 42px;
+
+    text-align:
+        center;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.10
+        );
+
+    border-radius:
+        28px;
+
+    background:
+        rgba(
+            13,
+            13,
+            30,
+            0.90
+        );
+
+    box-shadow:
+        0 30px 80px
+        rgba(
+            0,
+            0,
+            0,
+            0.45
+        );
+
+    backdrop-filter:
+        blur(20px);
+
+}
+
+
+/* ==========================================================
+   FAILED ICON
+========================================================== */
+
+.failed-icon {
+
+    width:
+        82px;
+
+    height:
+        82px;
+
+    margin:
+        0 auto 25px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    border:
+        2px solid
+        rgba(
+            255,
+            80,
+            100,
+            0.35
+        );
+
+    background:
+        rgba(
+            255,
+            60,
+            90,
+            0.10
+        );
+
+    color:
+        #ff6b81;
+
+    font-size:
+        38px;
+
+    font-weight:
+        700;
+
+    box-shadow:
+        0 0 50px
+        rgba(
+            255,
+            60,
+            90,
+            0.12
+        );
+
+}
+
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.failed-card h1 {
+
+    margin:
+        0 0 12px;
+
+    font-size:
+        clamp(
+            30px,
+            5vw,
+            44px
+        );
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -1px;
+
+}
+
+
+.failed-description {
+
+    max-width:
+        520px;
+
+    margin:
+        0 auto 35px;
+
+    color:
+        #9d9db2;
+
+    font-size:
+        15px;
+
+    line-height:
+        1.7;
+
+}
+
+
+/* ==========================================================
+   DETAILS
+========================================================== */
+
+.failed-details {
+
+    margin:
+        0 auto 28px;
+
+    padding:
+        5px 20px;
+
+    text-align:
+        left;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.07
+        );
+
+    border-radius:
+        18px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+
+}
+
+
+.failed-detail-row {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
+
+    padding:
+        17px 0;
+
+    border-bottom:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.06
+        );
+
+}
+
+
+.failed-detail-row:last-child {
+
+    border-bottom:
+        none;
+
+}
+
+
+.failed-detail-row span {
+
+    color:
+        #88889d;
+
+    font-size:
+        13px;
+
+}
+
+
+.failed-detail-row strong {
+
+    color:
+        #eeeeff;
+
+    font-size:
+        13px;
+
+    text-align:
+        right;
+
+    word-break:
+        break-word;
+
+}
+
+
+.failed-status {
+
+    color:
+        #ff6b81 !important;
+
+}
+
+
+/* ==========================================================
+   MESSAGE
+========================================================== */
+
+.failed-message {
+
+    padding:
+        17px 20px;
+
+    margin-bottom:
+        28px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            180,
+            70,
+            0.15
+        );
+
+    border-radius:
+        14px;
+
+    background:
+        rgba(
+            255,
+            170,
+            50,
+            0.05
+        );
+
+    color:
+        #c0c0d0;
+
+    font-size:
+        13px;
+
+    line-height:
+        1.6;
+
+}
+
+
+/* ==========================================================
+   ACTIONS
+========================================================== */
+
+.failed-actions {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        12px;
+
+    max-width:
+        360px;
+
+    margin:
+        0 auto;
+
+}
+
+
+.retry-button,
+.home-button {
+
+    width:
+        100%;
+
+    min-height:
+        52px;
+
+    border-radius:
+        14px;
+
+    font-family:
+        inherit;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+    text-decoration:
+        none;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    transition:
+        transform
+        0.2s ease,
+        opacity
+        0.2s ease;
+
+}
+
+
+.retry-button {
+
+    border:
+        none;
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7654ff,
+            #a855f7
+        );
+
+    box-shadow:
+        0 12px 30px
+        rgba(
+            118,
+            84,
+            255,
+            0.25
+        );
+
+}
+
+
+.home-button {
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.10
+        );
+
+    color:
+        #d0d0df;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.04
+        );
+
+}
+
+
+.retry-button:hover,
+.home-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    opacity:
+        0.92;
+
+}
+
+
+/* ==========================================================
+   SUPPORT
+========================================================== */
+
+.failed-support {
+
+    margin-top:
+        35px;
+
+    padding-top:
+        28px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.07
+        );
+
+}
+
+
+.failed-support h2 {
+
+    margin:
+        0 0 10px;
+
+    font-size:
+        15px;
+
+}
+
+
+.failed-support p {
+
+    margin:
+        0 auto 15px;
+
+    max-width:
+        480px;
+
+    color:
+        #858598;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.7;
+
+}
+
+
+.failed-support a {
+
+    color:
+        #a78bfa;
+
+    text-decoration:
+        none;
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+}
+
+
+/* ==========================================================
+   SECURITY
+========================================================== */
+
+.failed-security {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        22px;
+
+    color:
+        #77778a;
+
+    font-size:
+        11px;
+
+}
+
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.failed-footer {
+
+    margin-top:
+        70px;
+
+    padding-top:
+        28px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1.3fr
+        1fr
+        auto;
+
+    gap:
+        30px;
+
+    border-top:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.07
+        );
+
+}
+
+
+.failed-footer strong {
+
+    font-size:
+        16px;
+
+}
+
+
+.failed-footer p {
+
+    max-width:
+        340px;
+
+    margin:
+        8px 0 0;
+
+    color:
+        #717184;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.6;
+
+}
+
+
+.footer-links {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    align-content:
+        center;
+
+    gap:
+        14px;
+
+}
+
+
+.footer-links a {
+
+    color:
+        #77778a;
+
+    text-decoration:
+        none;
+
+    font-size:
+        11px;
+
+}
+
+
+.footer-links a:hover {
+
+    color:
+        #ffffff;
+
+}
+
+
+.footer-copy {
+
+    color:
+        #666678;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.8;
+
+    text-align:
+        right;
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (
+    max-width: 700px
+) {
+
+    .failed-page {
+
+        padding:
+            18px 14px 30px;
+
+    }
+
+
+    .failed-header {
+
+        align-items:
+            flex-start;
+
+        gap:
+            15px;
+
+    }
+
+
+    .failed-logo {
+
+        font-size:
+            19px;
+
+    }
+
+
+    .failed-badge {
+
+        padding:
+            8px 11px;
+
+        font-size:
+            10px;
+
+    }
+
+
+    .failed-card {
+
+        margin:
+            45px auto 35px;
+
+        padding:
+            35px 18px;
+
+        border-radius:
+            22px;
+
+    }
+
+
+    .failed-icon {
+
+        width:
+            68px;
+
+        height:
+            68px;
+
+        font-size:
+            30px;
+
+    }
+
+
+    .failed-detail-row {
+
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+
+        gap:
+            7px;
+
+    }
+
+
+    .failed-detail-row strong {
+
+        text-align:
+            left;
+
+    }
+
+
+    .failed-footer {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .footer-copy {
+
+        text-align:
+            left;
+
+    }
+
+}

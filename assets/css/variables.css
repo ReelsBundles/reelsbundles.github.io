@@ -1,0 +1,64 @@
+/* ==========================================
+   REELS BUNDLES V3 DESIGN TOKENS
+========================================== */
+
+:root{
+
+    /* Brand */
+
+    --primary:#7C3AED;
+    --secondary:#2563EB;
+    --accent:#06B6D4;
+
+    /* Background */
+
+    --bg:#030712;
+    --surface:#111827;
+    --surface-light:#1F2937;
+
+    /* Text */
+
+    --white:#F9FAFB;
+    --text:#E5E7EB;
+    --muted:#9CA3AF;
+
+    /* Status */
+
+    --success:#22C55E;
+    --warning:#F59E0B;
+    --danger:#EF4444;
+
+    /* Border */
+
+    --border:rgba(255,255,255,.08);
+
+    /* Glass */
+
+    --glass:rgba(255,255,255,.05);
+
+    /* Radius */
+
+    --radius-sm:8px;
+    --radius-md:16px;
+    --radius-lg:28px;
+    --radius-pill:999px;
+
+    /* Shadow */
+
+    --shadow:
+    0 20px 60px rgba(0,0,0,.35);
+
+    /* Container */
+
+    --container:1280px;
+
+    /* Fonts */
+
+    --heading:"Poppins",sans-serif;
+    --body:"Inter",sans-serif;
+
+    /* Transition */
+
+    --transition:.35s ease;
+
+}

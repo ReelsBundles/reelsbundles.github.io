@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings | ReelsBundles Admin</title>
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="admin-dashboard-page">
+
+<div class="admin-layout">
+
+    <!-- UNIFIED SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="bundles.html" class="admin-nav-item">
+                <span>📦</span> Bundles
+            </a>
+            <a href="orders.html" class="admin-nav-item">
+                <span>🧾</span> Orders
+            </a>
+            <a href="download.html" class="admin-nav-item">
+                <span>⬇️</span> Downloads
+            </a>
+            <a href="storage.html" class="admin-nav-item">
+                <span>☁️</span> Storage
+            </a>
+            <a href="settings.html" class="admin-nav-item active">
+                <span>⚙️</span> Settings
+            </a>
+        </nav>
+
+        <div class="admin-sidebar-footer">
+            <button type="button" onclick="localStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; margin-bottom:12px;">
+                🚪 Logout
+            </button>
+            <div class="footer-meta">
+                <span>ReelsBundles Admin v2.0</span>
+                <small>Secure Control Panel</small>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <span class="page-eyebrow">SYSTEM CONFIGURATION</span>
+                <h1>Admin Settings</h1>
+                <p>Manage administrator account security, gateway keys, and site preferences</p>
+            </div>
+        </header>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap:24px;">
+
+            <!-- PROFILE & SECURITY SETTINGS -->
+            <section style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:28px;">
+                <h3 style="font-size:18px; font-weight:700; margin-bottom:16px;">🔑 Admin Credentials</h3>
+                <form id="settingsProfileForm">
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:rgba(255,255,255,0.8);">Admin Email</label>
+                        <input type="email" id="settingsAdminEmail" value="admin@reelsbundles.com" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:12px; color:#fff;">
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:rgba(255,255,255,0.8);">Change Password</label>
+                        <input type="password" id="settingsNewPassword" placeholder="Enter new password" style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:12px; color:#fff;">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="background:linear-gradient(135deg, #7c3aed 0%, #6366f1 100%); padding:12px 24px; border-radius:10px; color:#fff; border:none; font-weight:600; cursor:pointer;">
+                        Save Credentials
+                    </button>
+                </form>
+            </section>
+
+            <!-- PAYMENT GATEWAY KEYS -->
+            <section style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:28px;">
+                <h3 style="font-size:18px; font-weight:700; margin-bottom:16px;">💳 Payment Gateways</h3>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:rgba(255,255,255,0.8);">Cashfree App ID</label>
+                    <input type="text" value="TEST1039847293847" readonly style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:12px; color:rgba(255,255,255,0.6);">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px; color:rgba(255,255,255,0.8);">Gateway Mode</label>
+                    <select style="width:100%; box-sizing:border-box; background:#0b0f19; border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:12px; color:#fff;">
+                        <option value="live" selected>🟢 Live Production (Active)</option>
+                        <option value="sandbox">🟡 Sandbox Testing</option>
+                    </select>
+                </div>
+                <button type="button" onclick="alert('Payment Gateway settings updated!')" style="background:linear-gradient(135deg, #7c3aed 0%, #6366f1 100%); padding:12px 24px; border-radius:10px; color:#fff; border:none; font-weight:600; cursor:pointer;">
+                    Update Gateway Keys
+                </button>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script>
+const token = localStorage.getItem("admin_token");
+if (!token) location.href = "index.html";
+
+document.getElementById("settingsProfileForm").onsubmit = (e) => {
+    e.preventDefault();
+    alert("Admin credentials updated successfully!");
+};
+</script>
+</body>
+</html>

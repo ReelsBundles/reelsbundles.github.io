@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Sign In | ReelsBundles</title>
+
+    <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+
+<body>
+
+<div class="auth-page">
+
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <a href="index.html">
+                ReelsBundles
+            </a>
+        </div>
+
+        <div class="auth-header">
+            <h1>Welcome Back</h1>
+
+            <p>
+                Sign in to access your ReelsBundles account.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            id="googleLoginBtn"
+            class="google-btn"
+        >
+            <span class="google-icon">G</span>
+            Continue with Google
+        </button>
+
+        <div class="divider">
+            <span>or continue with email</span>
+        </div>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="password-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="password-toggle"
+                    >
+                        Show
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="auth-options">
+
+                <a href="forgot-password.html">
+                    Forgot password?
+                </a>
+
+            </div>
+
+            <div
+                id="authMessage"
+                class="auth-message"
+            ></div>
+
+            <button
+                type="submit"
+                id="loginBtn"
+                class="primary-btn"
+            >
+                Sign In
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+
+            <p>
+                Don't have an account?
+                <a
+                href="signup.html"
+                id="signupLink"
+                >
+                Create Account
+            </a>
+            </p>
+
+            <a
+                href="index.html"
+                class="back-home"
+            >
+                ← Back to ReelsBundles
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script
+    type="module"
+    src="assets/js/login.js"
+></script>
+
+</body>
+</html>

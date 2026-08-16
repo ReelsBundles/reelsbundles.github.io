@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Downloads | ReelsBundles Admin
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Admin Dashboard CSS -->
+    <link
+        rel="stylesheet"
+        href="assets/css/admin-dashboard.css"
+    >
+
+    <!-- Downloads CSS -->
+    <link
+        rel="stylesheet"
+        href="assets/css/admin-download.css"
+    >
+
+</head>
+
+
+<body class="admin-downloads-page">
+
+
+    <!-- ======================================================
+         ADMIN APP
+    ======================================================= -->
+
+    <div class="admin-layout">
+
+
+        <!-- ==================================================
+             SIDEBAR
+        =================================================== -->
+
+        <aside class="admin-sidebar">
+
+            <div class="admin-brand">
+
+                <div class="admin-brand-icon">
+                    ▶
+                </div>
+
+                <div>
+
+                    <strong>
+                        ReelsBundles
+                    </strong>
+
+                    <span>
+                        ADMIN
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a
+                    href="dashboard.html"
+                    class="admin-nav-item"
+                >
+                    <span>📊</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    href="orders.html"
+                    class="admin-nav-item"
+                >
+                    <span>🧾</span>
+                    Orders
+                </a>
+
+
+                <a
+                    href="bundles.html"
+                    class="admin-nav-item"
+                >
+                    <span>📦</span>
+                    Bundles
+                </a>
+
+
+                <a href="download.html" class="admin-nav-item active">
+                    <span>⬇️</span>
+                    Downloads
+                </a>
+
+
+                <a
+                    href="storage.html"
+                    class="admin-nav-item"
+                >
+                    <span>☁️</span>
+                    Storage
+                </a>
+
+            </nav>
+
+
+            <div class="admin-sidebar-footer">
+
+                <span>
+                    ReelsBundles Admin
+                </span>
+
+                <small>
+                    Secure Control Panel
+                </small>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- ==================================================
+             MAIN
+        =================================================== -->
+
+        <main class="admin-main">
+
+
+            <!-- HEADER -->
+
+            <header class="admin-topbar">
+
+                <div>
+
+                    <span class="page-eyebrow">
+                        ADMIN PANEL
+                    </span>
+
+                    <h1>
+                        Downloads
+                    </h1>
+
+                    <p>
+                        Monitor customer downloads and purchases.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="refresh-button"
+                    onclick="loadDownloads(1)"
+                >
+
+                    ↻
+
+                    Refresh
+
+                </button>
+                <button
+                type="button"
+                id="deleteAllDownloadsButton"
+                class="delete-all-downloads-btn"
+                >
+                🗑️ Delete All
+                </button>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+            ================================================== -->
+
+            <section class="download-summary">
+
+
+                <article class="summary-card">
+
+                    <div class="summary-icon">
+                        ⬇️
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Total Downloads
+                        </span>
+
+                        <strong
+                            id="totalDownloads"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+
+                <article class="summary-card">
+
+                    <div class="summary-icon success-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Successful
+                        </span>
+
+                        <strong
+                            id="successfulDownloads"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+
+                <article class="summary-card">
+
+                    <div class="summary-icon basic-icon">
+                        📦
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Basic Downloads
+                        </span>
+
+                        <strong
+                            id="basicDownloads"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+
+                <article class="summary-card">
+
+                    <div class="summary-icon premium-icon">
+                        👑
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Premium Downloads
+                        </span>
+
+                        <strong
+                            id="premiumDownloads"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+            </section>
+
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
+            <section class="downloads-panel">
+
+
+                <div class="downloads-toolbar">
+
+
+                    <div class="search-box">
+
+                        <span>
+                            🔍
+                        </span>
+
+                        <input
+                            type="search"
+                            id="downloadSearch"
+                            placeholder="Search customer, email, phone or order ID..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+
+                    <select
+                        id="downloadPlanFilter"
+                        class="filter-select"
+                    >
+
+                        <option value="">
+                            All Plans
+                        </option>
+
+                        <option value="basic">
+                            Basic
+                        </option>
+
+                        <option value="premium">
+                            Premium
+                        </option>
+
+                    </select>
+
+
+                    <select
+                        id="downloadStatusFilter"
+                        class="filter-select"
+                    >
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        <option value="success">
+                            Success
+                        </option>
+
+                        <option value="failed">
+                            Failed
+                        </option>
+
+                    </select>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     TABLE
+                ================================================== -->
+
+                <div class="downloads-table-wrapper">
+
+                    <table class="downloads-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Customer
+                                </th>
+
+                                <th>
+                                    Email
+                                </th>
+
+                                <th>
+                                    Order ID
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Plan
+                                </th>
+
+                                <th>
+                                    Bundle
+                                </th>
+
+                                <th>
+                                    Payment
+                                </th>
+
+                                <th>
+                                    Download
+                                </th>
+
+                                <th>
+                                    Count
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody
+                            id="downloadsTableBody"
+                        >
+
+                            <tr>
+
+                                <td
+                                    colspan="11"
+                                    class="loading-state"
+                                >
+
+                                    Loading downloads...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     PAGINATION
+                ================================================== -->
+
+                <div
+                    id="downloadsPagination"
+                    class="downloads-pagination"
+                ></div>
+
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <!-- ======================================================
+         JAVASCRIPT
+    ======================================================= -->
+
+   <script
+    src="assets/js/admin-download.js"
+    defer
+></script>
+</body>
+
+</html>
