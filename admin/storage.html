@@ -100,7 +100,12 @@ if (!token) location.href = "index.html";
 
 async function loadStorageStats() {
     try {
-        const res = await fetch("/api/admin/bundles", {
+        const API_BASE = window.REELS_BUNDLES_API_BASE || (
+            (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+                ? "http://localhost:3000"
+                : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+        );
+        const res = await fetch(`${API_BASE}/api/admin/bundles`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();

@@ -32,9 +32,15 @@ window.loadDashboard = loadDashboard;
 loadDashboard();
 setInterval(loadDashboard, 10000);
 
+const API_BASE = window.REELS_BUNDLES_API_BASE || (
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000"
+        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+);
+
 async function loadDashboard() {
     try {
-        const response = await fetch("/api/admin/dashboard", {
+        const response = await fetch(`${API_BASE}/api/admin/dashboard`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`

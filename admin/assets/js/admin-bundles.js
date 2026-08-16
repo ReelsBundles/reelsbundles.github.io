@@ -9,7 +9,12 @@
    CONFIG
 ========================================================== */
 
-const API = "/api/admin/bundles";
+const API_BASE = window.REELS_BUNDLES_API_BASE || (
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000"
+        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+);
+const API = `${API_BASE}/api/admin/bundles`;
 const TOKEN_KEY = "admin_token";
 
 const token =
@@ -1995,7 +2000,7 @@ async function handleBulkSubmit() {
 
     showLoading();
     try {
-        const res = await fetch("/api/admin/bundles/bulk", {
+        const res = await fetch(`${API_BASE}/api/admin/bundles/bulk`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -2030,7 +2035,7 @@ async function handleDeleteAllSubmit() {
 
     showLoading();
     try {
-        const res = await fetch("/api/admin/bundles/all", {
+        const res = await fetch(`${API_BASE}/api/admin/bundles/all`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`
