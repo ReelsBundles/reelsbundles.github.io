@@ -232,15 +232,13 @@ async function api(
             await response.json();
 
     } else {
-
-        const text =
-            await response.text();
-
+        const text = await response.text();
+        const isHtml = text.trim().startsWith("<");
         data = {
             success: false,
-            message:
-                text ||
-                `Server returned ${response.status}`
+            message: isHtml 
+                ? `Server error (${response.status}). Please check backend status.`
+                : (text || `Server returned ${response.status}`)
         };
     }
 
