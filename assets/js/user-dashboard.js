@@ -14,6 +14,12 @@ import {
 } from "./auth-common.js";
 
 
+const API_BASE = window.REELS_BUNDLES_API_BASE || (
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000"
+        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+);
+
 /* ==========================================================
    GLOBAL STATE
 ========================================================== */
@@ -749,7 +755,7 @@ async function loadLiveBundles(isSilent = false) {
         -------------------------------------------------- */
         const response =
             await fetch(
-                "/api/user/bundles",
+                `${API_BASE}/api/user/bundles`,
                 {
                     method: "GET",
 
@@ -766,6 +772,13 @@ async function loadLiveBundles(isSilent = false) {
                 }
             );
             
+
+        const contentType =
+            response.headers.get("content-type") || "";
+
+        if (!contentType.includes("application/json")) {
+            throw new Error(`Server status ${response.status}. Backend server may be offline or deploying.`);
+        }
 
         const result =
             await response.json();
@@ -2458,7 +2471,7 @@ async function handleBundleDownload(
 
         const response =
             await fetch(
-                `/api/user/bundles/${encodeURIComponent(bundleId)}/download`,
+                `${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/download`,
                 {
                     method:
                         "GET",
