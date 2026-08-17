@@ -225,7 +225,13 @@ export const checkUserLiveStatus = async (user) => {
     try {
         const uid = encodeURIComponent(user.uid || '');
         const email = encodeURIComponent(user.email || '');
-        const res = await fetch(`${API_BASE}/user/status?uid=${uid}&email=${email}`);
+        const headers = {};
+        try {
+            const token = await getFirebaseIdToken();
+            if (token) headers["Authorization"] = `Bearer ${token}`;
+        } catch (e) {}
+
+        const res = await fetch(`${API_BASE}/user/status?uid=${uid}&email=${email}`, { headers });
         const data = await res.json();
         if (res.status === 403 || data.disabled === true || data.status === "disabled") {
             handleAccountDisabledAlert();

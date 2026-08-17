@@ -93,6 +93,8 @@ function applyCssRestrictions() {
         styleElement.remove();
         styleElement = null;
     }
+}
+
 let isProtectionInitialized = false;
 
 function initContentProtection() {
