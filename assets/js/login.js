@@ -6,12 +6,23 @@ import {
     signInWithEmailAndPassword,
     GoogleAuthProvider,
     signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
     createUserSession
 } from "./auth-common.js";
+
+getRedirectResult(auth).then(async (result) => {
+    if (result && result.user) {
+        await createUserSession();
+        window.location.replace(getLoginRedirect());
+    }
+}).catch((err) => {
+    console.warn("Google redirect result info:", err);
+});
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -234,21 +245,31 @@ googleLoginBtn.addEventListener(
                 prompt: "select_account"
             });
 
-            /*
-             * Firebase automatically creates
-             * the account on first Google login.
-             */
+            try {
+                await signInWithPopup(
+                    auth,
+                    provider
+                );
 
-            await signInWithPopup(
-                auth,
-                provider
-            );
+                await createUserSession();
 
-            await createUserSession();
-
-                    window.location.replace(
+                window.location.replace(
                     getLoginRedirect()
-                    );
+                );
+                return;
+            } catch (popupErr) {
+                console.warn("[AUTH] Popup blocked or failed, falling back to signInWithRedirect:", popupErr);
+                if (
+                    popupErr.code === "auth/popup-blocked" ||
+                    popupErr.code === "auth/popup-closed-by-user" ||
+                    popupErr.code === "auth/cancelled-popup-request" ||
+                    (popupErr.message && popupErr.message.toLowerCase().includes("popup"))
+                ) {
+                    await signInWithRedirect(auth, provider);
+                    return;
+                }
+                throw popupErr;
+            }
 
         }
         catch (error) {

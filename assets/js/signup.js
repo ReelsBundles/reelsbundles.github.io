@@ -8,12 +8,23 @@ import {
     createUserWithEmailAndPassword,
     updateProfile,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
     createUserSession
 } from "./auth-common.js";
+
+getRedirectResult(auth).then(async (result) => {
+    if (result && result.user) {
+        await createUserSession();
+        showSignupSuccess();
+    }
+}).catch((err) => {
+    console.warn("Google redirect signup result info:", err);
+});
 
 
 /* ==========================================================
@@ -539,36 +550,34 @@ googleSignupBtn?.addEventListener(
             const provider =
                 new GoogleAuthProvider();
 
-
             provider.setCustomParameters({
                 prompt:
                     "select_account"
             });
 
+            try {
+                await signInWithPopup(
+                    auth,
+                    provider
+                );
 
-            /*
-             * Firebase Google signup/login
-             * EXISTING FIREBASE LOGIC
-             */
+                await createUserSession();
 
-            await signInWithPopup(
-                auth,
-                provider
-            );
-
-
-            /* ==============================================
-               BACKEND SESSION
-            ============================================== */
-
-            await createUserSession();
-
-
-            /* ==============================================
-               REDIRECT / SUCCESS
-            ============================================== */
-
-            showSignupSuccess();
+                showSignupSuccess();
+                return;
+            } catch (popupErr) {
+                console.warn("[AUTH] Popup blocked or failed, falling back to signInWithRedirect:", popupErr);
+                if (
+                    popupErr.code === "auth/popup-blocked" ||
+                    popupErr.code === "auth/popup-closed-by-user" ||
+                    popupErr.code === "auth/cancelled-popup-request" ||
+                    (popupErr.message && popupErr.message.toLowerCase().includes("popup"))
+                ) {
+                    await signInWithRedirect(auth, provider);
+                    return;
+                }
+                throw popupErr;
+            }
 
         }
         catch (error) {
