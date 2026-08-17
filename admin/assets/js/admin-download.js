@@ -108,7 +108,7 @@ async function loadDownloads(
 
 
         const response =
-            await fetch(
+            await robustFetch(
                 `${API_BASE_URL}/api/admin/downloads?${params.toString()}`,
                 {
                     method:
@@ -924,7 +924,7 @@ window.deleteAdminDownload = async function(
     try {
 
         const response =
-            await fetch(
+            await robustFetch(
                 `${API_BASE_URL}/api/admin/downloads/${encodeURIComponent(downloadId)}`,
                 {
                     method:
@@ -1638,7 +1638,7 @@ if (
 
 
                 const response =
-                    await fetch(
+                    await robustFetch(
                         `${API_BASE_URL}/api/admin/downloads`,
                         {
                             method:
@@ -1714,4 +1714,18 @@ if (
         }
     );
 
+}
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
 }

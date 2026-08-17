@@ -15,7 +15,7 @@ async function fetchCoupons() {
     tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8;">Loading coupon codes...</td></tr>`;
 
     try {
-        const res = await fetch(`${API_BASE}/admin/coupons`);
+        const res = await robustFetch(`${API_BASE}/admin/coupons`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
@@ -67,7 +67,7 @@ async function handleCreateCoupon(e) {
     const expiryDate = document.getElementById("expiryDate").value || null;
 
     try {
-        const res = await fetch(`${API_BASE}/admin/coupons`, {
+        const res = await robustFetch(`${API_BASE}/admin/coupons`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ code, discountType, discountValue, maxUses, expiryDate })
@@ -93,7 +93,7 @@ window.copyCode = function(code) {
 
 window.toggleCouponStatus = async function(id) {
     try {
-        const res = await fetch(`${API_BASE}/admin/coupons/${id}/toggle`, { method: "PUT" });
+        const res = await robustFetch(`${API_BASE}/admin/coupons/${id}/toggle`, { method: "PUT" });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
         fetchCoupons();
@@ -105,7 +105,7 @@ window.toggleCouponStatus = async function(id) {
 window.deleteCouponItem = async function(id) {
     if (!confirm("Are you sure you want to delete this coupon?")) return;
     try {
-        const res = await fetch(`${API_BASE}/admin/coupons/${id}`, { method: "DELETE" });
+        const res = await robustFetch(`${API_BASE}/admin/coupons/${id}`, { method: "DELETE" });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
         fetchCoupons();
@@ -119,3 +119,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("createCouponForm");
     if (form) form.addEventListener("submit", handleCreateCoupon);
 });
+
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}

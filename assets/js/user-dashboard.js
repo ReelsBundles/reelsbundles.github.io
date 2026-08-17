@@ -754,7 +754,7 @@ async function loadLiveBundles(isSilent = false) {
            LIVE USER BUNDLE API
         -------------------------------------------------- */
         const response =
-            await fetch(
+            await robustFetch(
                 `${API_BASE}/api/user/bundles`,
                 {
                     method: "GET",
@@ -2470,7 +2470,7 @@ async function handleBundleDownload(
         -------------------------------------------------- */
 
         const response =
-            await fetch(
+            await robustFetch(
                 `${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/download`,
                 {
                     method:
@@ -2946,3 +2946,17 @@ document.addEventListener(
     },
     true
 );
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}

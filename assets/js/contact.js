@@ -84,7 +84,7 @@ if (contactForm) {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/api/contact`, {
+            const response = await robustFetch(`${API_BASE}/api/contact`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -150,4 +150,18 @@ function showContactAlert(message, type = "success") {
 
     alertBox.textContent = message;
     alertBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
 }

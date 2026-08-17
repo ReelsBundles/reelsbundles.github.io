@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
     try {
-        const res = await fetch(`${API_BASE}/demo/videos`);
+        const res = await robustFetch(`${API_BASE}/demo/videos`);
         const data = await res.json();
         if (data.success && data.videos && data.videos.length > 0) {
             const liveVideos = data.videos.map(v => ({
@@ -195,3 +195,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 });
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}

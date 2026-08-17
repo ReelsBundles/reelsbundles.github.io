@@ -200,7 +200,7 @@ export const createUserSession = async () => {
         const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
         const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
 
-        const response = await fetch(
+        const response = await robustFetch(
             `${API_BASE}/auth/user/session`,
             {
                 method: "POST",
@@ -246,7 +246,7 @@ export const getCurrentUserFromBackend = async () => {
         return null;
     }
 
-    const response = await fetch(
+    const response = await robustFetch(
         `${API_BASE}/auth/user/me`,
         {
             method: "GET",
@@ -335,7 +335,7 @@ export const getCurrentUserEntitlement =
         }
 
         const response =
-            await fetch(
+            await robustFetch(
                 `${API_BASE}/user/entitlement`,
                 {
                     method: "GET",
@@ -384,3 +384,17 @@ export const getCurrentUserEntitlement =
             null
         );
     };
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}

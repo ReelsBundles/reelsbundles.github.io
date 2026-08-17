@@ -848,7 +848,7 @@ async function createPaymentOrder(customer) {
     }
 
     const response =
-        await fetch(
+        await robustFetch(
             `${API_BASE}/api/payment/create-order`,
             {
                 method: "POST",
@@ -1563,7 +1563,7 @@ couponButton?.addEventListener(
         }
 
         try {
-            const response = await fetch(`${API_BASE}/apply-coupon`, {
+            const response = await robustFetch(`${API_BASE}/api/apply-coupon`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ code, planKey: currentPlan })
@@ -1883,3 +1883,18 @@ window.addEventListener(
         
 
 
+
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}

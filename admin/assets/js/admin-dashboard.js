@@ -40,7 +40,7 @@ setInterval(loadDashboard, 10000);
 
 async function loadDashboard() {
     try {
-        const response = await fetch(`${API_BASE}/api/admin/dashboard`, {
+        const response = await robustFetch(`${API_BASE}/api/admin/dashboard`, {
             method: "GET",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -151,4 +151,18 @@ function escapeHtml(str) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
 }

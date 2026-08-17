@@ -21,7 +21,7 @@ async function loadOrders() {
             document.getElementById("status").value;
 
 
-        const res = await fetch(
+        const res = await robustFetch(
             `${API_BASE}/api/admin/orders?page=${page}&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`,
             {
                 headers: {
@@ -278,7 +278,7 @@ function attachDeleteButtons() {
 
 
                         const res =
-                            await fetch(
+                            await robustFetch(
                                 `${API_BASE}/api/admin/orders/${encodeURIComponent(orderId)}`,
                                 {
                                     method: "DELETE",
@@ -485,7 +485,7 @@ document
 
             try {
 
-                const res = await fetch(
+                const res = await robustFetch(
                     `${API_BASE}/api/admin/orders/all`,
                     {
                         method: "DELETE",
@@ -534,3 +534,17 @@ document
 
         }
     );
+
+
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await robustFetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}

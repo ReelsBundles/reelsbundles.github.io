@@ -104,6 +104,19 @@
 const token = localStorage.getItem("admin_token");
 if (!token) location.href = "index.html";
 
+async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await fetch(url, options);
+            return response;
+        } catch (err) {
+            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
+            if (i === retries) throw err;
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        }
+    }
+}
+
 async function loadStorageStats() {
     try {
         const API_BASE = window.REELS_BUNDLES_API_BASE || (
@@ -111,7 +124,7 @@ async function loadStorageStats() {
                 ? "http://localhost:3000"
                 : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
         );
-        const res = await fetch(`${API_BASE}/api/admin/bundles`, {
+        const res = await robustFetch(`${API_BASE}/api/admin/bundles`, {
             headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
