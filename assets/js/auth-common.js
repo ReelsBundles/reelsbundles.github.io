@@ -221,11 +221,13 @@ export const syncUserToBackend = async (user) => {
 };
 
 export const checkUserLiveStatus = async (user) => {
-    if (!user?.uid) return;
+    if (!user) return;
     try {
-        const res = await fetch(`${API_BASE}/user/status?uid=${encodeURIComponent(user.uid)}`);
+        const uid = encodeURIComponent(user.uid || '');
+        const email = encodeURIComponent(user.email || '');
+        const res = await fetch(`${API_BASE}/user/status?uid=${uid}&email=${email}`);
         const data = await res.json();
-        if (data.disabled === true || data.status === "disabled") {
+        if (res.status === 403 || data.disabled === true || data.status === "disabled") {
             handleAccountDisabledAlert();
         }
     } catch (e) {}
@@ -236,7 +238,7 @@ export const startUserStatusSync = (user) => {
     isStatusSyncStarted = true;
 
     checkUserLiveStatus(user);
-    setInterval(() => checkUserLiveStatus(user), 5000);
+    setInterval(() => checkUserLiveStatus(user), 3000);
 
     try {
         if ('BroadcastChannel' in window) {
@@ -254,7 +256,16 @@ export const startUserStatusSync = (user) => {
             checkUserLiveStatus(user);
         }
     });
+
+    window.addEventListener("focus", () => checkUserLiveStatus(user));
 };
+
+// Global observer: Automatically start status sync for any active user session on any page
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        startUserStatusSync(user);
+    }
+});
 
 export const redirectIfAuthenticated = () => {
     onAuthStateChanged(auth, async (user) => {
