@@ -266,7 +266,7 @@ function renderDownloads(
             <tr>
 
                 <td
-                    colspan="12"
+                    colspan="11"
                     class="empty-state"
                 >
 
