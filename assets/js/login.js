@@ -42,6 +42,17 @@ const googleLoginBtn =
 const message =
     document.getElementById("authMessage");
 
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("disabled") === "1" || params.get("disabled") === "true") {
+        if (message) {
+            message.style.display = "block";
+            message.style.color = "#ef4444";
+            message.textContent = "⛔ Your account has been disabled by the admin. Please contact support.";
+        }
+    }
+});
+
 const togglePassword =
     document.getElementById("togglePassword");
 

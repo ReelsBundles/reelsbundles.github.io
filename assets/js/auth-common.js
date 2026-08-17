@@ -182,11 +182,21 @@ export const logoutUser = async () => {
     await signOut(auth);
 };
 
+let isStatusSyncStarted = false;
+
+function handleAccountDisabledAlert() {
+    alert("⛔ Access Denied!\n\nYour account has been disabled by the admin.");
+    logoutUser().then(() => {
+        const target = window.location.pathname.includes("admin") ? "../login.html?disabled=1" : "login.html?disabled=1";
+        window.location.replace(target);
+    });
+}
+
 export const syncUserToBackend = async (user) => {
-    if (!user) return;
+    if (!user) return { disabled: false };
     try {
         const providerId = user.providerData?.[0]?.providerId || (user.email ? "password" : "google.com");
-        await fetch(`${API_BASE}/auth/sync-user`, {
+        const res = await fetch(`${API_BASE}/auth/sync-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -197,15 +207,62 @@ export const syncUserToBackend = async (user) => {
                 providerId: providerId
             })
         });
+
+        const data = await res.json();
+        if (res.status === 403 || data.disabled === true || data.status === "disabled") {
+            handleAccountDisabledAlert();
+            return { disabled: true };
+        }
+        return data;
     } catch (e) {
         console.warn("[AUTH] User sync notice:", e);
+        return { disabled: false };
     }
 };
 
+export const checkUserLiveStatus = async (user) => {
+    if (!user?.uid) return;
+    try {
+        const res = await fetch(`${API_BASE}/user/status?uid=${encodeURIComponent(user.uid)}`);
+        const data = await res.json();
+        if (data.disabled === true || data.status === "disabled") {
+            handleAccountDisabledAlert();
+        }
+    } catch (e) {}
+};
+
+export const startUserStatusSync = (user) => {
+    if (!user || isStatusSyncStarted) return;
+    isStatusSyncStarted = true;
+
+    checkUserLiveStatus(user);
+    setInterval(() => checkUserLiveStatus(user), 5000);
+
+    try {
+        if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel("rb_user_status_sync");
+            bc.onmessage = (event) => {
+                if (event.data?.type === "user_status_changed") {
+                    checkUserLiveStatus(user);
+                }
+            };
+        }
+    } catch (e) {}
+
+    window.addEventListener("storage", (e) => {
+        if (e.key === "rb_user_status_event") {
+            checkUserLiveStatus(user);
+        }
+    });
+};
+
 export const redirectIfAuthenticated = () => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            syncUserToBackend(user);
+            const res = await syncUserToBackend(user);
+            if (res && res.disabled) return;
+            startUserStatusSync(user);
+
             const params = new URLSearchParams(window.location.search);
             const redirect = params.get("redirect");
             if (redirect) {
@@ -220,11 +277,13 @@ export const redirectIfAuthenticated = () => {
 };
 
 export const protectUserPage = () => {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (!user) {
-            window.location.href = "../login.html";
+            window.location.href = "login.html";
         } else {
-            syncUserToBackend(user);
+            const res = await syncUserToBackend(user);
+            if (res && res.disabled) return;
+            startUserStatusSync(user);
         }
     });
 };

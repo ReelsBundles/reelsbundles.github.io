@@ -94,6 +94,17 @@ function escapeHtml(str) {
     }[match]));
 }
 
+function broadcastUserStatusUpdate(userId) {
+    try {
+        if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel("rb_user_status_sync");
+            bc.postMessage({ type: "user_status_changed", userId, timestamp: Date.now() });
+            setTimeout(() => bc.close(), 500);
+        }
+        localStorage.setItem("rb_user_status_event", JSON.stringify({ userId, timestamp: Date.now() }));
+    } catch (e) {}
+}
+
 window.toggleUser = async function(userId) {
     try {
         const token = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token");
@@ -103,6 +114,7 @@ window.toggleUser = async function(userId) {
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
+        broadcastUserStatusUpdate(userId);
         fetchAdminUsers();
     } catch (err) {
         alert("Error updating user: " + err.message);
@@ -119,6 +131,7 @@ window.deleteUserItem = async function(userId) {
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
+        broadcastUserStatusUpdate(userId);
         fetchAdminUsers();
     } catch (err) {
         alert("Error deleting user: " + err.message);
