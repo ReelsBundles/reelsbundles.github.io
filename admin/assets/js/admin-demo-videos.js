@@ -25,13 +25,18 @@ async function fetchDemoVideos() {
             return;
         }
 
-        grid.innerHTML = videos.map(v => `
+        grid.innerHTML = videos.map(v => {
+            const isShort = v.videoType === 'short' || (v.youtubeUrl && v.youtubeUrl.includes('/shorts/'));
+            return `
             <div class="video-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow:hidden;">
-                <div style="position:relative; padding-top:56.25%; background:#000;">
+                <div style="position:relative; padding-top:${isShort ? '133%' : '56.25%'}; background:#000;">
                     <iframe src="https://www.youtube.com/embed/${v.videoId}" title="${v.title}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" allowfullscreen></iframe>
                 </div>
                 <div style="padding:16px;">
-                    <span class="badge badge-purple" style="font-size:11px; text-transform:uppercase;">${v.category || 'General'}</span>
+                    <div style="display:flex; gap:6px; margin-bottom:6px;">
+                        <span class="badge badge-purple" style="font-size:11px; text-transform:uppercase;">${v.category || 'General'}</span>
+                        <span class="badge" style="font-size:11px; background:${isShort ? 'rgba(236,72,153,0.2)' : 'rgba(99,102,241,0.2)'}; color:${isShort ? '#f472b6' : '#818cf8'}; border:1px solid rgba(255,255,255,0.1);">${isShort ? '📱 Short' : '🎬 Video'}</span>
+                    </div>
                     <h4 style="margin:8px 0 12px; color:#fff; font-size:15px; line-height:1.4;">${v.title}</h4>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span class="badge ${v.active ? 'badge-active' : 'badge-inactive'}">${v.active ? 'Active' : 'Hidden'}</span>
@@ -42,7 +47,7 @@ async function fetchDemoVideos() {
                     </div>
                 </div>
             </div>
-        `).join('');
+        `;}).join('');
     } catch (err) {
         grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#ef4444;">Error: ${err.message}</div>`;
     }
@@ -58,13 +63,15 @@ async function handleAddVideo(e) {
 
     const title = document.getElementById("videoTitle").value.trim();
     const youtubeUrl = document.getElementById("youtubeUrl").value.trim();
+    const videoTypeSelect = document.getElementById("videoType");
+    const videoType = videoTypeSelect ? videoTypeSelect.value : "auto";
     const category = document.getElementById("videoCategory").value.trim();
 
     try {
         const res = await robustFetch(`${API_BASE}/admin/demo-videos`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, youtubeUrl, category })
+            body: JSON.stringify({ title, youtubeUrl, videoType, category })
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);

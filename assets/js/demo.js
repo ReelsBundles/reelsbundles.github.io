@@ -79,6 +79,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         const selected = document.querySelector(`.demo-card[data-video-id="${safeCssEscape(video.id)}"]`);
         selected?.classList.add("active");
 
+        const playerContainer = player.parentElement;
+        if (playerContainer) {
+            if (video.videoType === "short") {
+                playerContainer.style.maxWidth = "420px";
+                playerContainer.style.margin = "0 auto";
+                playerContainer.style.aspectRatio = "9/16";
+            } else {
+                playerContainer.style.maxWidth = "";
+                playerContainer.style.margin = "";
+                playerContainer.style.aspectRatio = "";
+            }
+        }
+
         player.src = `https://www.youtube-nocookie.com/embed/${video.id}?rel=0&modestbranding=1&playsinline=1`;
         if (title) title.textContent = video.title;
         if (description) description.textContent = video.description;
@@ -106,15 +119,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 ${
                     isReady
                     ? `<img src="${image}" alt="${video.title}" loading="lazy">`
-                    : `<div class="demo-card__placeholder"><span>🎬</span><small>VIDEO ${String(index + 1).padStart(2, "0")}</small></div>`
+                    : `<div class="demo-card__placeholder"><span>${video.videoType === 'short' ? '📱' : '🎬'}</span><small>VIDEO ${String(index + 1).padStart(2, "0")}</small></div>`
                 }
                 <div class="demo-card__shade"></div>
             </div>
             <div class="demo-card__body">
-                <span class="demo-card__badge">${video.label}</span>
+                <span class="demo-card__badge" style="background:${video.videoType === 'short' ? 'rgba(236,72,153,0.15)' : ''}; color:${video.videoType === 'short' ? '#f472b6' : ''};">${video.label}</span>
                 <h3>${video.title}</h3>
                 <p>${video.description}</p>
-                <button type="button" class="demo-card__button">${isReady ? "Watch Demo →" : "Set Video →"}</button>
+                <button type="button" class="demo-card__button">${isReady ? (video.videoType === 'short' ? "Watch Short →" : "Watch Demo →") : "Set Video →"}</button>
             </div>
         `;
 
@@ -158,14 +171,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         const res = await robustFetch(`${API_BASE}/demo/videos`);
         const data = await res.json();
         if (data.success && data.videos && data.videos.length > 0) {
-            const liveVideos = data.videos.map(v => ({
-                id: v.videoId,
-                title: v.title,
-                description: v.category ? `Category: ${v.category}` : "ReelsBundles Demo Video",
-                category: (v.category || "overview").toLowerCase().replace(/[^a-z0-9]/g, ""),
-                label: v.category || "Demo",
-                duration: "2:00"
-            }));
+            const liveVideos = data.videos.map(v => {
+                const isShort = v.videoType === "short" || (v.youtubeUrl && v.youtubeUrl.includes("/shorts/"));
+                return {
+                    id: v.videoId,
+                    title: v.title,
+                    description: v.category ? `Category: ${v.category}` : (isShort ? "YouTube Short" : "YouTube Demo Video"),
+                    category: (v.category || "overview").toLowerCase().replace(/[^a-z0-9]/g, ""),
+                    label: isShort ? "📱 Short" : (v.category || "🎬 Video"),
+                    videoType: isShort ? "short" : "video",
+                    duration: isShort ? "0:60" : "2:00"
+                };
+            });
             demos.length = 0;
             demos.push(...liveVideos);
         } else {

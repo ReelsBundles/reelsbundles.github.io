@@ -85,8 +85,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="youtubeUrl">YouTube Video URL / Link *</label>
-                        <input type="url" id="youtubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." required>
+                        <label for="youtubeUrl">YouTube URL / Shorts Link *</label>
+                        <input type="url" id="youtubeUrl" class="form-control" placeholder="https://www.youtube.com/shorts/... or watch?v=..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="videoType">Video Format / Format Type</label>
+                        <select id="videoType" class="form-control" style="background: rgba(15, 23, 42, 0.9);">
+                            <option value="auto">⚡ Auto-Detect Format</option>
+                            <option value="short">📱 YouTube Short (Vertical)</option>
+                            <option value="video">🎬 YouTube Video (Landscape)</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
