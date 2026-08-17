@@ -15,6 +15,23 @@ const API_BASE =
             : "https://reelsbundles-backend.onrender.com"
     ) + "/api";
 
+(function cleanAddressBarUrl() {
+    try {
+        var path = window.location.pathname;
+        if (path.endsWith(".html")) {
+            var cleanPath = path.replace(/\.html$/, "");
+            if (cleanPath.endsWith("/index")) {
+                cleanPath = cleanPath.substring(0, cleanPath.length - 5);
+            }
+            if (!cleanPath) cleanPath = "/";
+            var newUrl = cleanPath + window.location.search + window.location.hash;
+            window.history.replaceState(null, "", newUrl);
+        }
+    } catch (e) {
+        // Safe execution
+    }
+})();
+
 export const getCurrentFirebaseUser = () => {
 
     return auth.currentUser;
