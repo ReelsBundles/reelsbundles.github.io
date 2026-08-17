@@ -1815,32 +1815,7 @@ if (emptyAddBundle) {
 }
 
 
-/* ==========================================================
-   TABLE EVENTS
-========================================================== */
 
-function bindEvents() {
-    document.querySelectorAll(".edit-btn").forEach(button => {
-        button.onclick = () => {
-            const id = button.dataset.id;
-            const bundle = bundles.find(item => String(item.id) === String(id));
-            if (bundle) openModal(bundle);
-        };
-    });
-
-    document.querySelectorAll(".delete-btn").forEach(button => {
-        button.onclick = () => {
-            deleteId = button.dataset.id;
-            if (deleteModal) deleteModal.classList.add("show");
-        };
-    });
-
-    document.querySelectorAll(".toggle-btn").forEach(button => {
-        button.onclick = () => {
-            toggleBundle(button.dataset.id);
-        };
-    });
-}
 
 
 
