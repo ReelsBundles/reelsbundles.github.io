@@ -144,6 +144,35 @@ body {
     z-index:
         1000;
 
+    overflow-y:
+        auto;
+
+    overflow-x:
+        hidden;
+
+    scrollbar-width:
+        thin;
+
+    scrollbar-color:
+        rgba(129, 140, 248, 0.35) transparent;
+
+}
+
+.user-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.user-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.user-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(129, 140, 248, 0.35);
+    border-radius: 10px;
+}
+
+.user-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(129, 140, 248, 0.6);
 }
 
 
