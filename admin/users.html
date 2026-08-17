@@ -6,49 +6,7 @@
     <title>Users Manager — ReelsBundles Admin</title>
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="assets/css/orders.css">
-    <style>
-        .user-avatar-badge {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-        .user-info-cell {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .provider-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-        .provider-badge.google {
-            background: rgba(234, 67, 53, 0.15);
-            color: #f87171;
-            border-color: rgba(234, 67, 53, 0.3);
-        }
-        .badge-disabled {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/users.css">
 </head>
 <body class="admin-body">
     <div class="admin-layout">
@@ -95,12 +53,12 @@
                 </div>
             </header>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:14px;">
-                <div style="position:relative; flex:1; min-width:280px; max-width:450px;">
-                    <input type="text" id="userSearchInput" class="form-control" placeholder="🔍 Search by name, email, or user ID..." style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:10px 16px; border-radius:10px; width:100%;">
+            <div class="users-toolbar">
+                <div class="users-search-box">
+                    <input type="text" id="userSearchInput" class="form-control" placeholder="🔍 Search by name, email, or user ID...">
                 </div>
-                <div style="color:#94a3b8; font-size:13px; font-weight:600;">
-                    Total Users: <span id="totalUsersCount" style="color:#38bdf8; font-weight:800;">0</span>
+                <div class="users-counter">
+                    Total Users: <span id="totalUsersCount">0</span>
                 </div>
             </div>
 

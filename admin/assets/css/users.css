@@ -1,0 +1,94 @@
+/* ==========================================================
+   REELSBUNDLES ADMIN — REGISTERED USERS MANAGER STYLES
+========================================================== */
+
+.user-avatar-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.user-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.provider-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.provider-badge.google {
+    background: rgba(234, 67, 53, 0.15);
+    color: #f87171;
+    border-color: rgba(234, 67, 53, 0.3);
+}
+
+.badge-disabled {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.users-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.users-search-box {
+    position: relative;
+    flex: 1;
+    min-width: 280px;
+    max-width: 460px;
+}
+
+.users-search-box input {
+    background: rgba(30, 41, 59, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+.users-search-box input:focus {
+    border-color: rgba(129, 140, 248, 0.6);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.users-counter {
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.users-counter span {
+    color: #38bdf8;
+    font-weight: 800;
+}
