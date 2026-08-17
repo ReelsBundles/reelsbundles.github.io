@@ -187,6 +187,11 @@ async function fetchProtectionSettings() {
         if (response.ok) {
             const data = await response.json();
             if (data.success && data.settings) {
+                const changed = (
+                    protectionConfig.protectionEnabled !== Boolean(data.settings.protectionEnabled) ||
+                    protectionConfig.disableRightClick !== Boolean(data.settings.disableRightClick) ||
+                    protectionConfig.disableDevTools !== Boolean(data.settings.disableDevTools)
+                );
                 protectionConfig = { ...protectionConfig, ...data.settings };
                 applyCssRestrictions();
             }
@@ -196,5 +201,29 @@ async function fetchProtectionSettings() {
     }
 }
 
+// 1. Initialize protection & fetch initial settings
 initContentProtection();
 fetchProtectionSettings();
+
+// 2. Periodic Auto-Refresh Polling (Every 5 seconds)
+setInterval(fetchProtectionSettings, 5000);
+
+// 3. Tab Focus Auto-Refresh
+window.addEventListener("focus", fetchProtectionSettings);
+
+// 4. Cross-Tab Live Broadcast Sync
+try {
+    const protectionChannel = new BroadcastChannel("reelsbundles_protection_sync");
+    protectionChannel.onmessage = (event) => {
+        if (event.data && (event.data.type === "PROTECTION_UPDATED" || event.data.type === "PROTECTION_CHANGED")) {
+            fetchProtectionSettings();
+        }
+    };
+} catch (err) {}
+
+// 5. LocalStorage Fallback Storage Event Sync
+window.addEventListener("storage", (event) => {
+    if (event.key === "reelsbundles_protection_sync_time") {
+        fetchProtectionSettings();
+    }
+});

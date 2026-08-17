@@ -75,6 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             if (response.ok && data.success) {
                 showMessage("✅ Protection settings saved successfully!");
+
+                // Broadcast live update to all open user tabs instantly
+                try {
+                    const channel = new BroadcastChannel("reelsbundles_protection_sync");
+                    channel.postMessage({ type: "PROTECTION_UPDATED", timestamp: Date.now() });
+                } catch (err) {}
+                try {
+                    localStorage.setItem("reelsbundles_protection_sync_time", String(Date.now()));
+                } catch (err) {}
             } else {
                 showMessage(data.message || "Failed to save protection settings.", true);
             }
