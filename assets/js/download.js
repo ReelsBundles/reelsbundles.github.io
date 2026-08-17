@@ -1562,25 +1562,10 @@ function createBundleCard(
                                     class="bundle-download-button"
                                     data-bundle-action="download"
                                     data-bundle-id="${escapeAttribute(bundleId)}"
-                                    style="flex:1;"
+                                    style="width:100%;"
                                 >
-                                    📁 Google Drive
+                                    📁 Access Storage Library
                                 </button>
-                                ${
-                                    bundle.megaLink
-                                        ? `
-                                            <a
-                                                href="${escapeAttribute(bundle.megaLink)}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="bundle-download-button mega-btn"
-                                                style="flex:1; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.35); color:#f87171; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
-                                            >
-                                                ☁️ MEGA Cloud
-                                            </a>
-                                        `
-                                        : ""
-                                }
                             </div>
                         `
                         : `
