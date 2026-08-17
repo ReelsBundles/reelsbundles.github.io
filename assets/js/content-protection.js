@@ -138,7 +138,7 @@ function initContentProtection() {
 
 async function fetchProtectionSettings() {
     try {
-        const response = await fetch(`${API_BASE}/settings/protection`, { cache: "no-store" });
+        const response = await fetch(`${API_BASE}/protection/status`, { cache: "no-store" });
         if (response.ok) {
             const data = await response.json();
             if (data.success && data.settings) {

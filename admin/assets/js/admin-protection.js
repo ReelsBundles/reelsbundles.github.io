@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadProtectionSettings() {
         try {
-            const response = await fetch(`${API_BASE}/settings/protection`, { cache: "no-store" });
+            const response = await fetch(`${API_BASE}/protection/status`, { cache: "no-store" });
             const data = await response.json();
             if (data.success && data.settings) {
                 protectionEnabledToggle.checked = Boolean(data.settings.protectionEnabled);
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 disableDevTools: devToolsToggle.checked
             };
 
-            const response = await fetch(`${API_BASE}/admin/protection`, {
+            const response = await fetch(`${API_BASE}/admin/protection/update`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
