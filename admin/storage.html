@@ -3,9 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Storage Manager | ReelsBundles Admin</title>
+    <title>Cloud Storage Manager | ReelsBundles Admin</title>
     <link rel="stylesheet" href="assets/css/admin-dashboard.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .storage-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .storage-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+        .provider-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-drive {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+        .badge-mega {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+        .badge-none {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+    </style>
 </head>
 <body class="admin-dashboard-page">
 
@@ -21,34 +58,16 @@
             </div>
         </div>
 
-                        <nav class="admin-nav">
-            <a href="dashboard.html" class="admin-nav-item ">
-                <span>📊</span> Dashboard
-            </a>
-            <a href="users.html" class="admin-nav-item ">
-                <span>👥</span> Users
-            </a>
-            <a href="bundles.html" class="admin-nav-item ">
-                <span>📦</span> Bundles
-            </a>
-            <a href="orders.html" class="admin-nav-item ">
-                <span>🧾</span> Orders
-            </a>
-            <a href="coupons.html" class="admin-nav-item ">
-                <span>🎟️</span> Coupons
-            </a>
-            <a href="demo-videos.html" class="admin-nav-item ">
-                <span>🎬</span> Demo Videos
-            </a>
-            <a href="download.html" class="admin-nav-item ">
-                <span>⬇️</span> Downloads
-            </a>
-            <a href="storage.html" class="admin-nav-item active">
-                <span>☁️</span> Cloud Storage
-            </a>
-            <a href="protection.html" class="admin-nav-item ">
-                <span>🛡️</span> Security & Protection
-            </a>
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item"><span>📊</span> Dashboard</a>
+            <a href="users.html" class="admin-nav-item"><span>👥</span> Users</a>
+            <a href="bundles.html" class="admin-nav-item"><span>📦</span> Bundles</a>
+            <a href="orders.html" class="admin-nav-item"><span>🧾</span> Orders</a>
+            <a href="coupons.html" class="admin-nav-item"><span>🎟️</span> Coupons</a>
+            <a href="demo-videos.html" class="admin-nav-item"><span>🎬</span> Demo Videos</a>
+            <a href="download.html" class="admin-nav-item"><span>⬇️</span> Downloads</a>
+            <a href="storage.html" class="admin-nav-item active"><span>☁️</span> Cloud Storage</a>
+            <a href="protection.html" class="admin-nav-item"><span>🛡️</span> Security & Protection</a>
         </nav>
 
         <div class="admin-sidebar-footer">
@@ -66,41 +85,50 @@
     <main class="admin-main">
         <header class="admin-topbar">
             <div>
-                <span class="page-eyebrow">STORAGE & GOOGLE DRIVE</span>
-                <h1>Cloud Storage Manager</h1>
-                <p>Manage encrypted Drive folder links and monitor link health</p>
+                <span class="page-eyebrow">CLOUD STORAGE MANAGER</span>
+                <h1>Google Drive & MEGA.nz Storage</h1>
+                <p>Monitor linked Google Drive folders and MEGA Cloud links across all bundles</p>
             </div>
-            <button type="button" onclick="loadStorageStats()" style="padding:10px 16px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; cursor:pointer;">
+            <button type="button" onclick="loadStorageStats()" style="padding:10px 16px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; cursor:pointer; font-weight:600;">
                 ↻ Refresh Storage
             </button>
         </header>
 
         <!-- SUMMARY STATS -->
-        <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:30px;">
-            <article style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:24px;">
-                <span style="font-size:13px; color:rgba(255,255,255,0.6); font-weight:600; text-transform:uppercase;">Storage Health</span>
-                <h2 style="font-size:32px; margin:8px 0 4px; color:#4ade80;">100% Healthy</h2>
-                <small style="color:rgba(255,255,255,0.5);">All Drive Links Active</small>
+        <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px;">
+            <article class="storage-card">
+                <span style="font-size:12px; color:rgba(255,255,255,0.6); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Storage Health</span>
+                <h2 style="font-size:28px; margin:8px 0 4px; color:#4ade80;">100% Healthy</h2>
+                <small style="color:rgba(255,255,255,0.5);">All Drive & MEGA Links Active</small>
             </article>
 
-            <article style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:24px;">
-                <span style="font-size:13px; color:rgba(255,255,255,0.6); font-weight:600; text-transform:uppercase;">Drive Folders</span>
-                <h2 id="storageFolderCount" style="font-size:32px; margin:8px 0 4px; color:#60a5fa;">8</h2>
+            <article class="storage-card">
+                <span style="font-size:12px; color:rgba(255,255,255,0.6); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Google Drive Folders</span>
+                <h2 id="driveFolderCount" style="font-size:28px; margin:8px 0 4px; color:#60a5fa;">0</h2>
                 <small style="color:rgba(255,255,255,0.5);">Linked Google Folders</small>
             </article>
 
-            <article style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:24px;">
-                <span style="font-size:13px; color:rgba(255,255,255,0.6); font-weight:600; text-transform:uppercase;">Encryption Status</span>
-                <h2 style="font-size:32px; margin:8px 0 4px; color:#a78bfa;">AES-256</h2>
-                <small style="color:rgba(255,255,255,0.5);">Secured Folder IDs</small>
+            <article class="storage-card">
+                <span style="font-size:12px; color:rgba(255,255,255,0.6); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">MEGA Cloud Storage</span>
+                <h2 id="megaLinkCount" style="font-size:28px; margin:8px 0 4px; color:#f87171;">0</h2>
+                <small style="color:rgba(255,255,255,0.5);">Linked MEGA.nz Storage Links</small>
+            </article>
+
+            <article class="storage-card">
+                <span style="font-size:12px; color:rgba(255,255,255,0.6); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Encryption Status</span>
+                <h2 style="font-size:28px; margin:8px 0 4px; color:#a78bfa;">AES-256</h2>
+                <small style="color:rgba(255,255,255,0.5);">Secured Cloud Storage Targets</small>
             </article>
         </section>
 
         <!-- STORAGE BUNDLE LIST TABLE -->
-        <section style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:28px;">
-            <h3 style="font-size:18px; font-weight:700; margin-bottom:20px;">☁️ Linked Storage Folders</h3>
+        <section style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:28px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="font-size:18px; font-weight:700;">☁️ Linked Storage Folders & Providers</h3>
+                <span id="totalBundlesBadge" style="font-size:12px; color:#94a3b8; background:rgba(255,255,255,0.06); padding:4px 12px; border-radius:12px;">0 Bundles</span>
+            </div>
             <div id="storageTableContainer" style="overflow-x:auto;">
-                <p style="color:rgba(255,255,255,0.5); text-align:center; padding:20px;">Loading storage folders...</p>
+                <p style="color:rgba(255,255,255,0.5); text-align:center; padding:30px;">Loading storage folders...</p>
             </div>
         </section>
     </main>
@@ -137,11 +165,27 @@ async function loadStorageStats() {
         if (!res.ok || !data.success) return;
 
         const bundles = data.bundles || [];
-        document.getElementById("storageFolderCount").textContent = bundles.length;
+        
+        let driveCount = 0;
+        let megaCount = 0;
+
+        bundles.forEach(b => {
+            const plan = String(b.plan || "basic").toLowerCase();
+            const planData = b[plan] || {};
+            const hasDrive = Boolean(planData.folderLink || planData.folderId || b.folderLink);
+            const hasMega = Boolean(planData.megaLink || b.megaLink);
+
+            if (hasDrive) driveCount++;
+            if (hasMega) megaCount++;
+        });
+
+        document.getElementById("driveFolderCount").textContent = driveCount;
+        document.getElementById("megaLinkCount").textContent = megaCount;
+        document.getElementById("totalBundlesBadge").textContent = `${bundles.length} Bundle${bundles.length === 1 ? '' : 's'}`;
 
         const container = document.getElementById("storageTableContainer");
         if (bundles.length === 0) {
-            container.innerHTML = `<p style="color:rgba(255,255,255,0.4); text-align:center; padding:20px;">No linked storage folders found.</p>`;
+            container.innerHTML = `<p style="color:rgba(255,255,255,0.4); text-align:center; padding:30px;">No linked storage folders found.</p>`;
             return;
         }
 
@@ -149,26 +193,51 @@ async function loadStorageStats() {
             <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
                 <thead>
                     <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.6);">
-                        <th style="padding:12px;">Bundle Name</th>
-                        <th style="padding:12px;">Plan</th>
-                        <th style="padding:12px;">Folder Status</th>
-                        <th style="padding:12px;">Google Drive Target</th>
+                        <th style="padding:14px;">Bundle Name</th>
+                        <th style="padding:14px;">Plan</th>
+                        <th style="padding:14px;">Status</th>
+                        <th style="padding:14px;">📁 Google Drive Target</th>
+                        <th style="padding:14px;">☁️ MEGA Cloud Target</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${bundles.map(b => `
-                        <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-                            <td style="padding:12px; font-weight:600;">${b.name}</td>
-                            <td style="padding:12px;"><span style="background:rgba(124, 58, 237, 0.15); color:#a78bfa; padding:4px 8px; border-radius:6px; font-size:11px; text-transform:uppercase;">${b.plan}</span></td>
-                            <td style="padding:12px;"><span style="color:#4ade80; font-weight:600;">🟢 Active</span></td>
-                            <td style="padding:12px; color:rgba(255,255,255,0.7); font-family:monospace; font-size:12px;">Google Drive Encrypted Folder ID</td>
-                        </tr>
-                    `).join('')}
+                    ${bundles.map(b => {
+                        const plan = String(b.plan || "basic").toLowerCase();
+                        const planData = b[plan] || {};
+                        const driveTarget = planData.folderLink || (planData.folderId ? `https://drive.google.com/drive/folders/${planData.folderId}` : null);
+                        const megaTarget = planData.megaLink || b.megaLink || null;
+
+                        return `
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                                <td style="padding:14px; font-weight:600; color:#fff;">${b.name}</td>
+                                <td style="padding:14px;">
+                                    <span style="background:rgba(124, 58, 237, 0.15); color:#a78bfa; border:1px solid rgba(124, 58, 237, 0.3); padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; text-transform:uppercase;">${plan}</span>
+                                </td>
+                                <td style="padding:14px;">
+                                    <span style="color:${b.active !== false ? '#4ade80' : '#f87171'}; font-weight:600;">${b.active !== false ? '🟢 Active' : '🔴 Inactive'}</span>
+                                </td>
+                                <td style="padding:14px;">
+                                    ${driveTarget ? `
+                                        <a href="${driveTarget.startsWith('http') ? driveTarget : '#'}" target="_blank" class="provider-badge badge-drive" style="text-decoration:none;">
+                                            📁 Linked Google Drive
+                                        </a>
+                                    ` : `<span class="provider-badge badge-none">❌ Not Linked</span>`}
+                                </td>
+                                <td style="padding:14px;">
+                                    ${megaTarget ? `
+                                        <a href="${megaTarget}" target="_blank" class="provider-badge badge-mega" style="text-decoration:none;">
+                                            ☁️ Linked MEGA.nz
+                                        </a>
+                                    ` : `<span class="provider-badge badge-none">❌ Not Linked</span>`}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
                 </tbody>
             </table>
         `;
     } catch(err) {
-        console.error(err);
+        console.error("Storage Stats Error:", err);
     }
 }
 loadStorageStats();
