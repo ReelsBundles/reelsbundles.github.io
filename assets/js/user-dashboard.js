@@ -14,11 +14,12 @@ import {
 } from "./auth-common.js";
 
 
-const API_BASE = window.REELS_BUNDLES_API_BASE || (
+const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
         ? "http://localhost:3000"
         : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
 );
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 
 /* ==========================================================
    GLOBAL STATE
@@ -2948,10 +2949,17 @@ document.addEventListener(
 );
 
 
-async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+async function robustFetch(url, options = {}, retries = 4, delayMs = 2000) {
     for (let i = 0; i <= retries; i++) {
         try {
             const response = await window.fetch(url, options);
+            if (response.ok || response.status === 401 || response.status === 403) {
+                return response;
+            }
+            if (i < retries && (response.status === 502 || response.status === 503 || response.status === 504)) {
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+                continue;
+            }
             return response;
         } catch (err) {
             console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
