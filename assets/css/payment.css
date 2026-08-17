@@ -2826,7 +2826,17 @@ img {
 
     }
 
+    .checkout-left {
+
+        order:
+            1;
+
+    }
+
     .summary-column {
+
+        order:
+            2;
 
         width:
             100%;
