@@ -4330,133 +4330,204 @@ console.log(
    END
 ========================================================== */
 
+                files or folders.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
 /* ==========================================================
-   END OF PART 3
+   NETWORK ERROR
+========================================================== */
+
+function getNetworkErrorMessage(
+    error
+) {
+
+    if (
+        !navigator.onLine
+    ) {
+
+        return (
+            "You appear to be offline. " +
+            "Please check your internet connection."
+        );
+
+    }
+
+
+    if (
+        error?.message
+    ) {
+
+        return error.message;
+
+    }
+
+
+    return (
+        "Something went wrong. " +
+        "Please try again."
+    );
+
+}
+
+
+/* ==========================================================
+   RETRY LIBRARY
+========================================================== */
+
+async function retryLoadBundleLibrary() {
+
+    try {
+
+        showLoading();
+
+        await loadBundleLibrary();
+
+        hideLoading();
+
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            "[Downloads] Retry failed:",
+            error
+        );
+
+
+        showLibraryError(
+            getNetworkErrorMessage(
+                error
+            )
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   ONLINE EVENT
+========================================================== */
+
+window.addEventListener(
+    "online",
+    async () => {
+
+        console.log(
+            "[Downloads] Connection restored."
+        );
+
+
+        if (
+            isAuthenticated()
+        ) {
+
+            try {
+
+                await loadBundleLibrary();
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.warn(
+                    "[Downloads] Online refresh failed:",
+                    error
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   OFFLINE EVENT
+========================================================== */
+
+window.addEventListener(
+    "offline",
+    () => {
+
+        console.warn(
+            "[Downloads] Browser is offline."
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   ESCAPE KEY
+========================================================== */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            closeLockedModal();
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   BEFORE UNLOAD
+========================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        downloadInProgress =
+            false;
+
+    }
+);
+
+
+/* ==========================================================
+   FINAL DEBUG INFO
+========================================================== */
+
+console.log(
+    "[Downloads] ReelsBundles download module loaded."
+);
+
+
+console.log(
+    "[Downloads] API:",
+    API_BASE
+);
+
+
+/* ==========================================================
+   END
 ========================================================== */
 
 /* ==========================================================
-   FRONTEND SECURITY BLOCKERS (OPTION B)
- ========================================================== */
-
-function showSecurityToast(message) {
-    let toast = document.getElementById("security-warning-toast");
-    if (toast) {
-        toast.remove();
-    }
-
-    toast = document.createElement("div");
-    toast.id = "security-warning-toast";
-    toast.style.position = "fixed";
-    toast.style.bottom = "40px";
-    toast.style.left = "50%";
-    toast.style.transform = "translateX(-50%) translateY(20px)";
-    toast.style.backgroundColor = "rgba(18, 18, 20, 0.95)";
-    toast.style.color = "#ff4d4d";
-    toast.style.border = "1px solid rgba(255, 77, 77, 0.25)";
-    toast.style.padding = "14px 24px";
-    toast.style.borderRadius = "12px";
-    toast.style.fontFamily = "'Inter', sans-serif";
-    toast.style.fontSize = "14px";
-    toast.style.fontWeight = "600";
-    toast.style.boxShadow = "0 8px 32px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 77, 77, 0.1)";
-    toast.style.zIndex = "999999";
-    toast.style.display = "flex";
-    toast.style.alignItems = "center";
-    toast.style.gap = "10px";
-    toast.style.opacity = "0";
-    toast.style.transition = "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-    toast.style.backdropFilter = "blur(10px)";
-    toast.style.pointerEvents = "none";
-
-    toast.innerHTML = `
-        <span style="font-size: 16px;">⚠️</span>
-        <span>${message}</span>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Trigger reflow
-    toast.offsetHeight;
-
-    toast.style.opacity = "1";
-    toast.style.transform = "translateX(-50%) translateY(0)";
-
-    setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateX(-50%) translateY(20px)";
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, 3500);
-}
-
-// 1. Disable Right-Click
-document.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    showSecurityToast("Right-click is disabled to protect content library.");
-});
-
-// 2. Disable devtools, source view, copy shortcuts
-document.addEventListener("keydown", (e) => {
-    // F12
-    if (e.key === "F12" || e.keyCode === 123) {
-        e.preventDefault();
-        showSecurityToast("Developer tools access is restricted.");
-    }
-    // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
-    if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C" || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
-        e.preventDefault();
-        showSecurityToast("Inspect Element is disabled.");
-    }
-    // Ctrl+U (View Source)
-    if (e.ctrlKey && (e.key === "u" || e.key === "U" || e.keyCode === 85)) {
-        e.preventDefault();
-        showSecurityToast("View Page Source is disabled.");
-    }
-    // Ctrl+S (Save Page)
-    if (e.ctrlKey && (e.key === "s" || e.key === "S" || e.keyCode === 83)) {
-        e.preventDefault();
-        showSecurityToast("Saving pages is disabled.");
-    }
-    // Ctrl+C / Ctrl+X (Block copy/cut on page contents)
-    if (e.ctrlKey && (e.key === "c" || e.key === "C" || e.keyCode === 67 || e.key === "x" || e.key === "X" || e.keyCode === 88)) {
-        const activeEl = document.activeElement;
-        const isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA");
-        if (!isInput) {
-            e.preventDefault();
-            showSecurityToast("Copying content links or text is restricted.");
-        }
-    }
-});
-
-// Disable text/link highlighting (User Select)
-document.addEventListener("DOMContentLoaded", () => {
-    document.body.style.webkitUserSelect = "none";
-    document.body.style.mozUserSelect = "none";
-    document.body.style.msUserSelect = "none";
-    document.body.style.userSelect = "none";
-});
-
-// 3. Prevent copying directly via copy event
-document.addEventListener("copy", (e) => {
-    const activeEl = document.activeElement;
-    const isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA");
-    if (!isInput) {
-        e.preventDefault();
-        showSecurityToast("Copying content links or text is restricted.");
-    }
-});
-
-// 4. Prevent cutting directly via cut event
-document.addEventListener("cut", (e) => {
-    const activeEl = document.activeElement;
-    const isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA");
-    if (!isInput) {
-        e.preventDefault();
-        showSecurityToast("Cutting page text is restricted.");
-    }
-});
-
+   END OF PART 3
+========================================================== */
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
