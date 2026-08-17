@@ -875,7 +875,12 @@ async function createPaymentOrder(customer) {
                     phone:
                         normalizePhone(
                             customer.phone
-                        )
+                        ),
+
+                    couponCode:
+                        appliedCoupon
+                            ? appliedCoupon.code
+                            : undefined
 
                 })
             }
@@ -1520,15 +1525,13 @@ checkoutButton?.addEventListener(
 );
 
 
-/* ==========================================================
-   COUPON
-========================================================== */
+let appliedCoupon = null;
 
 couponButton?.addEventListener(
 
     "click",
 
-    () => {
+    async () => {
 
         const code =
             couponInput
@@ -1554,24 +1557,52 @@ couponButton?.addEventListener(
 
         }
 
-
-        /*
-         * IMPORTANT:
-         *
-         * There is currently no coupon API in the
-         * supplied backend payment flow.
-         *
-         * Therefore we do NOT fake a discount here.
-         */
-
         if (couponMessage) {
+            couponMessage.textContent = "Validating coupon...";
+            couponMessage.style.color = "#a78bfa";
+        }
 
-            couponMessage.textContent =
-                "Coupon validation is not available yet.";
+        try {
+            const response = await fetch(`${API_BASE}/apply-coupon`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code, planKey: currentPlan })
+            });
 
-            couponMessage.style.color =
-                "#fbbf24";
+            const data = await response.json();
 
+            if (!response.ok || !data.success) {
+                appliedCoupon = null;
+                if (couponMessage) {
+                    couponMessage.textContent = data.message || "Invalid coupon code.";
+                    couponMessage.style.color = "#ef4444";
+                }
+                return;
+            }
+
+            appliedCoupon = data.coupon;
+
+            if (discountPrice) {
+                discountPrice.textContent = `₹${data.discountAmount}`;
+            }
+
+            if (totalPrice) {
+                totalPrice.textContent = `₹${data.finalPrice}`;
+            }
+
+            if (checkoutButton) {
+                checkoutButton.textContent = `🔒 Pay ₹${data.finalPrice} Securely`;
+            }
+
+            if (couponMessage) {
+                couponMessage.textContent = `✓ ${data.message}`;
+                couponMessage.style.color = "#4ade80";
+            }
+        } catch (err) {
+            if (couponMessage) {
+                couponMessage.textContent = "Unable to validate coupon at this time.";
+                couponMessage.style.color = "#ef4444";
+            }
         }
 
     }

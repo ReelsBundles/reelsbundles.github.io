@@ -10,6 +10,24 @@ color:var(--text);
 
 min-height:100vh;
 
+overflow-x:hidden;
+
+max-width:100%;
+
+}
+
+html {
+
+overflow-x:hidden;
+
+max-width:100%;
+
+}
+
+img, video, iframe {
+
+max-width:100%;
+
 }
 
 /* Container */

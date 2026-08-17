@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Demo Videos Manager | ReelsBundles Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-bundles.css">
+    <style>
+        .demo-layout { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-top: 24px; }
+        @media (max-width: 991px) { .demo-layout { grid-template-columns: 1fr; } }
+        .form-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2); }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .badge-purple { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .btn-action { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-action:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-danger { color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .videos-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item"><span>📊</span> Dashboard</a>
+            <a href="bundles.html" class="admin-nav-item"><span>📦</span> Bundles</a>
+            <a href="orders.html" class="admin-nav-item"><span>🧾</span> Orders</a>
+            <a href="coupons.html" class="admin-nav-item"><span>🎟️</span> Coupons</a>
+            <a href="demo-videos.html" class="admin-nav-item active"><span>🎬</span> Demo Videos</a>
+            <a href="download.html" class="admin-nav-item"><span>⬇️</span> Downloads</a>
+            <a href="storage.html" class="admin-nav-item"><span>☁️</span> Storage</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1>🎬 YouTube Demo Videos Manager</h1>
+                <p style="color:#94a3b8; font-size:14px; margin-top:4px;">Manage YouTube video embeds displayed on the public Demo page.</p>
+            </div>
+        </header>
+
+        <div class="demo-layout">
+            <div class="form-card">
+                <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Add YouTube Video</h3>
+                <form id="addVideoForm">
+                    <div class="form-group">
+                        <label for="videoTitle">Video Title *</label>
+                        <input type="text" id="videoTitle" class="form-control" placeholder="e.g. AI Reels Bundle Preview" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="youtubeUrl">YouTube Video URL / Link *</label>
+                        <input type="url" id="youtubeUrl" class="form-control" placeholder="https://www.youtube.com/watch?v=..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="videoCategory">Category / Tag</label>
+                        <input type="text" id="videoCategory" class="form-control" placeholder="e.g. AI Reels, Fitness, Motivational">
+                    </div>
+
+                    <div id="formMessage" style="margin-bottom:14px; font-size:13px;"></div>
+
+                    <button type="submit" id="addVideoBtn" class="btn-submit">+ Add YouTube Video</button>
+                </form>
+            </div>
+
+            <div>
+                <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Live Demo Video Collection</h3>
+                <div id="videosGrid" class="videos-grid-container">
+                    <div style="grid-column:1/-1; text-align:center; padding:40px; color:#94a3b8;">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="assets/js/admin-demo-videos.js"></script>
+</body>
+</html>

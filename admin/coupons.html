@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Code Manager | ReelsBundles Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-bundles.css">
+    <style>
+        .coupon-grid { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-top: 24px; }
+        @media (max-width: 991px) { .coupon-grid { grid-template-columns: 1fr; } }
+        .form-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2); }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .badge-purple { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .badge-green { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .btn-action { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-action:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-danger { color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item"><span>📊</span> Dashboard</a>
+            <a href="bundles.html" class="admin-nav-item"><span>📦</span> Bundles</a>
+            <a href="orders.html" class="admin-nav-item"><span>🧾</span> Orders</a>
+            <a href="coupons.html" class="admin-nav-item active"><span>🎟️</span> Coupons</a>
+            <a href="demo-videos.html" class="admin-nav-item"><span>🎬</span> Demo Videos</a>
+            <a href="download.html" class="admin-nav-item"><span>⬇️</span> Downloads</a>
+            <a href="storage.html" class="admin-nav-item"><span>☁️</span> Storage</a>
+        </nav>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1>🎟️ Coupon Code Manager</h1>
+                <p style="color:#94a3b8; font-size:14px; margin-top:4px;">Generate custom discount codes for user payments.</p>
+            </div>
+        </header>
+
+        <div class="coupon-grid">
+            <div class="form-card">
+                <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Create New Coupon</h3>
+                <form id="createCouponForm">
+                    <div class="form-group">
+                        <label for="couponCode">Coupon Code *</label>
+                        <input type="text" id="couponCode" class="form-control" placeholder="e.g. WELCOME50" uppercase required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="discountType">Discount Type *</label>
+                        <select id="discountType" class="form-control">
+                            <option value="percentage">Percentage (%) Discount</option>
+                            <option value="flat">Flat Amount (₹) Discount</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="discountValue">Discount Value *</label>
+                        <input type="number" id="discountValue" class="form-control" placeholder="e.g. 20 (for 20% or ₹20)" min="1" step="any" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxUses">Max Uses (Limit)</label>
+                        <input type="number" id="maxUses" class="form-control" placeholder="Leave empty for unlimited" min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date</label>
+                        <input type="date" id="expiryDate" class="form-control">
+                    </div>
+
+                    <div id="formMessage" style="margin-bottom:14px; font-size:13px;"></div>
+
+                    <button type="submit" id="saveCouponBtn" class="btn-submit">+ Create Coupon</button>
+                </form>
+            </div>
+
+            <div class="table-card" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px;">
+                <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Active & Saved Coupons</h3>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-size:12px; text-transform:uppercase;">
+                                <th style="padding:12px;">Code</th>
+                                <th style="padding:12px;">Discount</th>
+                                <th style="padding:12px;">Uses</th>
+                                <th style="padding:12px;">Expiry</th>
+                                <th style="padding:12px;">Status</th>
+                                <th style="padding:12px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponsTableBody">
+                            <tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="assets/js/admin-coupons.js"></script>
+</body>
+</html>
