@@ -1814,214 +1814,35 @@ if (emptyAddBundle) {
         };
 }
 
-/* ==========================================================
-   INIT
-========================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        updateBundlePlanSection();
-
-        loadBundles();
-    }
-);
-
 
 /* ==========================================================
-   BULK ADD & DELETE ALL BUNDLES LOGIC
+   TABLE EVENTS
 ========================================================== */
 
-const bulkAddBtn = document.getElementById("bulkAddBtn");
-const bulkBundleModal = document.getElementById("bulkBundleModal");
-const closeBulkModal = document.getElementById("closeBulkModal");
-const cancelBulkBtn = document.getElementById("cancelBulkBtn");
-const submitBulkBtn = document.getElementById("submitBulkBtn");
-const bulkTabPaste = document.getElementById("bulkTabPaste");
-const bulkTabRows = document.getElementById("bulkTabRows");
-const bulkPasteSection = document.getElementById("bulkPasteSection");
-const bulkRowsSection = document.getElementById("bulkRowsSection");
-const bulkPasteInput = document.getElementById("bulkPasteInput");
-const bulkRowsContainer = document.getElementById("bulkRowsContainer");
-const addBulkRowBtn = document.getElementById("addBulkRowBtn");
-
-const deleteAllBundlesBtn = document.getElementById("deleteAllBundlesBtn");
-                    () => {
-
-                        const id =
-                            button.dataset.id;
-
-                        const bundle =
-                            bundles.find(
-                                item =>
-                                    String(
-                                        item.id
-                                    ) ===
-                                    String(
-                                        id
-                                    )
-                            );
-
-                        if (bundle) {
-
-                            openModal(
-                                bundle
-                            );
-                        }
-                    };
-            }
-        );
-
-    document
-        .querySelectorAll(
-            ".delete-btn"
-        )
-        .forEach(
-            button => {
-
-                button.onclick =
-                    () => {
-
-                        deleteId =
-                            button.dataset.id;
-
-                        if (
-                            deleteModal
-                        ) {
-
-                            deleteModal.classList.add(
-                                "show"
-                            );
-                        }
-                    };
-            }
-        );
-
-    document
-        .querySelectorAll(
-            ".toggle-btn"
-        )
-        .forEach(
-            button => {
-
-                button.onclick =
-                    () => {
-
-                        toggleBundle(
-                            button.dataset.id
-                        );
-                    };
-            }
-        );
-}
-
-/* ==========================================================
-   DELETE MODAL
-========================================================== */
-
-const confirmDelete =
-    document.getElementById(
-        "confirmDelete"
-    );
-
-if (confirmDelete) {
-
-    confirmDelete.onclick =
-        async () => {
-
-            if (!deleteId) {
-                return;
-            }
-
-            const id =
-                deleteId;
-
-            deleteId = null;
-
-            if (deleteModal) {
-
-                deleteModal.classList.remove(
-                    "show"
-                );
-            }
-
-            await deleteBundle(
-                id
-            );
+function bindEvents() {
+    document.querySelectorAll(".edit-btn").forEach(button => {
+        button.onclick = () => {
+            const id = button.dataset.id;
+            const bundle = bundles.find(item => String(item.id) === String(id));
+            if (bundle) openModal(bundle);
         };
-}
+    });
 
-const cancelDelete =
-    document.getElementById(
-        "cancelDelete"
-    );
-
-if (cancelDelete) {
-
-    cancelDelete.onclick =
-        () => {
-
-            deleteId = null;
-
-            if (deleteModal) {
-
-                deleteModal.classList.remove(
-                    "show"
-                );
-            }
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.onclick = () => {
+            deleteId = button.dataset.id;
+            if (deleteModal) deleteModal.classList.add("show");
         };
-}
+    });
 
-/* ==========================================================
-   ADD BUNDLE
-========================================================== */
-
-const addBundleButton =
-    document.getElementById(
-        "addBundleBtn"
-    );
-
-if (addBundleButton) {
-
-    addBundleButton.onclick =
-        event => {
-
-            event.preventDefault();
-
-            openModal();
+    document.querySelectorAll(".toggle-btn").forEach(button => {
+        button.onclick = () => {
+            toggleBundle(button.dataset.id);
         };
+    });
 }
 
-const emptyAddBundle =
-    document.getElementById(
-        "emptyAddBundle"
-    );
 
-if (emptyAddBundle) {
-
-    emptyAddBundle.onclick =
-        event => {
-
-            event.preventDefault();
-
-            openModal();
-        };
-}
-
-/* ==========================================================
-   INIT
-========================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        updateBundlePlanSection();
-
-        loadBundles();
-    }
-);
 
 
 /* ==========================================================
