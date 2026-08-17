@@ -179,7 +179,17 @@ export const getCurrentUserFromBackend = async () => {
 };
 
 export const logoutUser = async () => {
-    await signOut(auth);
+    try {
+        if (auth) {
+            await signOut(auth);
+        }
+    } catch (err) {
+        console.warn("[Auth] Firebase signOut error:", err);
+    }
+    try {
+        localStorage.clear();
+        sessionStorage.clear();
+    } catch (err) {}
 };
 
 let isStatusSyncStarted = false;

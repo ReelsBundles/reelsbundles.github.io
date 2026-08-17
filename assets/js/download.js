@@ -553,60 +553,25 @@ function setupMobileMenu() {
 ========================================================== */
 
 function setupLogout() {
+    if (!logoutButton) return;
 
-    if (
-        !logoutButton
-    ) {
-
-        return;
-
-    }
-
-
-    logoutButton.addEventListener(
-        "click",
-        async () => {
-
+    logoutButton.addEventListener("click", async () => {
+        try {
+            if (firebaseAuth) {
+                await firebaseAuth.signOut();
+            } else if (auth) {
+                await auth.signOut();
+            }
+        } catch (error) {
+            console.error("[Downloads] Logout error:", error);
+        } finally {
             try {
-
-                if (
-                    firebaseAuth
-                ) {
-
-                    await firebaseAuth.signOut();
-
-                }
-
-                else if (
-                    auth
-                ) {
-
-                    await auth.signOut();
-
-                }
-
-                window.location.href =
-                    "login.html";
-
-            }
-
-            catch (
-                error
-            ) {
-
-                console.error(
-                    "[Downloads] Logout failed:",
-                    error
-                );
-
-                window.location.href =
-                    "login.html";
-
-            }
-
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch(e) {}
+            window.location.href = "index.html";
         }
-    );
-
+    });
 }
 
 

@@ -68,6 +68,18 @@
                 <span>🛡️</span> Security & Protection
             </a>
         </nav>
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                <span class="admin-avatar" style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:14px;">A</span>
+                <div>
+                    <strong style="display:block; color:#fff; font-size:13px;">Super Administrator</strong>
+                    <small style="color:rgba(255,255,255,0.5); font-size:11px;">admin@reelsbundles.com</small>
+                </div>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
+        </div>
     </aside>
 
     <main class="admin-main">
