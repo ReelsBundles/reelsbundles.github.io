@@ -53,6 +53,16 @@ async function fetchDemoVideos() {
     }
 }
 
+function broadcastDemoUpdate() {
+    try {
+        const channel = new BroadcastChannel("reelsbundles_demo_videos_sync");
+        channel.postMessage({ type: "DEMO_VIDEOS_UPDATED", timestamp: Date.now() });
+    } catch (e) {}
+    try {
+        localStorage.setItem("reelsbundles_demo_sync_time", String(Date.now()));
+    } catch (e) {}
+}
+
 async function handleAddVideo(e) {
     e.preventDefault();
     const btn = document.getElementById("addVideoBtn");
@@ -79,6 +89,7 @@ async function handleAddVideo(e) {
         msg.innerHTML = `<span style="color:#4ade80;">✓ ${data.message}</span>`;
         document.getElementById("addVideoForm").reset();
         fetchDemoVideos();
+        broadcastDemoUpdate();
     } catch (err) {
         msg.innerHTML = `<span style="color:#ef4444;">✕ ${err.message}</span>`;
     } finally {
@@ -93,6 +104,7 @@ window.toggleVideoStatus = async function(id) {
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
         fetchDemoVideos();
+        broadcastDemoUpdate();
     } catch (err) {
         alert("Error toggling video: " + err.message);
     }
@@ -105,6 +117,7 @@ window.deleteVideoItem = async function(id) {
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
         fetchDemoVideos();
+        broadcastDemoUpdate();
     } catch (err) {
         alert("Error deleting video: " + err.message);
     }

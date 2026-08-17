@@ -143,7 +143,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         return card;
     }
 
+    let currentFilter = "all";
+
     function render(filter = "all") {
+        currentFilter = filter;
         grid.innerHTML = "";
         const filtered = demos.filter(video => {
             return (
@@ -167,37 +170,69 @@ document.addEventListener("DOMContentLoaded", async () => {
         render(button.dataset.filter);
     });
 
-    try {
-        const res = await robustFetch(`${API_BASE}/demo/videos`);
-        const data = await res.json();
-        if (data.success && data.videos && data.videos.length > 0) {
-            const liveVideos = data.videos.map(v => {
-                const isShort = v.videoType === "short" || (v.youtubeUrl && v.youtubeUrl.includes("/shorts/"));
-                return {
-                    id: v.videoId,
-                    title: v.title,
-                    description: v.category ? `Category: ${v.category}` : (isShort ? "YouTube Short" : "YouTube Demo Video"),
-                    category: (v.category || "overview").toLowerCase().replace(/[^a-z0-9]/g, ""),
-                    label: isShort ? "📱 Short" : (v.category || "🎬 Video"),
-                    videoType: isShort ? "short" : "video",
-                    duration: isShort ? "0:60" : "2:00"
-                };
-            });
-            demos.length = 0;
-            demos.push(...liveVideos);
-        } else {
-            const validStatic = demos.filter(d => validId(d.id));
-            demos.length = 0;
-            demos.push(...validStatic);
+    async function fetchLiveDemoVideos() {
+        try {
+            const res = await robustFetch(`${API_BASE}/demo/videos`);
+            const data = await res.json();
+            if (data.success && data.videos && data.videos.length > 0) {
+                const liveVideos = data.videos.map(v => {
+                    const isShort = v.videoType === "short" || (v.youtubeUrl && v.youtubeUrl.includes("/shorts/"));
+                    return {
+                        id: v.videoId,
+                        title: v.title,
+                        description: v.category ? `Category: ${v.category}` : (isShort ? "YouTube Short" : "YouTube Demo Video"),
+                        category: (v.category || "overview").toLowerCase().replace(/[^a-z0-9]/g, ""),
+                        label: isShort ? "📱 Short" : (v.category || "🎬 Video"),
+                        videoType: isShort ? "short" : "video",
+                        duration: isShort ? "0:60" : "2:00"
+                    };
+                });
+                const hasChanged = JSON.stringify(demos.map(d => d.id)) !== JSON.stringify(liveVideos.map(d => d.id));
+                demos.length = 0;
+                demos.push(...liveVideos);
+                if (hasChanged) {
+                    render(currentFilter);
+                    if (demos.length > 0 && validId(demos[0].id) && !player.src) {
+                        playDemo(demos[0]);
+                    }
+                }
+            } else if (demos.length > 0) {
+                demos.length = 0;
+                render(currentFilter);
+            }
+        } catch (e) {
+            console.warn("Could not load backend demo videos", e);
         }
-    } catch (e) {
-        console.warn("Could not load backend demo videos", e);
     }
 
-    render("all");
+    await fetchLiveDemoVideos();
+
     if (demos.length > 0 && validId(demos[0].id)) {
         playDemo(demos[0]);
     }
+
+    // 1. Auto-Refresh Polling (Every 5 seconds)
+    setInterval(fetchLiveDemoVideos, 5000);
+
+    // 2. Tab Focus Auto-Refresh
+    window.addEventListener("focus", fetchLiveDemoVideos);
+
+    // 3. Cross-Tab Live Broadcast Sync
+    try {
+        const demoChannel = new BroadcastChannel("reelsbundles_demo_videos_sync");
+        demoChannel.onmessage = (event) => {
+            if (event.data && event.data.type === "DEMO_VIDEOS_UPDATED") {
+                fetchLiveDemoVideos();
+            }
+        };
+    } catch (err) {}
+
+    // 4. LocalStorage Fallback Storage Event Sync
+    window.addEventListener("storage", (event) => {
+        if (event.key === "reelsbundles_demo_sync_time") {
+            fetchLiveDemoVideos();
+        }
+    });
 });
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
