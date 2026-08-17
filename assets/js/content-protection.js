@@ -1,6 +1,6 @@
 /* ==========================================================
    REELSBUNDLES — SITE-WIDE CONTENT PROTECTION MODULE
-   PREVENTS SOURCE CODE THEFT & UNTHORIZED COPYING
+   PREVENTS SOURCE CODE THEFT & UNAUTHORIZED COPYING
    DYNAMICALLY CONTROLLED BY ADMIN PANEL CONTROL SYSTEM
 ========================================================== */
 
@@ -19,6 +19,7 @@ let protectionConfig = {
 
 let activeToast = null;
 let toastTimeout = null;
+let styleElement = null;
 
 function showProtectionToast(message) {
     if (activeToast) {
@@ -67,7 +68,36 @@ function showProtectionToast(message) {
     }, 2500);
 }
 
+function applyCssRestrictions() {
+    if (protectionConfig.protectionEnabled) {
+        if (!styleElement) {
+            styleElement = document.createElement("style");
+            styleElement.id = "protection-user-select-style";
+            styleElement.innerHTML = `
+                body, p, h1, h2, h3, h4, h5, h6, span, div, img, a, button, card {
+                    -webkit-user-select: none !important;
+                    -moz-user-select: none !important;
+                    -ms-user-select: none !important;
+                    user-select: none !important;
+                }
+                input, textarea, select {
+                    -webkit-user-select: text !important;
+                    -moz-user-select: text !important;
+                    -ms-user-select: text !important;
+                    user-select: text !important;
+                }
+            `;
+            document.head.appendChild(styleElement);
+        }
+    } else if (styleElement) {
+        styleElement.remove();
+        styleElement = null;
+    }
+}
+
 function initContentProtection() {
+    applyCssRestrictions();
+
     // 1. Right Click Protection
     document.addEventListener("contextmenu", (event) => {
         if (protectionConfig.protectionEnabled && protectionConfig.disableRightClick) {
@@ -76,7 +106,14 @@ function initContentProtection() {
         }
     }, true);
 
-    // 2. DevTools & Inspection Keyboard Shortcuts
+    // 2. Image and Element Dragging Protection
+    document.addEventListener("dragstart", (event) => {
+        if (protectionConfig.protectionEnabled) {
+            event.preventDefault();
+        }
+    }, true);
+
+    // 3. DevTools & Inspection Keyboard Shortcuts
     document.addEventListener("keydown", (event) => {
         if (!protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
             return;
@@ -133,6 +170,14 @@ function initContentProtection() {
             showProtectionToast("Saving web page is disabled.");
             return false;
         }
+
+        // Ctrl+P / Cmd+P (Print Page)
+        if (isCmdOrCtrl && (key === "p" || code === "keyp")) {
+            event.preventDefault();
+            event.stopPropagation();
+            showProtectionToast("Printing page source is disabled.");
+            return false;
+        }
     }, true);
 }
 
@@ -143,6 +188,7 @@ async function fetchProtectionSettings() {
             const data = await response.json();
             if (data.success && data.settings) {
                 protectionConfig = { ...protectionConfig, ...data.settings };
+                applyCssRestrictions();
             }
         }
     } catch (e) {
