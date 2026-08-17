@@ -2,13 +2,16 @@
    ADMIN DOWNLOADS
 ========================================================== */
 
-const API_BASE_URL =
+const RAW_API_BASE =
     window.API_BASE_URL ||
+    window.REELS_BUNDLES_API_BASE ||
     (
         (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
             ? "http://localhost:3000"
             : "https://reelsbundles-backend.onrender.com"
     );
+
+const API_BASE_URL = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 
 
 let currentPage = 1;
@@ -70,7 +73,8 @@ const premiumDownloadsElement =
 ========================================================== */
 
 async function loadDownloads(
-    page = 1
+    page = 1,
+    silent = false
 ) {
 
     try {
@@ -79,7 +83,9 @@ async function loadDownloads(
             page;
 
 
-        showLoading();
+        if (!silent) {
+            showLoading();
+        }
 
 
         const params =
@@ -1717,7 +1723,7 @@ if (
 }
 
 
-async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+async function robustFetch(url, options = {}, retries = 3, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
         try {
             const response = await window.fetch(url, options);
@@ -1729,3 +1735,39 @@ async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
         }
     }
 }
+
+function startLiveDownloadsAutoSync() {
+    // 5-second periodic live polling
+    setInterval(() => loadDownloads(currentPage, true), 5000);
+
+    // Cross-tab BroadcastChannel listener
+    try {
+        if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel("rb_downloads_sync");
+            bc.onmessage = () => loadDownloads(currentPage, true);
+        }
+    } catch (e) {}
+
+    // Storage event listener
+    window.addEventListener("storage", (e) => {
+        if (e.key === "rb_downloads_sync_event") {
+            loadDownloads(currentPage, true);
+        }
+    });
+
+    // Window focus listener
+    window.addEventListener("focus", () => loadDownloads(currentPage, true));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    startLiveDownloadsAutoSync();
+
+    let searchTimer;
+    searchInput?.addEventListener("input", () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => loadDownloads(1), 300);
+    });
+
+    planFilter?.addEventListener("change", () => loadDownloads(1));
+    statusFilter?.addEventListener("change", () => loadDownloads(1));
+});
