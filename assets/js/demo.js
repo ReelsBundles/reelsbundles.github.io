@@ -42,16 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-    const demos = [
-        {
-            id: "GMkf14cw8e0",
-            title: "Website Overview",
-            description: "Complete walkthrough of the ReelsBundles product.",
-            category: "overview",
-            label: "Overview",
-            duration: "3:15"
-        }
-    ];
+    const demos = [];
 
     function validId(id) {
         return (
