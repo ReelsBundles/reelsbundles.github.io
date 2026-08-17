@@ -11,7 +11,7 @@ const API_BASE = (
 
 let allUsers = [];
 
-async function fetchAdminUsers() {
+async function fetchAdminUsers(isSilent = false) {
     const tbody = document.getElementById("usersTableBody");
     const countEl = document.getElementById("totalUsersCount");
     if (!tbody) return;
@@ -28,9 +28,23 @@ async function fetchAdminUsers() {
 
         allUsers = data.users || [];
         if (countEl) countEl.textContent = allUsers.length;
-        renderUsers(allUsers);
+
+        const searchInput = document.getElementById("userSearchInput");
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+        if (query) {
+            const filtered = allUsers.filter(u =>
+                (u.displayName || "").toLowerCase().includes(query) ||
+                (u.email || "").toLowerCase().includes(query) ||
+                (u.id || "").toLowerCase().includes(query)
+            );
+            renderUsers(filtered);
+        } else {
+            renderUsers(allUsers);
+        }
     } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px; color:#ef4444;">Error loading users: ${err.message}</td></tr>`;
+        if (!isSilent) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:40px; color:#ef4444;">Error loading users: ${err.message}</td></tr>`;
+        }
     }
 }
 
@@ -115,7 +129,7 @@ window.toggleUser = async function(userId) {
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
         broadcastUserStatusUpdate(userId);
-        fetchAdminUsers();
+        fetchAdminUsers(true);
     } catch (err) {
         alert("Error updating user: " + err.message);
     }
@@ -132,14 +146,38 @@ window.deleteUserItem = async function(userId) {
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
         broadcastUserStatusUpdate(userId);
-        fetchAdminUsers();
+        fetchAdminUsers(true);
     } catch (err) {
         alert("Error deleting user: " + err.message);
     }
 };
 
+function startUserListAutoRefresh() {
+    // 5-second periodic live polling
+    setInterval(() => fetchAdminUsers(true), 5000);
+
+    // Cross-tab BroadcastChannel listener
+    try {
+        if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel("rb_user_status_sync");
+            bc.onmessage = () => fetchAdminUsers(true);
+        }
+    } catch (e) {}
+
+    // Storage event listener
+    window.addEventListener("storage", (e) => {
+        if (e.key === "rb_user_status_event") {
+            fetchAdminUsers(true);
+        }
+    });
+
+    // Window focus listener
+    window.addEventListener("focus", () => fetchAdminUsers(true));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     fetchAdminUsers();
+    startUserListAutoRefresh();
 
     const searchInput = document.getElementById("userSearchInput");
     searchInput?.addEventListener("input", (e) => {
