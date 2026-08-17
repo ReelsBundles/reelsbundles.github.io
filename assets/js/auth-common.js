@@ -15,7 +15,21 @@ const API_BASE =
             : "https://reelsbundles-backend.onrender.com"
     ) + "/api";
 
-(function cleanAddressBarUrl() {
+(function sanitizeAllLinksAndAddressBar() {
+    function cleanUrlPath(hrefStr) {
+        if (!hrefStr) return hrefStr;
+        if (hrefStr.startsWith("#") || hrefStr.startsWith("javascript:") || hrefStr.startsWith("mailto:") || hrefStr.startsWith("tel:")) {
+            return hrefStr;
+        }
+        if (hrefStr.startsWith("http://") || hrefStr.startsWith("https://")) {
+            if (!hrefStr.includes(window.location.hostname)) return hrefStr;
+        }
+        return hrefStr.replace(/([a-zA-Z0-9_-]+)\.html(\?|#|$)/g, function(match, pageName, suffix) {
+            if (pageName === "index") return "/" + suffix;
+            return pageName + suffix;
+        });
+    }
+
     try {
         var path = window.location.pathname;
         if (path.endsWith(".html")) {
@@ -27,9 +41,37 @@ const API_BASE =
             var newUrl = cleanPath + window.location.search + window.location.hash;
             window.history.replaceState(null, "", newUrl);
         }
-    } catch (e) {
-        // Safe execution
+    } catch (e) {}
+
+    function rewriteAnchors() {
+        var links = document.querySelectorAll("a[href*='.html']");
+        links.forEach(function(a) {
+            var oldHref = a.getAttribute("href");
+            if (oldHref && oldHref.includes(".html")) {
+                a.setAttribute("href", cleanUrlPath(oldHref));
+            }
+        });
     }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", rewriteAnchors);
+    } else {
+        rewriteAnchors();
+    }
+
+    document.addEventListener("mouseover", function(e) {
+        var a = e.target.closest("a");
+        if (a && a.getAttribute("href") && a.getAttribute("href").includes(".html")) {
+            a.setAttribute("href", cleanUrlPath(a.getAttribute("href")));
+        }
+    }, true);
+
+    document.addEventListener("click", function(e) {
+        var a = e.target.closest("a");
+        if (a && a.getAttribute("href") && a.getAttribute("href").includes(".html")) {
+            a.setAttribute("href", cleanUrlPath(a.getAttribute("href")));
+        }
+    }, true);
 })();
 
 export const getCurrentFirebaseUser = () => {
