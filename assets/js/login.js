@@ -12,11 +12,18 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
-    createUserSession
+    createUserSession,
+    syncUserToBackend,
+    logoutUser
 } from "./auth-common.js";
 
 getRedirectResult(auth).then(async (result) => {
     if (result && result.user) {
+        const syncRes = await syncUserToBackend(result.user);
+        if (syncRes && syncRes.disabled) {
+            await logoutUser();
+            return;
+        }
         await createUserSession();
         window.location.replace(getLoginRedirect());
     }
@@ -24,8 +31,19 @@ getRedirectResult(auth).then(async (result) => {
     console.warn("Google redirect result info:", err);
 });
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
+        const syncRes = await syncUserToBackend(user);
+        if (syncRes && syncRes.disabled) {
+            await logoutUser();
+            const msgEl = document.getElementById("authMessage");
+            if (msgEl) {
+                msgEl.style.display = "block";
+                msgEl.style.color = "#ef4444";
+                msgEl.textContent = "⛔ Your account has been disabled by the admin. Please contact support.";
+            }
+            return;
+        }
         window.location.replace(getLoginRedirect());
     }
 });

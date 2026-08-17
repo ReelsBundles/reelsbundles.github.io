@@ -1,6 +1,11 @@
 import {
     auth
 } from "./firebase-client.js";
+import {
+    protectUserPage,
+    syncUserToBackend,
+    startUserStatusSync
+} from "./auth-common.js";
 /* ==========================================================
    REELSBUNDLES
    USER DOWNLOAD LIBRARY
@@ -290,6 +295,8 @@ async function initializeDownloadPage() {
 
     try {
 
+        protectUserPage();
+
         setupUI();
 
         const bundleId =
@@ -305,6 +312,12 @@ async function initializeDownloadPage() {
         await waitForAuthenticatedUser();
 
         await loadCurrentUser();
+
+        if (currentUser) {
+            const syncRes = await syncUserToBackend(currentUser);
+            if (syncRes && syncRes.disabled) return;
+            startUserStatusSync(currentUser);
+        }
 
         await loadBundleLibrary();
 
