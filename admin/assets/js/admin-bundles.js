@@ -1847,6 +1847,201 @@ const bulkRowsContainer = document.getElementById("bulkRowsContainer");
 const addBulkRowBtn = document.getElementById("addBulkRowBtn");
 
 const deleteAllBundlesBtn = document.getElementById("deleteAllBundlesBtn");
+                    () => {
+
+                        const id =
+                            button.dataset.id;
+
+                        const bundle =
+                            bundles.find(
+                                item =>
+                                    String(
+                                        item.id
+                                    ) ===
+                                    String(
+                                        id
+                                    )
+                            );
+
+                        if (bundle) {
+
+                            openModal(
+                                bundle
+                            );
+                        }
+                    };
+            }
+        );
+
+    document
+        .querySelectorAll(
+            ".delete-btn"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () => {
+
+                        deleteId =
+                            button.dataset.id;
+
+                        if (
+                            deleteModal
+                        ) {
+
+                            deleteModal.classList.add(
+                                "show"
+                            );
+                        }
+                    };
+            }
+        );
+
+    document
+        .querySelectorAll(
+            ".toggle-btn"
+        )
+        .forEach(
+            button => {
+
+                button.onclick =
+                    () => {
+
+                        toggleBundle(
+                            button.dataset.id
+                        );
+                    };
+            }
+        );
+}
+
+/* ==========================================================
+   DELETE MODAL
+========================================================== */
+
+const confirmDelete =
+    document.getElementById(
+        "confirmDelete"
+    );
+
+if (confirmDelete) {
+
+    confirmDelete.onclick =
+        async () => {
+
+            if (!deleteId) {
+                return;
+            }
+
+            const id =
+                deleteId;
+
+            deleteId = null;
+
+            if (deleteModal) {
+
+                deleteModal.classList.remove(
+                    "show"
+                );
+            }
+
+            await deleteBundle(
+                id
+            );
+        };
+}
+
+const cancelDelete =
+    document.getElementById(
+        "cancelDelete"
+    );
+
+if (cancelDelete) {
+
+    cancelDelete.onclick =
+        () => {
+
+            deleteId = null;
+
+            if (deleteModal) {
+
+                deleteModal.classList.remove(
+                    "show"
+                );
+            }
+        };
+}
+
+/* ==========================================================
+   ADD BUNDLE
+========================================================== */
+
+const addBundleButton =
+    document.getElementById(
+        "addBundleBtn"
+    );
+
+if (addBundleButton) {
+
+    addBundleButton.onclick =
+        event => {
+
+            event.preventDefault();
+
+            openModal();
+        };
+}
+
+const emptyAddBundle =
+    document.getElementById(
+        "emptyAddBundle"
+    );
+
+if (emptyAddBundle) {
+
+    emptyAddBundle.onclick =
+        event => {
+
+            event.preventDefault();
+
+            openModal();
+        };
+}
+
+/* ==========================================================
+   INIT
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        updateBundlePlanSection();
+
+        loadBundles();
+    }
+);
+
+
+/* ==========================================================
+   BULK ADD & DELETE ALL BUNDLES LOGIC
+========================================================== */
+
+const bulkAddBtn = document.getElementById("bulkAddBtn");
+const bulkBundleModal = document.getElementById("bulkBundleModal");
+const closeBulkModal = document.getElementById("closeBulkModal");
+const cancelBulkBtn = document.getElementById("cancelBulkBtn");
+const submitBulkBtn = document.getElementById("submitBulkBtn");
+const bulkTabPaste = document.getElementById("bulkTabPaste");
+const bulkTabRows = document.getElementById("bulkTabRows");
+const bulkPasteSection = document.getElementById("bulkPasteSection");
+const bulkRowsSection = document.getElementById("bulkRowsSection");
+const bulkPasteInput = document.getElementById("bulkPasteInput");
+const bulkRowsContainer = document.getElementById("bulkRowsContainer");
+const addBulkRowBtn = document.getElementById("addBulkRowBtn");
+
+const deleteAllBundlesBtn = document.getElementById("deleteAllBundlesBtn");
 const deleteAllModal = document.getElementById("deleteAllModal");
 const cancelDeleteAllBtn = document.getElementById("cancelDeleteAllBtn");
 const confirmDeleteAllBtn = document.getElementById("confirmDeleteAllBtn");
@@ -1890,7 +2085,7 @@ function addBulkRow() {
     if (!bulkRowsContainer) return;
     const row = document.createElement("div");
     row.className = "bulk-row";
-    row.style.cssText = "display:grid; grid-template-columns: 2fr 1fr 1fr 2.5fr 2.5fr auto; gap:8px; align-items:center;";
+    row.style.cssText = "display:grid; grid-template-columns: 2fr 1fr 1fr 2fr 2fr 2fr auto; gap:8px; align-items:center; margin-bottom:8px;";
     row.innerHTML = `
         <input type="text" class="bulk-name" placeholder="Bundle Name" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
         <select class="bulk-plan" style="background:#0b0f19; border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
@@ -1905,7 +2100,8 @@ function addBulkRow() {
             <option value="5">Page 5</option>
             <option value="6">Page 6</option>
         </select>
-        <input type="text" class="bulk-link" placeholder="Drive Link / Folder ID" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
+        <input type="text" class="bulk-link" placeholder="Drive Link (Optional)" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
+        <input type="text" class="bulk-mega" placeholder="MEGA Link (Optional)" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
         <input type="text" class="bulk-thumb" placeholder="Thumbnail URL (Optional)" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.15); border-radius:6px; padding:8px; color:#fff; font-size:12px;">
         <button type="button" class="btn btn-secondary remove-row-btn" style="padding:6px 10px; color:#f87171;">✕</button>
     `;
@@ -1926,31 +2122,59 @@ function parsePasteInput(text) {
             let plan = "basic";
             let page = 1;
             let driveLink = "";
+            let megaLink = "";
             let thumbnail = "";
 
-            if (parts.length >= 5) {
+            if (parts.length >= 6) {
                 plan = parts[1].trim().toLowerCase() === "premium" ? "premium" : "basic";
                 page = Number(parts[2]) || 1;
                 driveLink = parts[3].trim();
-                thumbnail = parts[4].trim();
+                megaLink = parts[4].trim();
+                thumbnail = parts[5].trim();
+            } else if (parts.length === 5) {
+                plan = parts[1].trim().toLowerCase() === "premium" ? "premium" : "basic";
+                page = Number(parts[2]) || 1;
+                const link1 = parts[3].trim();
+                const link2 = parts[4].trim();
+                if (link1.includes("mega.nz") || link1.includes("mega.io")) {
+                    megaLink = link1;
+                    thumbnail = link2;
+                } else if (link2.includes("mega.nz") || link2.includes("mega.io")) {
+                    driveLink = link1;
+                    megaLink = link2;
+                } else {
+                    driveLink = link1;
+                    thumbnail = link2;
+                }
             } else if (parts.length === 4) {
                 plan = parts[1].trim().toLowerCase() === "premium" ? "premium" : "basic";
                 page = Number(parts[2]) || 1;
-                driveLink = parts[3].trim();
+                const link = parts[3].trim();
+                if (link.includes("mega.nz") || link.includes("mega.io")) {
+                    megaLink = link;
+                } else {
+                    driveLink = link;
+                }
             } else if (parts.length === 3) {
                 if (parts[1].trim().toLowerCase() === "premium" || parts[1].trim().toLowerCase() === "basic") {
                     plan = parts[1].trim().toLowerCase();
-                    driveLink = parts[2].trim();
+                    const link = parts[2].trim();
+                    if (link.includes("mega.nz") || link.includes("mega.io")) megaLink = link;
+                    else driveLink = link;
                 } else {
-                    driveLink = parts[1].trim();
+                    const link = parts[1].trim();
+                    if (link.includes("mega.nz") || link.includes("mega.io")) megaLink = link;
+                    else driveLink = link;
                     thumbnail = parts[2].trim();
                 }
             } else {
-                driveLink = parts[1].trim();
+                const link = parts[1].trim();
+                if (link.includes("mega.nz") || link.includes("mega.io")) megaLink = link;
+                else driveLink = link;
             }
 
-            if (name && driveLink) {
-                items.push({ name, plan, page, driveLink, thumbnail });
+            if (name && (driveLink || megaLink)) {
+                items.push({ name, plan, page, driveLink, megaLink, thumbnail });
             }
         }
     });
@@ -1968,17 +2192,18 @@ async function handleBulkSubmit() {
             const name = row.querySelector(".bulk-name")?.value?.trim();
             const plan = row.querySelector(".bulk-plan")?.value;
             const page = Number(row.querySelector(".bulk-page")?.value) || 1;
-            const driveLink = row.querySelector(".bulk-link")?.value?.trim();
+            const driveLink = row.querySelector(".bulk-link")?.value?.trim() || "";
+            const megaLink = row.querySelector(".bulk-mega")?.value?.trim() || "";
             const thumbnail = row.querySelector(".bulk-thumb")?.value?.trim() || "";
 
-            if (name && driveLink) {
-                items.push({ name, plan, page, driveLink, thumbnail });
+            if (name && (driveLink || megaLink)) {
+                items.push({ name, plan, page, driveLink, megaLink, thumbnail });
             }
         });
     }
 
     if (items.length === 0) {
-        toastMessage("Please enter at least 1 valid bundle with Name and Drive Link.", "error");
+        toastMessage("Please enter at least 1 valid bundle with Name and at least one storage link (Google Drive or MEGA.nz).", "error");
         return;
     }
 
@@ -2011,7 +2236,6 @@ async function handleBulkSubmit() {
     }
 }
 
-// DIRECT DELETE ALL LOGIC
 async function handleDeleteAllSubmit() {
     if (!confirm("Are you sure you want to delete ALL bundles from your database? This action cannot be undone.")) {
         return;
