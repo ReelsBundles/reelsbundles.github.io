@@ -219,14 +219,14 @@ async function loadStorageStats() {
                                 <td style="padding:14px;">
                                     ${driveTarget ? `
                                         <a href="${driveTarget.startsWith('http') ? driveTarget : '#'}" target="_blank" class="provider-badge badge-drive" style="text-decoration:none;">
-                                            📁 Linked Google Drive
+                                            📁 Google Drive (AES-256 Encrypted)
                                         </a>
                                     ` : `<span class="provider-badge badge-none">❌ Not Linked</span>`}
                                 </td>
                                 <td style="padding:14px;">
                                     ${megaTarget ? `
-                                        <a href="${megaTarget}" target="_blank" class="provider-badge badge-mega" style="text-decoration:none;">
-                                            ☁️ Linked MEGA.nz
+                                        <a href="${megaTarget.startsWith('http') ? megaTarget : '#'}" target="_blank" class="provider-badge badge-mega" style="text-decoration:none;">
+                                            ☁️ MEGA.nz (AES-256 Encrypted)
                                         </a>
                                     ` : `<span class="provider-badge badge-none">❌ Not Linked</span>`}
                                 </td>

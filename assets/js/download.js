@@ -1758,13 +1758,18 @@ function renderBundleFilesView(
                 type="button"
                 class="folder-back-button"
                 id="folderBrowserBack"
-                ${folderName ? "" : "disabled"}
-            >← Back</button>
+                style="cursor:pointer;"
+            >${folderName ? "← Back to Root" : "← Back to Library"}</button>
             <span class="folder-browser-path">${currentFolderTitle}</span>
         </div>
 
         <div class="folder-browser-grid" id="reelsBundlesFolderGrid"></div>
     `;
+
+    // Hide background bundle cards grid so only the file browser is displayed in view=files mode
+    if (basicBundleSection) basicBundleSection.style.display = "none";
+    if (premiumBundleSection) premiumBundleSection.style.display = "none";
+    document.querySelectorAll(".rb-bundle-section").forEach(sec => sec.style.display = "none");
 
     const target = basicBundleSection || premiumBundleSection || document.body;
 
@@ -1779,10 +1784,13 @@ function renderBundleFilesView(
 
     const backButton = browser.querySelector("#folderBrowserBack");
     backButton?.addEventListener("click", () => {
-        if (!folderName) return;
-        const requestedBundleId = getBundleIdFromUrl();
-        if (requestedBundleId) {
-            loadFolderContents(requestedBundleId, null, null);
+        if (folderName) {
+            const requestedBundleId = getBundleIdFromUrl();
+            if (requestedBundleId) {
+                loadFolderContents(requestedBundleId, null, null);
+            }
+        } else {
+            window.location.href = "download.html";
         }
     });
 
