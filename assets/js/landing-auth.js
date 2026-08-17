@@ -33,11 +33,6 @@ document.addEventListener(
         ====================================================== */
 
         if (!authActions) {
-
-            console.warn(
-                "Landing auth container not found."
-            );
-
             return;
         }
 

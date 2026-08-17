@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
 
-        player.src = `https://www.youtube-nocookie.com/embed/${video.id}?rel=0&modestbranding=1&playsinline=1`;
+        player.src = `https://www.youtube.com/embed/${video.id}?rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
         if (title) title.textContent = video.title;
         if (description) description.textContent = video.description;
         if (category) category.textContent = video.label;
