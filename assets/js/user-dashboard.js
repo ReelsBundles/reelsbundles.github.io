@@ -1462,7 +1462,7 @@ function createBundleCard(
                         data-bundle-id="${escapeAttribute(bundle.id)}"
                         style="width:100%;"
                     >
-                        📁 Access Storage Library
+                        ⬇️ Download
                     </button>
                 </div>
               `
