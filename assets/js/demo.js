@@ -42,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
-
     const demos = [
         {
             id: "GMkf14cw8e0",
@@ -54,7 +53,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     ];
 
-
     function validId(id) {
         return (
             id &&
@@ -63,7 +61,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
     }
 
-
     function thumbnail(video) {
         if (validId(video.id)) {
             return `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
@@ -71,6 +68,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return "";
     }
 
+    function safeCssEscape(str) {
+        if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+            return CSS.escape(str);
+        }
+        return String(str || "").replace(/["'\\]/g, '\\$&');
+    }
 
     function playDemo(video) {
         if (!validId(video.id)) {
@@ -82,7 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             card.classList.remove("active");
         });
 
-        const selected = document.querySelector(`.demo-card[data-video-id="${CSS.escape(video.id)}"]`);
+        const selected = document.querySelector(`.demo-card[data-video-id="${safeCssEscape(video.id)}"]`);
         selected?.classList.add("active");
 
         player.src = `https://www.youtube-nocookie.com/embed/${video.id}?rel=0&modestbranding=1&playsinline=1`;
@@ -96,7 +99,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             block: "start"
         });
     }
-
 
     function createCard(video, index) {
         const card = document.createElement("article");
@@ -137,14 +139,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         return card;
     }
 
-
     function render(filter = "all") {
         grid.innerHTML = "";
         const filtered = demos.filter(video => {
             return (
                 filter === "all" ||
-                video.category === filter ||
-                filter === "all"
+                video.category === filter
             );
         });
 
@@ -155,7 +155,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (count) count.textContent = filtered.length;
     }
 
-
     filters?.addEventListener("click", event => {
         const button = event.target.closest(".filter-btn");
         if (!button) return;
@@ -163,7 +162,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         button.classList.add("active");
         render(button.dataset.filter);
     });
-
 
     try {
         const res = await robustFetch(`${API_BASE}/demo/videos`);
@@ -188,14 +186,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.warn("Could not load backend demo videos", e);
     }
 
-
     render("all");
     if (demos.length > 0 && validId(demos[0].id)) {
         playDemo(demos[0]);
     }
-
 });
-
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
