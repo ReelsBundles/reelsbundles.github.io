@@ -196,12 +196,5 @@ async function fetchProtectionSettings() {
     }
 }
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", () => {
-        fetchProtectionSettings();
-        initContentProtection();
-    });
-} else {
-    fetchProtectionSettings();
-    initContentProtection();
-}
+initContentProtection();
+fetchProtectionSettings();
