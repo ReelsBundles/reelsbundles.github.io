@@ -97,33 +97,22 @@ body {
     display: flex;
 }
 
-
-/* ==========================================================
-   SIDEBAR
-========================================================== */
-
 .admin-sidebar {
-    width: 250px;
-    min-width: 250px;
-    min-height: 100vh;
-
-    position: sticky;
+    position: fixed;
     top: 0;
-
+    left: 0;
+    width: 265px;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-
-    background:
-        linear-gradient(
-            180deg,
-            #0b1020 0%,
-            #090f1d 100%
-        );
-
-    border-right:
-        1px solid var(--border);
-
-    z-index: 100;
+    padding: 28px 18px 20px;
+    background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 1000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(129, 140, 248, 0.35) transparent;
 }
 
 
@@ -304,10 +293,27 @@ body {
 
 .admin-main {
     flex: 1;
-
+    margin-left: 265px;
+    width: calc(100% - 265px);
     min-width: 0;
-
     padding: 32px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 991px) {
+    .admin-sidebar {
+        position: fixed;
+        left: -285px;
+        transition: left 0.3s ease;
+    }
+    .admin-sidebar.open {
+        left: 0;
+    }
+    .admin-main {
+        margin-left: 0;
+        width: 100%;
+        padding: 16px;
+    }
 }
 
 
