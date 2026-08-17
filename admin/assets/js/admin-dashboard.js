@@ -1,3 +1,9 @@
+const API_BASE = window.REELS_BUNDLES_API_BASE || (
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000"
+        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+);
+
 const token = localStorage.getItem("admin_token");
 const admin = JSON.parse(localStorage.getItem("admin_data") || "{}");
 
@@ -31,12 +37,6 @@ if (refreshDashboardBtn) {
 window.loadDashboard = loadDashboard;
 loadDashboard();
 setInterval(loadDashboard, 10000);
-
-const API_BASE = window.REELS_BUNDLES_API_BASE || (
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-        ? "http://localhost:3000"
-        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
-);
 
 async function loadDashboard() {
     try {
