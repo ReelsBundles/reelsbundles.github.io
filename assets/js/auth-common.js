@@ -75,9 +75,7 @@ const API_BASE =
 })();
 
 export const getCurrentFirebaseUser = () => {
-
     return auth.currentUser;
-
 };
 
 /* ==========================================================
@@ -86,117 +84,42 @@ export const getCurrentFirebaseUser = () => {
 ========================================================== */
 
 export const getFirebaseIdToken = async () => {
-
-    /*
-     * Firebase may need a moment to restore
-     * the existing login session after a page load.
-     */
-
     if (auth.currentUser) {
-
-        return await auth.currentUser
-            .getIdToken();
-
+        return await auth.currentUser.getIdToken();
     }
 
+    const user = await new Promise((resolve) => {
+        let finished = false;
+        const timeout = setTimeout(() => {
+            if (finished) return;
+            finished = true;
+            resolve(null);
+        }, 8000);
 
-    /*
-     * Wait until Firebase tells us whether
-     * a user session exists.
-     */
-
-    const user =
-        await new Promise(
-            (resolve) => {
-
-                let finished =
-                    false;
-
-
-                const timeout =
-                    setTimeout(
-                        () => {
-
-                            if (
-                                finished
-                            ) {
-                                return;
-                            }
-
-
-                            finished =
-                                true;
-
-                            resolve(
-                                null
-                            );
-
-                        },
-                        8000
-                    );
-
-
-                const unsubscribe =
-                    onAuthStateChanged(
-                        auth,
-
-                        (currentUser) => {
-
-                            if (
-                                finished
-                            ) {
-                                return;
-                            }
-
-
-                            finished =
-                                true;
-
-
-                            clearTimeout(
-                                timeout
-                            );
-
-
-                            unsubscribe();
-
-
-                            resolve(
-                                currentUser
-                            );
-
-                        }
-                    );
-
-            }
-        );
-
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timeout);
+            unsubscribe();
+            resolve(currentUser);
+        });
+    });
 
     if (!user) {
-
         return null;
-
     }
-
 
     return await user.getIdToken();
-
 };
+
 export const createUserSession = async () => {
-
     const user = auth.currentUser;
-
     if (!user) {
-
         return null;
-
     }
 
     try {
-
-        const idToken =
-            await user.getIdToken(true);
-
+        const idToken = await user.getIdToken(true);
         const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
         const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
 
@@ -204,15 +127,12 @@ export const createUserSession = async () => {
             `${API_BASE}/auth/user/session`,
             {
                 method: "POST",
-
                 headers: {
                     "Content-Type": "application/json"
                 },
-
                 body: JSON.stringify({
                     idToken
                 }),
-
                 signal: controller ? controller.signal : undefined
             }
         );
@@ -226,22 +146,14 @@ export const createUserSession = async () => {
 
         const result = await response.json();
         return result;
-
-    }
-    catch (error) {
-
+    } catch (error) {
         console.warn("[AUTH] Non-fatal backend session sync warning:", error);
         return null;
-
     }
-
 };
 
 export const getCurrentUserFromBackend = async () => {
-
-    const idToken =
-        await getFirebaseIdToken();
-
+    const idToken = await getFirebaseIdToken();
     if (!idToken) {
         return null;
     }
@@ -250,319 +162,85 @@ export const getCurrentUserFromBackend = async () => {
         `${API_BASE}/auth/user/me`,
         {
             method: "GET",
-
             headers: {
-                Authorization:
-                    `Bearer ${idToken}`
+                Authorization: `Bearer ${idToken}`
             }
         }
     );
 
     if (!response.ok) {
-
-        if (
-            response.status === 401 ||
-            response.status === 403
-        ) {
-
+        if (response.status === 401 || response.status === 403) {
             return null;
-
         }
-
-        throw new Error(
-            "Unable to fetch user profile."
-        );
-
+        throw new Error("Unable to fetch user profile.");
     }
 
     return await response.json();
-
 };
 
 export const logoutUser = async () => {
-
     await signOut(auth);
-
 };
 
 export const redirectIfAuthenticated = () => {
-
-    onAuthStateChanged(
-        auth,
-        (user) => {
-
-            if (user) {
-
-                window.location.href =
-                    "user/dashboard.html";
-
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            const params = new URLSearchParams(window.location.search);
+            const redirect = params.get("redirect");
+            if (redirect) {
+                try {
+                    window.location.replace(decodeURIComponent(redirect));
+                    return;
+                } catch (e) {}
             }
-
+            window.location.replace("download.html");
         }
-    );
-
+    });
 };
 
 export const protectUserPage = () => {
-
-    onAuthStateChanged(
-        auth,
-        (user) => {
-
-            if (!user) {
-
-                window.location.href =
-                    "../login.html";
-
-            }
-
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            window.location.href = "../login.html";
         }
-    );
-
-                            finished =
-                                true;
-
-                            resolve(
-                                null
-                            );
-
-                        },
-                        8000
-                    );
-
-
-                const unsubscribe =
-                    onAuthStateChanged(
-                        auth,
-
-                        (currentUser) => {
-
-                            if (
-                                finished
-                            ) {
-                                return;
-                            }
-
-
-                            finished =
-                                true;
-
-
-                            clearTimeout(
-                                timeout
-                            );
-
-
-                            unsubscribe();
-
-
-                            resolve(
-                                currentUser
-                            );
-
-                        }
-                    );
-
-            }
-        );
-
-
-    if (!user) {
-
-        return null;
-
-    }
-
-
-    return await user.getIdToken();
-
-};
-export const createUserSession = async () => {
-
-    const user = auth.currentUser;
-
-    if (!user) {
-
-        return null;
-
-    }
-
-    try {
-
-        const idToken =
-            await user.getIdToken(true);
-
-        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
-
-        const response = await robustFetch(
-            `${API_BASE}/auth/user/session`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-                    idToken
-                }),
-
-                signal: controller ? controller.signal : undefined
-            }
-        );
-
-        if (timeoutId) clearTimeout(timeoutId);
-
-        if (!response.ok) {
-            console.warn("[AUTH] Backend session sync returned non-200 status.");
-            return null;
-        }
-
-        const result = await response.json();
-        return result;
-
-    }
-    catch (error) {
-
-        console.warn("[AUTH] Non-fatal backend session sync warning:", error);
-        return null;
-
-    }
-
+    });
 };
 
-export const getCurrentUserFromBackend = async () => {
-
-    const idToken =
-        await getFirebaseIdToken();
-
-    if (!idToken) {
-        return null;
-    }
-
-    const response = await robustFetch(
-        `${API_BASE}/auth/user/me`,
-        {
-            method: "GET",
-
-            headers: {
-                Authorization:
-                    `Bearer ${idToken}`
-            }
-        }
-    );
-
-    if (!response.ok) {
-
-        if (
-            response.status === 401 ||
-            response.status === 403
-        ) {
-
-            return null;
-
-        }
-
-        throw new Error(
-            "Unable to fetch user profile."
-        );
-
-    }
-
-    return await response.json();
-
-};
-
-export const logoutUser = async () => {
-
-    await signOut(auth);
-
-};
-
-export const redirectIfAuthenticated = () => {
-
-    onAuthStateChanged(
-        auth,
-        (user) => {
-
-            if (user) {
-
-                window.location.href =
-                    "user/dashboard.html";
-
-            }
-
-        }
-    );
-
-};
-
-export const protectUserPage = () => {
-
-    onAuthStateChanged(
-        auth,
-        (user) => {
-
-            if (!user) {
-
-                window.location.href =
-                    "../login.html";
-
-            }
-
-        }
-    );
-
-};
 /* ==========================================================
    GET USER ENTITLEMENT
-   ========================================================== */
+========================================================== */
 
-export const getCurrentUserEntitlement =
-    async () => {
+export const getCurrentUserEntitlement = async () => {
+    try {
+        const idToken = await getFirebaseIdToken();
+        if (!idToken) {
+            return null;
+        }
 
-        try {
-            const idToken =
-                await getFirebaseIdToken();
-
-            if (!idToken) {
-                return null;
+        const response = await robustFetch(
+            `${API_BASE}/user/entitlement`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${idToken}`,
+                    Accept: "application/json"
+                },
+                cache: "no-store"
             }
+        );
 
-            const response =
-                await robustFetch(
-                    `${API_BASE}/user/entitlement`,
-                    {
-                        method: "GET",
-
-                        headers: {
-                            Authorization:
-                                `Bearer ${idToken}`,
-
-                            Accept:
-                                "application/json"
-                        },
-
-                        cache: "no-store"
-                    }
-                );
-
-            if (!response.ok) {
-                console.warn("[AUTH] Entitlement status non-200:", response.status);
-                return { plan: "free", status: "inactive" };
-            }
-
-            const result =
-                await response.json();
-
-            return result?.entitlement || { plan: "free", status: "inactive" };
-        } catch (err) {
-            console.warn("[AUTH] Entitlement fetch fallback warning:", err);
+        if (!response.ok) {
+            console.warn("[AUTH] Entitlement status non-200:", response.status);
             return { plan: "free", status: "inactive" };
         }
-    };
 
+        const result = await response.json();
+        return result?.entitlement || { plan: "free", status: "inactive" };
+    } catch (err) {
+        console.warn("[AUTH] Entitlement fetch fallback warning:", err);
+        return { plan: "free", status: "inactive" };
+    }
+};
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
