@@ -4300,36 +4300,36 @@ document.addEventListener(
    BEFORE UNLOAD
 ========================================================== */
 
-window.addEventListener(
-    "beforeunload",
-    () => {
+   SHOW EMPTY FOLDER
+========================================================== */
 
-        downloadInProgress =
-            false;
+function showEmptyFolder(
+    container
+) {
+
+    if (
+        !container
+    ) {
+
+        return;
 
     }
-);
 
 
-/* ==========================================================
-   FINAL DEBUG INFO
-========================================================== */
+    container.innerHTML = `
 
-console.log(
-    "[Downloads] ReelsBundles download module loaded."
-);
+        <div class="folder-browser-empty">
 
+            <div class="folder-empty-icon">
+                📂
+            </div>
 
-console.log(
-    "[Downloads] API:",
-    API_BASE
-);
+            <h3>
+                No content available
+            </h3>
 
-
-/* ==========================================================
-   END
-========================================================== */
-
+            <p>
+                This folder does not contain any available
                 files or folders.
             </p>
 
