@@ -177,6 +177,12 @@ form.addEventListener(
                     "Too many attempts. Please try again later.";
 
             }
+            else if (error.message && (error.message.toLowerCase().includes("fetch") || error.message.toLowerCase().includes("network"))) {
+
+                errorMessage =
+                    "Network connection error. Please check your connection and try again.";
+
+            }
             else if (error.message) {
 
                 errorMessage =

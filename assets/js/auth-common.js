@@ -188,43 +188,52 @@ export const createUserSession = async () => {
 
     if (!user) {
 
-        throw new Error(
-            "Firebase user session not found."
-        );
+        return null;
 
     }
 
-    const idToken =
-        await user.getIdToken(true);
+    try {
 
-    const response = await fetch(
-        `${API_BASE}/auth/user/session`,
-        {
-            method: "POST",
+        const idToken =
+            await user.getIdToken(true);
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
 
-            body: JSON.stringify({
-                idToken
-            })
+        const response = await fetch(
+            `${API_BASE}/auth/user/session`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    idToken
+                }),
+
+                signal: controller ? controller.signal : undefined
+            }
+        );
+
+        if (timeoutId) clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            console.warn("[AUTH] Backend session sync returned non-200 status.");
+            return null;
         }
-    );
 
-    const result =
-        await response.json();
-
-    if (!response.ok) {
-
-        throw new Error(
-            result.message ||
-            "Unable to create user session."
-        );
+        const result = await response.json();
+        return result;
 
     }
+    catch (error) {
 
-    return result;
+        console.warn("[AUTH] Non-fatal backend session sync warning:", error);
+        return null;
+
+    }
 
 };
 
