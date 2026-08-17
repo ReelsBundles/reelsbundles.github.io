@@ -182,9 +182,30 @@ export const logoutUser = async () => {
     await signOut(auth);
 };
 
+export const syncUserToBackend = async (user) => {
+    if (!user) return;
+    try {
+        const providerId = user.providerData?.[0]?.providerId || (user.email ? "password" : "google.com");
+        await fetch(`${API_BASE}/auth/sync-user`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName || user.email?.split("@")[0] || "User",
+                photoURL: user.photoURL || null,
+                providerId: providerId
+            })
+        });
+    } catch (e) {
+        console.warn("[AUTH] User sync notice:", e);
+    }
+};
+
 export const redirectIfAuthenticated = () => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
+            syncUserToBackend(user);
             const params = new URLSearchParams(window.location.search);
             const redirect = params.get("redirect");
             if (redirect) {
@@ -202,6 +223,8 @@ export const protectUserPage = () => {
     onAuthStateChanged(auth, (user) => {
         if (!user) {
             window.location.href = "../login.html";
+        } else {
+            syncUserToBackend(user);
         }
     });
 };
