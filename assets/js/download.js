@@ -1540,43 +1540,60 @@ function createBundleCard(
                 ${description}
             </p>
 
+            <div class="bundle-card-footer" style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
 
-            <div class="bundle-card-footer">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="bundle-access-status">
+                        ${
+                            isUnlocked
+                                ? "🔓 Unlocked"
+                                : "🔒 Locked"
+                        }
+                    </span>
+                    <span style="font-size:11px; color:#94a3b8;">Lifetime Access</span>
+                </div>
 
-                <span
-                    class="bundle-access-status"
-                >
-
-                    ${
-                        isUnlocked
-                            ? "🔓 Unlocked"
-                            : "🔒 Locked"
-                    }
-
-                </span>
-
-
-                <button
-                    type="button"
-                    class="bundle-download-button"
-                    data-bundle-action="download"
-                    data-bundle-id="${escapeAttribute(
-                        bundleId
-                    )}"
-                    ${
-                        !isUnlocked
-                            ? "disabled"
-                            : ""
-                    }
-                >
-
-                    ${
-                        isUnlocked
-                            ? "⬇️ Download"
-                            : "🔒 Locked"
-                    }
-
-                </button>
+                ${
+                    isUnlocked
+                        ? `
+                            <div style="display:flex; gap:8px; width:100%;">
+                                <button
+                                    type="button"
+                                    class="bundle-download-button"
+                                    data-bundle-action="download"
+                                    data-bundle-id="${escapeAttribute(bundleId)}"
+                                    style="flex:1;"
+                                >
+                                    📁 Google Drive
+                                </button>
+                                ${
+                                    bundle.megaLink
+                                        ? `
+                                            <a
+                                                href="${escapeAttribute(bundle.megaLink)}"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="bundle-download-button mega-btn"
+                                                style="flex:1; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.35); color:#f87171; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
+                                            >
+                                                ☁️ MEGA Cloud
+                                            </a>
+                                        `
+                                        : ""
+                                }
+                            </div>
+                        `
+                        : `
+                            <button
+                                type="button"
+                                class="bundle-download-button"
+                                disabled
+                                style="width:100%;"
+                            >
+                                🔒 Locked
+                            </button>
+                        `
+                }
 
             </div>
 

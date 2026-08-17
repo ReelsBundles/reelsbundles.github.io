@@ -1454,14 +1454,32 @@ function createBundleCard(
     const action =
         unlocked
             ? `
-                <button
-                    type="button"
-                    class="rb-card-button rb-card-button-unlocked"
-                    data-bundle-action="download"
-                    data-bundle-id="${escapeAttribute(bundle.id)}"
-                >
-                    ⬇️ Download
-                </button>
+                <div style="display:flex; gap:6px; width:100%;">
+                    <button
+                        type="button"
+                        class="rb-card-button rb-card-button-unlocked"
+                        data-bundle-action="download"
+                        data-bundle-id="${escapeAttribute(bundle.id)}"
+                        style="flex:1;"
+                    >
+                        📁 Google Drive
+                    </button>
+                    ${
+                        bundle.megaLink
+                            ? `
+                                <a
+                                    href="${escapeAttribute(bundle.megaLink)}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="rb-card-button mega-btn"
+                                    style="flex:1; background:rgba(239, 68, 68, 0.18); border:1px solid rgba(239, 68, 68, 0.4); color:#f87171; text-decoration:none; display:inline-flex; align-items:center; justify-content:center;"
+                                >
+                                    ☁️ MEGA Cloud
+                                </a>
+                            `
+                            : ""
+                    }
+                </div>
               `
             : `
                 <button

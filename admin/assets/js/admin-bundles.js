@@ -151,6 +151,16 @@ const premiumFileInput =
         "premiumFileId"
     );
 
+const basicMegaInput =
+    document.getElementById(
+        "basicMegaLink"
+    );
+
+const premiumMegaInput =
+    document.getElementById(
+        "premiumMegaLink"
+    );
+
 /* The existing input IDs are kept for HTML compatibility.
  * They now contain Google Drive FOLDER links, not file links. */
 function updateDriveFolderFieldText() {
@@ -1122,16 +1132,30 @@ function openModal(
             "";
 
         basicFileInput.value =
+            bundle.basic?.folderLink ||
             bundle.basic?.fileId ||
             "";
+
+        if (basicMegaInput) {
+            basicMegaInput.value =
+                bundle.basic?.megaLink ||
+                "";
+        }
 
         premiumTitleInput.value =
             bundle.premium?.title ||
             "";
 
         premiumFileInput.value =
+            bundle.premium?.folderLink ||
             bundle.premium?.fileId ||
             "";
+
+        if (premiumMegaInput) {
+            premiumMegaInput.value =
+                bundle.premium?.megaLink ||
+                "";
+        }
 
         if (thumbPreview) {
 
@@ -1361,84 +1385,46 @@ function buildPayload() {
     /*
      * BASIC
      */
-    if (
-        selectedPlan ===
-        "basic"
-    ) {
-
-        const title =
-            basicTitleInput?.value.trim() ||
-            "";
-
-        const folderLink =
-            basicFileInput?.value.trim() ||
-            "";
+    if (selectedPlan === "basic") {
+        const title = basicTitleInput?.value.trim() || "";
+        const folderLink = basicFileInput?.value.trim() || "";
+        const megaLink = basicMegaInput?.value.trim() || "";
 
         if (!title) {
-
-            throw new Error(
-                "Basic bundle title is required."
-            );
+            throw new Error("Basic bundle title is required.");
         }
 
-        if (
-            !isValidGoogleDriveLink(
-                folderLink
-            )
-        ) {
-
-            throw new Error(
-                "Invalid Basic Google Drive Folder Link."
-            );
+        if (!folderLink && !megaLink) {
+            throw new Error("At least one cloud storage link (Google Drive or MEGA.nz) is required for Basic plan.");
         }
 
         payload.basic = {
-
             title,
-
-            folderLink
+            folderLink,
+            megaLink
         };
     }
 
     /*
      * PREMIUM
      */
-    if (
-        selectedPlan ===
-        "premium"
-    ) {
-
-        const title =
-            premiumTitleInput?.value.trim() ||
-            "";
-
-        const folderLink =
-            premiumFileInput?.value.trim() ||
-            "";
+    if (selectedPlan === "premium") {
+        const title = premiumTitleInput?.value.trim() || "";
+        const folderLink = premiumFileInput?.value.trim() || "";
+        const megaLink = premiumMegaInput?.value.trim() || "";
 
         if (!title) {
-
-            throw new Error(
-                "Premium bundle title is required."
-            );
+            throw new Error("Premium bundle title is required.");
         }
 
-        if (
-            !isValidGoogleDriveLink(
-                folderLink
-            )
-        ) {
-
-            throw new Error(
-                "Invalid Premium Google Drive Folder Link."
-            );
+        if (!folderLink && !megaLink) {
+            throw new Error("At least one cloud storage link (Google Drive or MEGA.nz) is required for Premium plan.");
         }
 
         payload.premium = {
-
             title,
-
-            folderLink
+            folderLink,
+            megaLink
         };
     }
 
