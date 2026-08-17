@@ -1,403 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Downloads | ReelsBundles Admin
-    </title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <!-- Admin Dashboard CSS -->
-    <link
-        rel="stylesheet"
-        href="assets/css/admin-dashboard.css"
-    >
-
-    <!-- Downloads CSS -->
-    <link
-        rel="stylesheet"
-        href="assets/css/admin-download.css"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloads Manager — ReelsBundles Admin</title>
+    
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- ADMIN CORE CSS -->
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-orders.css">
+    <link rel="stylesheet" href="assets/css/admin-download.css">
 </head>
-
-
-<body class="admin-downloads-page">
-
-
-    <!-- ======================================================
-         ADMIN APP
-    ======================================================= -->
-
+<body class="admin-body">
     <div class="admin-layout">
-
-
-        <!-- ==================================================
-             SIDEBAR
-        =================================================== -->
-
+        <!-- SIDEBAR -->
         <aside class="admin-sidebar">
-
             <div class="admin-brand">
-
-                <div class="admin-brand-icon">
-                    ▶
-                </div>
-
+                <div class="admin-brand-icon">▶</div>
                 <div>
-
-                    <strong>
-                        ReelsBundles
-                    </strong>
-
-                    <span>
-                        ADMIN
-                    </span>
-
+                    <strong>ReelsBundles</strong>
+                    <span>ADMIN PANEL</span>
                 </div>
-
             </div>
 
+            <nav class="admin-nav">
+                <a href="dashboard.html" class="admin-nav-item"><span>📊</span> Dashboard</a>
+                <a href="users.html" class="admin-nav-item"><span>👥</span> Users</a>
+                <a href="bundles.html" class="admin-nav-item"><span>📦</span> Bundles</a>
+                <a href="orders.html" class="admin-nav-item"><span>🧾</span> Orders</a>
+                <a href="coupons.html" class="admin-nav-item"><span>🎟️</span> Coupons</a>
+                <a href="demo-videos.html" class="admin-nav-item"><span>🎬</span> Demo Videos</a>
+                <a href="download.html" class="admin-nav-item active"><span>⬇️</span> Downloads</a>
+                <a href="storage.html" class="admin-nav-item"><span>☁️</span> Cloud Storage</a>
+                <a href="protection.html" class="admin-nav-item"><span>🛡️</span> Security & Protection</a>
+            </nav>
 
-                            <nav class="admin-nav">
-            <a href="dashboard.html" class="admin-nav-item ">
-                <span>📊</span> Dashboard
-            </a>
-            <a href="users.html" class="admin-nav-item ">
-                <span>👥</span> Users
-            </a>
-            <a href="bundles.html" class="admin-nav-item ">
-                <span>📦</span> Bundles
-            </a>
-            <a href="orders.html" class="admin-nav-item ">
-                <span>🧾</span> Orders
-            </a>
-            <a href="coupons.html" class="admin-nav-item ">
-                <span>🎟️</span> Coupons
-            </a>
-            <a href="demo-videos.html" class="admin-nav-item ">
-                <span>🎬</span> Demo Videos
-            </a>
-            <a href="download.html" class="admin-nav-item active">
-                <span>⬇️</span> Downloads
-            </a>
-            <a href="storage.html" class="admin-nav-item ">
-                <span>☁️</span> Cloud Storage
-            </a>
-            <a href="protection.html" class="admin-nav-item ">
-                <span>🛡️</span> Security & Protection
-            </a>
-                 SUMMARY CARDS
-            ================================================== -->
-
-            <section class="download-summary">
-
-
-                <article class="summary-card">
-
-                    <div class="summary-icon">
-                        ⬇️
-                    </div>
-
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <span class="admin-avatar">A</span>
                     <div>
-
-                        <span>
-                            Total Downloads
-                        </span>
-
-                        <strong
-                            id="totalDownloads"
-                        >
-                            0
-                        </strong>
-
+                        <strong id="adminSidebarName">Super Administrator</strong>
+                        <small id="adminSidebarEmail">admin@reelsbundles.com</small>
                     </div>
+                </div>
+                <button type="button" class="admin-logout-btn" id="adminLogoutBtn">Logout</button>
+            </div>
+        </aside>
 
+        <!-- MAIN -->
+        <main class="admin-main">
+            <header class="admin-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <div>
+                    <h1>⬇️ Downloads Manager</h1>
+                    <p style="color:#94a3b8; font-size:14px; margin-top:4px;">Monitor real customer bundle downloads and purchase logs.</p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="btn-action" onclick="loadDownloads(1)">↻ Refresh</button>
+                    <button type="button" id="deleteAllDownloadsButton" class="btn-action btn-danger">🗑️ Delete All</button>
+                </div>
+            </header>
+
+            <!-- SUMMARY CARDS -->
+            <section class="download-summary" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;">
+                <article class="summary-card" style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:18px; display:flex; align-items:center; gap:14px;">
+                    <div class="summary-icon" style="font-size:24px;">⬇️</div>
+                    <div>
+                        <span style="color:#94a3b8; font-size:12px; display:block;">Total Downloads</span>
+                        <strong id="totalDownloads" style="color:#fff; font-size:22px; font-weight:800;">0</strong>
+                    </div>
                 </article>
 
-
-
-                <article class="summary-card">
-
-                    <div class="summary-icon success-icon">
-                        ✓
-                    </div>
-
+                <article class="summary-card" style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:18px; display:flex; align-items:center; gap:14px;">
+                    <div class="summary-icon success-icon" style="font-size:24px; color:#4ade80;">✓</div>
                     <div>
-
-                        <span>
-                            Successful
-                        </span>
-
-                        <strong
-                            id="successfulDownloads"
-                        >
-                            0
-                        </strong>
-
+                        <span style="color:#94a3b8; font-size:12px; display:block;">Successful</span>
+                        <strong id="successfulDownloads" style="color:#fff; font-size:22px; font-weight:800;">0</strong>
                     </div>
-
                 </article>
 
-
-
-                <article class="summary-card">
-
-                    <div class="summary-icon basic-icon">
-                        📦
-                    </div>
-
+                <article class="summary-card" style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:18px; display:flex; align-items:center; gap:14px;">
+                    <div class="summary-icon basic-icon" style="font-size:24px; color:#60a5fa;">📦</div>
                     <div>
-
-                        <span>
-                            Basic Downloads
-                        </span>
-
-                        <strong
-                            id="basicDownloads"
-                        >
-                            0
-                        </strong>
-
+                        <span style="color:#94a3b8; font-size:12px; display:block;">Basic Downloads</span>
+                        <strong id="basicDownloads" style="color:#fff; font-size:22px; font-weight:800;">0</strong>
                     </div>
-
                 </article>
 
-
-
-                <article class="summary-card">
-
-                    <div class="summary-icon premium-icon">
-                        👑
-                    </div>
-
+                <article class="summary-card" style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:18px; display:flex; align-items:center; gap:14px;">
+                    <div class="summary-icon premium-icon" style="font-size:24px; color:#f59e0b;">👑</div>
                     <div>
-
-                        <span>
-                            Premium Downloads
-                        </span>
-
-                        <strong
-                            id="premiumDownloads"
-                        >
-                            0
-                        </strong>
-
+                        <span style="color:#94a3b8; font-size:12px; display:block;">Premium Downloads</span>
+                        <strong id="premiumDownloads" style="color:#fff; font-size:22px; font-weight:800;">0</strong>
                     </div>
-
                 </article>
-
-
             </section>
 
-
-
-            <!-- =================================================
-                 FILTERS
-            ================================================== -->
-
-            <section class="downloads-panel">
-
-
-                <div class="downloads-toolbar">
-
-
-                    <div class="search-box">
-
-                        <span>
-                            🔍
-                        </span>
-
-                        <input
-                            type="search"
-                            id="downloadSearch"
-                            placeholder="Search customer, email, phone or order ID..."
-                            autocomplete="off"
-                        >
-
-                    </div>
-
-
-                    <select
-                        id="downloadPlanFilter"
-                        class="filter-select"
-                    >
-
-                        <option value="">
-                            All Plans
-                        </option>
-
-                        <option value="basic">
-                            Basic
-                        </option>
-
-                        <option value="premium">
-                            Premium
-                        </option>
-
-                    </select>
-
-
-                    <select
-                        id="downloadStatusFilter"
-                        class="filter-select"
-                    >
-
-                        <option value="">
-                            All Status
-                        </option>
-
-                        <option value="success">
-                            Success
-                        </option>
-
-                        <option value="failed">
-                            Failed
-                        </option>
-
-                    </select>
-
-
+            <!-- TOOLBAR FILTERS -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:14px;">
+                <div style="flex:1; min-width:260px; max-width:400px;">
+                    <input type="search" id="downloadSearch" class="form-control" placeholder="🔍 Search customer, email, or order ID..." style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:10px 16px; border-radius:10px; width:100%;">
                 </div>
-
-
-
-                <!-- =================================================
-                     TABLE
-                ================================================== -->
-
-                <div class="downloads-table-wrapper">
-
-                    <table class="downloads-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Customer
-                                </th>
-
-                                <th>
-                                    Email
-                                </th>
-
-                                <th>
-                                    Order ID
-                                </th>
-
-                                <th>
-                                    Amount
-                                </th>
-
-                                <th>
-                                    Plan
-                                </th>
-
-                                <th>
-                                    Bundle
-                                </th>
-
-                                <th>
-                                    Payment
-                                </th>
-
-                                <th>
-                                    Download
-                                </th>
-
-                                <th>
-                                    Count
-                                </th>
-
-                                <th>
-                                    Date
-                                </th>
-
-                                <th>
-                                    Action
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody
-                            id="downloadsTableBody"
-                        >
-
-                            <tr>
-
-                                <td
-                                    colspan="11"
-                                    class="loading-state"
-                                >
-
-                                    Loading downloads...
-
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
+                <div style="display:flex; gap:10px;">
+                    <select id="downloadPlanFilter" style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:10px 14px; border-radius:10px;">
+                        <option value="">All Plans</option>
+                        <option value="basic">Basic</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                    <select id="downloadStatusFilter" style="background:rgba(30,41,59,0.7); border:1px solid rgba(255,255,255,0.1); color:#fff; padding:10px 14px; border-radius:10px;">
+                        <option value="">All Status</option>
+                        <option value="success">Success</option>
+                        <option value="failed">Failed</option>
+                    </select>
                 </div>
+            </div>
 
+            <!-- TABLE CONTAINER -->
+            <div class="table-container" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius:16px; overflow:hidden;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Order ID</th>
+                            <th>Amount</th>
+                            <th>Plan</th>
+                            <th>Bundle</th>
+                            <th>Payment</th>
+                            <th>Download</th>
+                            <th>Count</th>
+                            <th>Date</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="downloadsTableBody">
+                        <tr>
+                            <td colspan="11" style="text-align:center; padding:40px; color:#94a3b8;">Loading download records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-
-                <!-- =================================================
-                     PAGINATION
-                ================================================== -->
-
-                <div
-                    id="downloadsPagination"
-                    class="downloads-pagination"
-                ></div>
-
-
-            </section>
-
-
+            <div id="downloadsPagination" style="margin-top:20px; display:flex; justify-content:center; gap:8px;"></div>
         </main>
-
     </div>
 
-
-
-    <!-- ======================================================
-         JAVASCRIPT
-    ======================================================= -->
-
-   <script
-    src="assets/js/admin-download.js"
-    defer
-></script>
+    <script src="assets/js/admin-download.js"></script>
 </body>
-
 </html>
