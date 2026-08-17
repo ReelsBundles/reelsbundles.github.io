@@ -205,3 +205,70 @@ right:-150px;
 top:120px;
 
 }
+
+/* ==========================================================
+   CROSS-DEVICE COMPATIBILITY (Mobile, Tablet, Desktop)
+   ========================================================== */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+    font-size: 16px !important;
+}
+
+@media screen and (max-width: 991px) {
+    section {
+        padding: 70px 0 !important;
+    }
+    
+    .container {
+        width: 92% !important;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    section {
+        padding: 45px 0 !important;
+    }
+
+    h1 {
+        font-size: clamp(2.1rem, 7.5vw, 3.2rem) !important;
+        letter-spacing: -0.5px;
+    }
+
+    h2 {
+        font-size: clamp(1.6rem, 5.5vw, 2.2rem) !important;
+    }
+
+    p {
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+    }
+
+    .btn {
+        padding: 14px 22px !important;
+        font-size: 15px !important;
+    }
+
+    .background__blur--left,
+    .background__blur--right {
+        width: 250px !important;
+        height: 250px !important;
+        filter: blur(80px) !important;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    .container {
+        width: 95% !important;
+    }
+}
