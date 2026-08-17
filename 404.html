@@ -2,6 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script>
+    (function() {
+        var routeMap = {
+            "/": "index.html",
+            "/index": "index.html",
+            "/login": "login.html",
+            "/signup": "signup.html",
+            "/dashboard": "dashboard.html",
+            "/payment": "payment.html",
+            "/success": "success.html",
+            "/download": "download.html",
+            "/contact": "contact.html",
+            "/demo": "demo.html",
+            "/disclaimer": "disclaimer.html",
+            "/failed": "failed.html",
+            "/forgot-password": "forgot-password.html",
+            "/privacy": "privacy.html",
+            "/refund": "refund.html",
+            "/terms": "terms.html"
+        };
+
+        var pathname = window.location.pathname;
+        if (pathname.length > 1 && pathname.endsWith('/')) {
+            pathname = pathname.slice(0, -1);
+        }
+        var lowerPath = pathname.toLowerCase();
+        var segments = lowerPath.split('/').filter(Boolean);
+        var pageKey = segments.length > 0 ? '/' + segments[segments.length - 1] : '/';
+
+        var targetFile = routeMap[lowerPath] || routeMap[pageKey];
+
+        if (targetFile) {
+            var queryAndHash = window.location.search + window.location.hash;
+            window.location.replace(targetFile + queryAndHash);
+        }
+    })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 — Page Not Found | ReelsBundles</title>
 
