@@ -62,31 +62,17 @@ document.addEventListener(
 
 
                                 /* ==========================================
-                                   USER NOT LOGGED IN
+                                   USER NOT LOGGED IN -> SEAMLESS LOGIN REDIRECT
                                    ========================================== */
 
-                                const loginConfirm =
-                                    window.confirm(
-                                        "🔐 Login Required\n\nPlease sign in to continue with your purchase.\n\nClick OK to continue to Login."
-                                    );
+                                const returnUrl =
+                                    `payment.html?plan=${encodeURIComponent(plan)}`;
 
 
-                                if (loginConfirm) {
+                                window.location.href =
+                                    `login.html?redirect=${encodeURIComponent(returnUrl)}`;
 
-                                    const returnUrl =
-                                        `payment.html?plan=${encodeURIComponent(plan)}`;
-
-
-                                    window.location.href =
-                                        `login.html?redirect=${encodeURIComponent(returnUrl)}`;
-
-                                }
-
-                                else {
-
-                                    resolve(false);
-
-                                }
+                                resolve(false);
 
                             }
                         );
