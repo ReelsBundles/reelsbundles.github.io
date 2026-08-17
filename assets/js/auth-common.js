@@ -389,7 +389,7 @@ export const getCurrentUserEntitlement =
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
         try {
-            const response = await robustFetch(url, options);
+            const response = await window.fetch(url, options);
             return response;
         } catch (err) {
             console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
