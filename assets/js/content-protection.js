@@ -93,10 +93,12 @@ function applyCssRestrictions() {
         styleElement.remove();
         styleElement = null;
     }
-}
+let isProtectionInitialized = false;
 
 function initContentProtection() {
     applyCssRestrictions();
+    if (isProtectionInitialized) return;
+    isProtectionInitialized = true;
 
     // 1. Right Click Protection
     document.addEventListener("contextmenu", (event) => {
