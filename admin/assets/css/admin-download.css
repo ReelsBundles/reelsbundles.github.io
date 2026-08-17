@@ -1171,37 +1171,18 @@ body {
 }
 
 
-/* ==========================================================
-   EMPTY / LOADING / ERROR
-========================================================== */
-
-.loading-state,
-.empty-state,
-.error-state {
-    min-height: 170px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 30px;
-
-    text-align: center;
-
-    font-size: 13px;
-}
-
-.loading-state {
-    color: #94a3b8;
-}
-
-.empty-state {
-    color: #94a3b8;
-}
-
-.error-state {
-    color: #fca5a5;
+td.loading-state,
+td.empty-state,
+td.error-state {
+    display: table-cell !important;
+    width: 100% !important;
+    padding: 60px 20px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    color: #94a3b8 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    background: transparent !important;
 }
 
 
