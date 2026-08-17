@@ -1866,31 +1866,27 @@ async function loadFolderContents(
    DRIVE ITEM CARD
 ========================================================== */
 
-function createDriveItemCard(
-    item,
-    bundle
-) {
-    if (!item?.id) return null;
-
+function createDriveItemCard(item, bundle) {
     const card = document.createElement("article");
     card.className = "drive-item-card";
 
-    const isFolder = item.type === "folder";
-    const name = safeText(item.name || "Untitled");
-    const icon = getDriveItemIcon(item);
-    const meta = safeText(getDriveItemMeta(item));
+    const isMega = item.type === "mega" || item.mimeType === "application/vnd.mega.cloud-storage";
+    const isFolder = !isMega && isDriveFolder(item);
+    const name = safeText(item.name || (isFolder ? "Folder" : "File"));
+    const icon = isMega ? "☁️" : getDriveItemIcon(item);
+    const meta = isMega ? "MEGA Cloud Storage Package" : safeText(getDriveItemMeta(item));
 
     card.innerHTML = `
         <div class="drive-item-icon">${icon}</div>
         <div class="drive-item-info">
             <h3 class="drive-item-name">${name}</h3>
             <p class="drive-item-type">
-                ${isFolder ? "Folder" : (safeText(item.mimeType || "File"))}
+                ${isMega ? "☁️ MEGA Cloud Package" : (isFolder ? "Folder" : safeText(item.mimeType || "File"))}
                 ${meta ? ` • ${meta}` : ""}
             </p>
         </div>
         <button type="button" class="drive-item-action">
-            ${isFolder ? "Open" : "Download"}
+            ${isMega ? "Open MEGA" : (isFolder ? "Open" : "Download")}
         </button>
     `;
 
@@ -1898,6 +1894,11 @@ function createDriveItemCard(
 
     actionButton?.addEventListener("click", async () => {
         if (actionButton.disabled) return;
+
+        if (isMega && item.megaLink) {
+            window.open(item.megaLink, "_blank", "noopener,noreferrer");
+            return;
+        }
 
         const bundleId = bundle?.id || getBundleIdFromUrl();
 
@@ -1934,7 +1935,7 @@ function createDriveItemCard(
         } finally {
             if (document.body.contains(card)) {
                 actionButton.disabled = false;
-                actionButton.textContent = isFolder ? "Open" : "Download";
+                actionButton.textContent = isMega ? "Open MEGA" : (isFolder ? "Open" : "Download");
             }
         }
     });
