@@ -5,12 +5,19 @@ import {
 import {
     signInWithEmailAndPassword,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 import {
     createUserSession
 } from "./auth-common.js";
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        window.location.replace(getLoginRedirect());
+    }
+});
 
 const form =
     document.getElementById("loginForm");
@@ -43,13 +50,15 @@ const getLoginRedirect = () => {
 
     try {
 
-        const decoded = decodeURIComponent(redirect);
+        const decoded = decodeURIComponent(redirect).trim();
 
-        // Only allow internal pages
         if (
-            decoded.startsWith("payment.html") ||
+            decoded.includes("payment") ||
+            decoded.includes("download") ||
+            decoded.includes("dashboard") ||
             decoded.startsWith("user/") ||
-            decoded === "dashboard.html"
+            decoded.startsWith("/") ||
+            decoded.startsWith(".")
         ) {
             return decoded;
         }
