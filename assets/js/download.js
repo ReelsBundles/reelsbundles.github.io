@@ -1813,9 +1813,16 @@ async function loadFolderContents(
             );
         }
 
+        const items = Array.isArray(data.items) ? data.items : [];
+
+        if (items.length === 0 && folderId) {
+            window.open(`https://drive.google.com/drive/folders/${encodeURIComponent(folderId)}`, "_blank", "noopener,noreferrer");
+            return;
+        }
+
         renderBundleFilesView(
             data.bundle,
-            Array.isArray(data.items) ? data.items : [],
+            items,
             folderName
         );
     } catch (error) {
