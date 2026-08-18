@@ -4181,46 +4181,44 @@ async function retryLoadBundleLibrary() {
 
     }
 
+    if (
+        !button.dataset.originalText
+    ) {
+
+        button.dataset.originalText =
+            button.innerHTML;
+
+    }
+
+
+    button.disabled =
+        true;
+
+
+    button.setAttribute(
+        "aria-busy",
+        "true"
+    );
+
+
+    button.innerHTML =
+        `⏳ ${safeText(text)}`;
+
 }
 
 
 /* ==========================================================
-   ONLINE EVENT
+   RESTORE BUTTON
 ========================================================== */
 
-window.addEventListener(
-    "online",
-    async () => {
+function restoreButton(
+    button
+) {
 
-        console.log(
-            "[Downloads] Connection restored."
-        );
+    if (
+        !button
+    ) {
 
-
-        if (
-            isAuthenticated()
-        ) {
-
-            try {
-
-                await loadBundleLibrary();
-
-            }
-
-            catch (
-                error
-            ) {
-
-                console.warn(
-                    "[Downloads] Online refresh failed:",
-                    error
-                );
-
-            }
-
-        }
-
-    }
         return;
 
     }
@@ -4380,60 +4378,29 @@ async function retryLoadBundleLibrary() {
 
 
 /* ==========================================================
-   ONLINE EVENT
+   ONLINE & OFFLINE EVENTS
 ========================================================== */
 
 window.addEventListener(
     "online",
     async () => {
-
-        console.log(
-            "[Downloads] Connection restored."
-        );
-
-
-        if (
-            isAuthenticated()
-        ) {
-
+        console.log("[Downloads] Connection restored.");
+        if (isAuthenticated()) {
             try {
-
                 await loadBundleLibrary();
-
+            } catch (error) {
+                console.warn("[Downloads] Online refresh failed:", error);
             }
-
-            catch (
-                error
-            ) {
-
-                console.warn(
-                    "[Downloads] Online refresh failed:",
-                    error
-                );
-
-            }
-
         }
-
     }
 );
-
-
-/* ==========================================================
-   OFFLINE EVENT
-========================================================== */
 
 window.addEventListener(
     "offline",
     () => {
-
-        console.warn(
-            "[Downloads] Browser is offline."
-        );
-
+        console.warn("[Downloads] Browser is offline.");
     }
 );
-
 
 /* ==========================================================
    ESCAPE KEY
@@ -4442,15 +4409,8 @@ window.addEventListener(
 document.addEventListener(
     "keydown",
     event => {
-
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
+        if (event.key === "Escape") {
             closeLockedModal();
-
-        }
 
     }
 );
