@@ -1865,6 +1865,11 @@ function createDriveItemCard(item, bundle) {
             return;
         }
 
+        if (item.folderLink) {
+            window.open(item.folderLink, "_blank", "noopener,noreferrer");
+            return;
+        }
+
         const bundleId = bundle?.id || getBundleIdFromUrl();
 
         if (!bundleId) {
