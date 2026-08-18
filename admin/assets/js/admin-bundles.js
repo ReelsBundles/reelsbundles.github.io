@@ -2090,3 +2090,6 @@ async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
         }
     }
 }
+
+// Automatically load bundles when script initializes
+loadBundles();
