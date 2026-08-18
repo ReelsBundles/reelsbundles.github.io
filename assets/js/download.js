@@ -4221,16 +4221,16 @@ window.addEventListener(
         }
 
     }
-);
+        return;
+
+    }
 
 
-/* ==========================================================
-   OFFLINE EVENT
-========================================================== */
+    button.disabled =
+        false;
 
-window.addEventListener(
-    "offline",
-    () => {
+
+    button.removeAttribute(
         "aria-busy"
     );
 
