@@ -15,10 +15,16 @@ const API_BASE = window.REELS_BUNDLES_API_BASE || (
         : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
 );
 const API = `${API_BASE}/api/admin/bundles`;
-const TOKEN_KEY = "admin_token";
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           localStorage.getItem("token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("token") || "";
+}
 
-const token =
-    localStorage.getItem(TOKEN_KEY);
+const token = getAdminToken();
 
 if (!token) {
     window.location.href = "login.html";
@@ -206,7 +212,7 @@ async function api(
     url,
     options = {}
 ) {
-
+    const currentToken = getAdminToken() || token;
     const response =
         await robustFetch(
             url,
@@ -215,7 +221,7 @@ async function api(
 
                 headers: {
                     Authorization:
-                        `Bearer ${token}`,
+                        `Bearer ${currentToken}`,
 
                     "Content-Type":
                         "application/json",
