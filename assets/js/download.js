@@ -4181,201 +4181,7 @@ async function retryLoadBundleLibrary() {
 
     }
 
-    if (
-        !button.dataset.originalText
-    ) {
-
-        button.dataset.originalText =
-            button.innerHTML;
-
-    }
-
-
-    button.disabled =
-        true;
-
-
-    button.setAttribute(
-        "aria-busy",
-        "true"
-    );
-
-
-    button.innerHTML =
-        `⏳ ${safeText(text)}`;
-
 }
-
-
-/* ==========================================================
-   RESTORE BUTTON
-========================================================== */
-
-function restoreButton(
-    button
-) {
-
-    if (
-        !button
-    ) {
-
-        return;
-
-    }
-
-
-    button.disabled =
-        false;
-
-
-    button.removeAttribute(
-        "aria-busy"
-    );
-
-
-    if (
-        button.dataset.originalText
-    ) {
-
-        button.innerHTML =
-            button.dataset.originalText;
-
-    }
-
-}
-
-
-/* ==========================================================
-   REMOVE FOLDER BROWSER
-========================================================== */
-
-function removeFolderBrowser() {
-
-    const browser =
-        document.getElementById(
-            "reelsBundlesFolderBrowser"
-        );
-
-
-    browser?.remove();
-
-}
-
-
-/* ==========================================================
-   SHOW EMPTY FOLDER
-========================================================== */
-
-function showEmptyFolder(
-    container
-) {
-
-    if (
-        !container
-    ) {
-
-        return;
-
-    }
-
-
-    container.innerHTML = `
-
-        <div class="folder-browser-empty">
-
-            <div class="folder-empty-icon">
-                📂
-            </div>
-
-            <h3>
-                No content available
-            </h3>
-
-            <p>
-                This folder does not contain any available
-                files or folders.
-            </p>
-
-        </div>
-
-    `;
-
-}
-
-
-/* ==========================================================
-   NETWORK ERROR
-========================================================== */
-
-function getNetworkErrorMessage(
-    error
-) {
-
-    if (
-        !navigator.onLine
-    ) {
-
-        return (
-            "You appear to be offline. " +
-            "Please check your internet connection."
-        );
-
-    }
-
-
-    if (
-        error?.message
-    ) {
-
-        return error.message;
-
-    }
-
-
-    return (
-        "Something went wrong. " +
-        "Please try again."
-    );
-
-}
-
-
-/* ==========================================================
-   RETRY LIBRARY
-========================================================== */
-
-async function retryLoadBundleLibrary() {
-
-    try {
-
-        showLoading();
-
-        await loadBundleLibrary();
-
-        hideLoading();
-
-    }
-
-    catch (
-        error
-    ) {
-
-        console.error(
-            "[Downloads] Retry failed:",
-            error
-        );
-
-
-        showLibraryError(
-            getNetworkErrorMessage(
-                error
-            )
-        );
-
-    }
-
-}
-
 
 /* ==========================================================
    ONLINE & OFFLINE EVENTS
@@ -4411,10 +4217,9 @@ document.addEventListener(
     event => {
         if (event.key === "Escape") {
             closeLockedModal();
-
+        }
     }
 );
-
 
 /* ==========================================================
    BEFORE UNLOAD
@@ -4423,36 +4228,12 @@ document.addEventListener(
 window.addEventListener(
     "beforeunload",
     () => {
-
-        downloadInProgress =
-            false;
-
+        downloadInProgress = false;
     }
 );
 
-
-/* ==========================================================
-   FINAL DEBUG INFO
-========================================================== */
-
-console.log(
-    "[Downloads] ReelsBundles download module loaded."
-);
-
-
-console.log(
-    "[Downloads] API:",
-    API_BASE
-);
-
-
-/* ==========================================================
-   END
-========================================================== */
-
-/* ==========================================================
-   END OF PART 3
-========================================================== */
+console.log("[Downloads] ReelsBundles download module loaded.");
+console.log("[Downloads] API:", API_BASE);
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {

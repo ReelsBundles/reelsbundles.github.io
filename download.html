@@ -158,56 +158,23 @@
                 Premium
             </span>
 
-        </button>
-
-
     </nav>
 
-
-
     <!-- SIDEBAR BOTTOM -->
-
     <div class="sidebar-bottom">
-
-
-        <a
-            href="index.html"
-            class="sidebar-link"
-        >
-
-            <span class="sidebar-icon">
-                🌐
-            </span>
-
-            <span>
-                Website
-            </span>
-
+        <a href="index.html" class="sidebar-link">
+            <span class="sidebar-icon">🌐</span>
+            <span>Website</span>
         </a>
-
-
-
-        <button
-            type="button"
-            class="sidebar-link logout-button"
-            id="logoutButton"
-        >
-
-            <span class="sidebar-icon">
-                🚪
-            </span>
-
-            <span>
-                Logout
-            </span>
-
+        <button type="button" class="sidebar-link logout-button" id="logoutButton" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';">
+            <span class="sidebar-icon">🚪</span>
+            <span>Logout</span>
         </button>
-
-
     </div>
-
-
 </aside>
+
+
+
 
 
 
