@@ -1971,34 +1971,29 @@ async function downloadDriveItem(
         throw new Error("File information is missing.");
     }
 
-    const response = await apiFetch(
-        `/api/user/bundles/${encodeURIComponent(bundleId)}/file/${encodeURIComponent(fileId)}`
-    );
-
-    if (response.status === 401) {
+    const token = await getAuthToken();
+    if (!token) {
         redirectToLogin();
         return;
     }
 
-    if (!response.ok) {
-        await throwApiError(response, "Unable to download this file.");
-    }
+    const cleanName = String(fileName || "download").replace(/[\\/:*?"<>|]/g, "_");
+    const downloadUrl = `${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/file/${encodeURIComponent(fileId)}?token=${encodeURIComponent(token)}`;
 
-    const blob = await response.blob();
-    if (!blob || blob.size === 0) {
-        throw new Error("The downloaded file is empty.");
-    }
-
-    const objectUrl = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
-    anchor.href = objectUrl;
-    anchor.download = String(fileName || "download")
-        .replace(/[\\/:*?"<>|]/g, "_");
+    anchor.href = downloadUrl;
+    anchor.download = cleanName;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.style.display = "none";
     document.body.appendChild(anchor);
     anchor.click();
-    anchor.remove();
 
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+    setTimeout(() => {
+        if (document.body.contains(anchor)) {
+            anchor.remove();
+        }
+    }, 1000);
 
     if (card) {
         showCardError(card, "Download started.");
