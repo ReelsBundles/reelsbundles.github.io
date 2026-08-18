@@ -4231,31 +4231,31 @@ window.addEventListener(
 window.addEventListener(
     "offline",
     () => {
+        "aria-busy"
+    );
 
-        console.warn(
-            "[Downloads] Browser is offline."
-        );
+
+    if (
+        button.dataset.originalText
+    ) {
+
+        button.innerHTML =
+            button.dataset.originalText;
 
     }
-);
+
+}
 
 
 /* ==========================================================
-   ESCAPE KEY
+   REMOVE FOLDER BROWSER
 ========================================================== */
 
-document.addEventListener(
-    "keydown",
-    event => {
+function removeFolderBrowser() {
 
-        if (
-            event.key ===
-            "Escape"
-        ) {
-
-            closeLockedModal();
-
-        }
+    const browser =
+        document.getElementById(
+            "reelsBundlesFolderBrowser"
         );
 
 
