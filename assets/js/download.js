@@ -1844,26 +1844,29 @@ function createDriveItemCard(item, bundle) {
     const card = document.createElement("article");
     card.className = "drive-item-card";
 
-    const isMega = item.type === "mega" || item.mimeType === "application/vnd.mega.cloud-storage";
+    const isMega = Boolean(item.isMega) || item.type === "mega" || item.mimeType === "application/vnd.mega.cloud-storage";
     const isDriveLink = item.type === "drive" || Boolean(item.folderLink);
-    const isFolder = !isMega && !isDriveLink && isDriveFolder(item);
+    const isFolder = isDriveFolder(item);
 
     const name = safeText(item.name || (isFolder ? "Folder" : "File"));
-    const icon = isMega ? "☁️" : (isDriveLink ? "📁" : getDriveItemIcon(item));
-    const meta = isMega
+    const icon = isMega
+        ? (isFolder ? "📁" : getDriveItemIcon(item))
+        : (isDriveLink ? "📁" : getDriveItemIcon(item));
+
+    const meta = (isMega && item.type === "mega")
         ? "MEGA Cloud Storage Package"
         : (isDriveLink ? "Google Drive Cloud Folder" : safeText(getDriveItemMeta(item)));
 
-    const buttonLabel = isMega
-        ? "Open MEGA"
-        : (isDriveLink ? "Open Drive" : (isFolder ? "Open" : "Download"));
+    const buttonLabel = isFolder
+        ? "Open"
+        : (isMega ? "Download" : (isDriveLink ? "Open Drive" : "Download"));
 
     card.innerHTML = `
         <div class="drive-item-icon">${icon}</div>
         <div class="drive-item-info">
             <h3 class="drive-item-name">${name}</h3>
             <p class="drive-item-type">
-                ${isMega ? "☁️ MEGA Cloud Package" : (isDriveLink ? "📁 Google Drive Folder" : (isFolder ? "Folder" : safeText(item.mimeType || "File")))}
+                ${isMega ? (isFolder ? "📁 Folder" : safeText(item.mimeType || "File")) : (isDriveLink ? "📁 Google Drive Folder" : (isFolder ? "Folder" : safeText(item.mimeType || "File")))}
                 ${meta ? ` • ${meta}` : ""}
             </p>
         </div>
@@ -1876,42 +1879,6 @@ function createDriveItemCard(item, bundle) {
 
     actionButton?.addEventListener("click", async () => {
         if (actionButton.disabled) return;
-
-        if (isMega) {
-            const bundleId = bundle?.id || getBundleIdFromUrl();
-            if (!bundleId) {
-                showCardError(card, "Bundle information is missing.");
-                return;
-            }
-
-            actionButton.disabled = true;
-            actionButton.textContent = "⏳ Opening MEGA...";
-
-            try {
-                const response = await apiFetch(`/api/user/bundles/${encodeURIComponent(bundleId)}/mega`);
-                if (response.redirected && response.url) {
-                    window.open(response.url, "_blank", "noopener,noreferrer");
-                } else if (response.ok) {
-                    window.open(`${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/mega`, "_blank", "noopener,noreferrer");
-                } else {
-                    await throwApiError(response, "Unable to access MEGA storage.");
-                }
-            } catch (error) {
-                console.error("[Downloads] MEGA open failed:", error);
-                showCardError(card, error?.message || "Unable to open MEGA storage.");
-            } finally {
-                if (document.body.contains(card)) {
-                    actionButton.disabled = false;
-                    actionButton.textContent = "Open MEGA";
-                }
-            }
-            return;
-        }
-
-        if (isDriveLink && item.folderLink) {
-            window.open(item.folderLink, "_blank", "noopener,noreferrer");
-            return;
-        }
 
         const bundleId = bundle?.id || getBundleIdFromUrl();
 
@@ -1930,6 +1897,29 @@ function createDriveItemCard(item, bundle) {
                     item.id,
                     item.name || "Folder"
                 );
+                return;
+            }
+
+            if (isMega) {
+                const token = await getAuthToken();
+                if (!token) {
+                    redirectToLogin();
+                    return;
+                }
+
+                const response = await apiFetch(`/api/user/bundles/${encodeURIComponent(bundleId)}/mega`);
+                if (response.redirected && response.url) {
+                    window.open(response.url, "_blank", "noopener,noreferrer");
+                } else if (response.ok) {
+                    window.open(`${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/mega`, "_blank", "noopener,noreferrer");
+                } else {
+                    await throwApiError(response, "Unable to access MEGA storage.");
+                }
+                return;
+            }
+
+            if (isDriveLink && item.folderLink) {
+                window.open(item.folderLink, "_blank", "noopener,noreferrer");
                 return;
             }
 
