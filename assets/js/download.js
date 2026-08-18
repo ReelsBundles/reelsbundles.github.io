@@ -1831,27 +1831,44 @@ async function loadFolderContents(
    DRIVE ITEM CARD
 ========================================================== */
 
+function isDriveFolder(item) {
+    if (!item) return false;
+    return (
+        item.type === "folder" ||
+        item.type === "drive" ||
+        item.mimeType === "application/vnd.google-apps.folder"
+    );
+}
+
 function createDriveItemCard(item, bundle) {
     const card = document.createElement("article");
     card.className = "drive-item-card";
 
     const isMega = item.type === "mega" || item.mimeType === "application/vnd.mega.cloud-storage";
-    const isFolder = !isMega && isDriveFolder(item);
+    const isDriveLink = item.type === "drive" || Boolean(item.folderLink);
+    const isFolder = !isMega && !isDriveLink && isDriveFolder(item);
+
     const name = safeText(item.name || (isFolder ? "Folder" : "File"));
-    const icon = isMega ? "☁️" : getDriveItemIcon(item);
-    const meta = isMega ? "MEGA Cloud Storage Package" : safeText(getDriveItemMeta(item));
+    const icon = isMega ? "☁️" : (isDriveLink ? "📁" : getDriveItemIcon(item));
+    const meta = isMega
+        ? "MEGA Cloud Storage Package"
+        : (isDriveLink ? "Google Drive Cloud Folder" : safeText(getDriveItemMeta(item)));
+
+    const buttonLabel = isMega
+        ? "Open MEGA"
+        : (isDriveLink ? "Open Drive" : (isFolder ? "Open" : "Download"));
 
     card.innerHTML = `
         <div class="drive-item-icon">${icon}</div>
         <div class="drive-item-info">
             <h3 class="drive-item-name">${name}</h3>
             <p class="drive-item-type">
-                ${isMega ? "☁️ MEGA Cloud Package" : (isFolder ? "Folder" : safeText(item.mimeType || "File"))}
+                ${isMega ? "☁️ MEGA Cloud Package" : (isDriveLink ? "📁 Google Drive Folder" : (isFolder ? "Folder" : safeText(item.mimeType || "File")))}
                 ${meta ? ` • ${meta}` : ""}
             </p>
         </div>
         <button type="button" class="drive-item-action">
-            ${isMega ? "Open MEGA" : (isFolder ? "Open" : "Download")}
+            ${buttonLabel}
         </button>
     `;
 
@@ -1865,7 +1882,7 @@ function createDriveItemCard(item, bundle) {
             return;
         }
 
-        if (item.folderLink) {
+        if (isDriveLink && item.folderLink) {
             window.open(item.folderLink, "_blank", "noopener,noreferrer");
             return;
         }
@@ -1905,7 +1922,7 @@ function createDriveItemCard(item, bundle) {
         } finally {
             if (document.body.contains(card)) {
                 actionButton.disabled = false;
-                actionButton.textContent = isMega ? "Open MEGA" : (isFolder ? "Open" : "Download");
+                actionButton.textContent = buttonLabel;
             }
         }
     });
