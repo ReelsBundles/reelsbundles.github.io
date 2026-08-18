@@ -1317,3 +1317,130 @@ a {
         font-size: 28px;
     }
 }
+
+
+/* ==========================================================
+   COMPREHENSIVE RESPONSIVE COMPATIBILITY (ALL DEVICES)
+   ========================================================== */
+
+/* Tables & Data Overflows */
+.table-responsive,
+.panel,
+.admin-table-container,
+.data-table-container,
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+table,
+.admin-table,
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .stats,
+    .dashboard-grid,
+    .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+}
+
+/* Mobile & Small Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .admin-layout {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar,
+    .admin-sidebar {
+        width: 100% !important;
+        position: relative !important;
+        height: auto !important;
+        margin-left: 0 !important;
+        padding: 16px !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .content,
+    .admin-main,
+    .admin-layout .admin-main {
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 20px 14px 30px !important;
+        box-sizing: border-box !important;
+    }
+
+    .sidebar nav,
+    .admin-nav {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    .admin-nav-item {
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        border-radius: 8px !important;
+    }
+
+    .stats,
+    .dashboard-grid,
+    .grid-4,
+    .grid-3 {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .modal-content,
+    .admin-modal {
+        width: 94% !important;
+        max-width: 480px !important;
+        padding: 20px 16px !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea,
+    .btn,
+    button {
+        min-height: 42px;
+    }
+
+    table th,
+    table td {
+        padding: 10px 8px !important;
+        font-size: 12px !important;
+        white-space: nowrap;
+    }
+}
+
+/* Extra Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .sidebar nav,
+    .admin-nav {
+        grid-template-columns: 1fr !important;
+    }
+
+    .admin-header,
+    .admin-topbar,
+    .header-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+    }
+
+    .card h2,
+    .stat-number {
+        font-size: 24px !important;
+    }
+}
