@@ -1877,8 +1877,34 @@ function createDriveItemCard(item, bundle) {
     actionButton?.addEventListener("click", async () => {
         if (actionButton.disabled) return;
 
-        if (isMega && item.megaLink) {
-            window.open(item.megaLink, "_blank", "noopener,noreferrer");
+        if (isMega) {
+            const bundleId = bundle?.id || getBundleIdFromUrl();
+            if (!bundleId) {
+                showCardError(card, "Bundle information is missing.");
+                return;
+            }
+
+            actionButton.disabled = true;
+            actionButton.textContent = "⏳ Opening MEGA...";
+
+            try {
+                const response = await apiFetch(`/api/user/bundles/${encodeURIComponent(bundleId)}/mega`);
+                if (response.redirected && response.url) {
+                    window.open(response.url, "_blank", "noopener,noreferrer");
+                } else if (response.ok) {
+                    window.open(`${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/mega`, "_blank", "noopener,noreferrer");
+                } else {
+                    await throwApiError(response, "Unable to access MEGA storage.");
+                }
+            } catch (error) {
+                console.error("[Downloads] MEGA open failed:", error);
+                showCardError(card, error?.message || "Unable to open MEGA storage.");
+            } finally {
+                if (document.body.contains(card)) {
+                    actionButton.disabled = false;
+                    actionButton.textContent = "Open MEGA";
+                }
+            }
             return;
         }
 
