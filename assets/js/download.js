@@ -1836,7 +1836,8 @@ function isDriveFolder(item) {
     return (
         item.type === "folder" ||
         item.type === "drive" ||
-        item.mimeType === "application/vnd.google-apps.folder"
+        item.mimeType === "application/vnd.google-apps.folder" ||
+        item.mimeType === "application/vnd.google-apps.shortcut"
     );
 }
 
