@@ -1947,6 +1947,20 @@ function createDriveItemCard(item, bundle) {
 }
 
 
+async function getAuthToken() {
+    if (firebaseIdToken) return firebaseIdToken;
+    const user = currentUser || firebaseAuth?.currentUser;
+    if (user) {
+        try {
+            firebaseIdToken = await user.getIdToken();
+            return firebaseIdToken;
+        } catch (e) {
+            console.warn("[Downloads] getAuthToken error:", e);
+        }
+    }
+    return firebaseIdToken || null;
+}
+
 /* ==========================================================
    SECURE FILE DOWNLOAD
 ========================================================== */
