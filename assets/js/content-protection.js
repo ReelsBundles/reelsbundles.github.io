@@ -163,6 +163,44 @@ function hideDevToolsWarningModal() {
     }
 }
 
+let isReportingDevTools = false;
+
+async function triggerDevToolsAutoLogout() {
+    showDevToolsWarningModal();
+    if (isReportingDevTools) return;
+    isReportingDevTools = true;
+
+    try {
+        let idToken = null;
+        if (typeof window.getAuthToken === "function") {
+            idToken = await window.getAuthToken();
+        }
+
+        if (idToken) {
+            await fetch(`${API_BASE}/user/report-devtools`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
+                body: JSON.stringify({ reason: "Developer tools inspection detected" })
+            }).catch(() => {});
+        }
+    } catch (e) {
+        console.warn("[PROTECTION] DevTools report failed:", e);
+    } finally {
+        setTimeout(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+            const reasonMsg = "Account suspended due to Developer Tools inspection detection.";
+            const redirectUrl = `download.html?suspended=true&reason=${encodeURIComponent(reasonMsg)}`;
+            if (!window.location.href.includes("suspended=true")) {
+                window.location.href = redirectUrl;
+            }
+        }, 1000);
+    }
+}
+
 function checkDevToolsDimensions() {
     if (!protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
         hideDevToolsWarningModal();
@@ -174,7 +212,7 @@ function checkDevToolsDimensions() {
     const heightDiff = window.outerHeight - window.innerHeight > threshold;
 
     if (widthDiff || heightDiff) {
-        showDevToolsWarningModal();
+        triggerDevToolsAutoLogout();
         return true;
     } else {
         hideDevToolsWarningModal();
@@ -198,7 +236,7 @@ function startAntiDebuggingLoop() {
                 const end = performance.now();
 
                 if (end - start > 100) {
-                    showDevToolsWarningModal();
+                    triggerDevToolsAutoLogout();
                 }
             }
         } else {

@@ -299,6 +299,14 @@ async function initializeDownloadPage() {
 
         setupUI();
 
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("suspended") === "true") {
+            const reason = params.get("reason") || "Account suspended due to Developer Tools inspection detection.";
+            showLibraryError(`🚫 ACCOUNT SUSPENDED: ${reason} Contact Administrator to unlock access.`);
+            hideLoading();
+            return;
+        }
+
         const bundleId =
             getBundleIdFromUrl();
 

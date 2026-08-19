@@ -62,7 +62,8 @@ function renderUsers(usersList) {
         const name = u.displayName || u.email?.split("@")[0] || "User";
         const initial = name.charAt(0).toUpperCase();
         const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
-        const isActive = u.status !== "disabled";
+        const isSuspended = u.locked === true || u.status === "SUSPENDED" || u.status === "disabled";
+        const reasonText = u.suspensionReason ? ` — ${u.suspensionReason}` : "";
 
         return `
             <tr>
@@ -87,13 +88,13 @@ function renderUsers(usersList) {
                 </td>
                 <td style="color:#cbd5e1; font-size:13px;">${dateStr}</td>
                 <td>
-                    <span class="badge ${isActive ? 'badge-active' : 'badge-disabled'}">
-                        ${isActive ? 'Active' : 'Disabled'}
+                    <span class="badge ${isSuspended ? 'badge-disabled' : 'badge-active'}" title="${escapeHtml(u.suspensionReason || '')}">
+                        ${isSuspended ? '⛔ Suspended' + escapeHtml(reasonText) : '🟢 Active'}
                     </span>
                 </td>
                 <td style="text-align:right;">
                     <div style="display:flex; justify-content:flex-end; gap:8px;">
-                        <button class="btn-action" onclick="toggleUser('${u.id}')">${isActive ? '⏸️ Disable' : '▶️ Activate'}</button>
+                        <button class="btn-action" onclick="toggleUser('${u.id}')">${isSuspended ? '🔓 Unlock' : '⏸️ Suspend'}</button>
                         <button class="btn-action btn-danger" onclick="deleteUserItem('${u.id}')">🗑️ Delete</button>
                     </div>
                 </td>
