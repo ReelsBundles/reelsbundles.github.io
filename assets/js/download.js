@@ -302,8 +302,35 @@ async function initializeDownloadPage() {
         const params = new URLSearchParams(window.location.search);
         if (params.get("suspended") === "true") {
             const reason = params.get("reason") || "Account suspended due to Developer Tools inspection detection.";
-            showLibraryError(`🚫 ACCOUNT SUSPENDED: ${reason} Contact Administrator to unlock access.`);
-            hideLoading();
+            const loadingEl = document.getElementById("libraryLoading");
+            if (loadingEl) {
+                loadingEl.style.display = "none";
+                loadingEl.hidden = true;
+            }
+            const errEl = document.getElementById("libraryError");
+            const msgEl = document.getElementById("libraryErrorMessage");
+            if (errEl) {
+                errEl.hidden = false;
+                errEl.style.display = "flex";
+                errEl.style.flexDirection = "column";
+                errEl.style.alignItems = "center";
+                errEl.style.justifyContent = "center";
+                errEl.style.padding = "40px 24px";
+                errEl.style.margin = "30px auto";
+                errEl.style.maxWidth = "640px";
+                errEl.style.border = "1px solid rgba(239, 68, 68, 0.4)";
+                errEl.style.borderRadius = "16px";
+                errEl.style.backgroundColor = "rgba(30, 41, 59, 0.95)";
+                errEl.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.2)";
+            }
+            if (msgEl) {
+                msgEl.textContent = `🚫 ACCOUNT SUSPENDED: ${reason} Contact Administrator to unlock access.`;
+                msgEl.style.color = "#f87171";
+                msgEl.style.fontSize = "16px";
+                msgEl.style.fontWeight = "600";
+                msgEl.style.lineHeight = "1.6";
+                msgEl.style.textAlign = "center";
+            }
             return;
         }
 
