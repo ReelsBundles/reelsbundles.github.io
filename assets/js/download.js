@@ -324,12 +324,30 @@ async function initializeDownloadPage() {
                 errEl.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.2)";
             }
             if (msgEl) {
-                msgEl.textContent = `🚫 ACCOUNT SUSPENDED: ${reason} Contact Administrator to unlock access.`;
-                msgEl.style.color = "#f87171";
-                msgEl.style.fontSize = "16px";
-                msgEl.style.fontWeight = "600";
-                msgEl.style.lineHeight = "1.6";
-                msgEl.style.textAlign = "center";
+                msgEl.innerHTML = `
+                    <div style="font-size: 18px; font-weight: 700; color: #f87171; margin-bottom: 12px;">
+                        🚫 ACCOUNT SUSPENDED
+                    </div>
+                    <div style="font-size: 14px; color: #cbd5e1; font-weight: 500; line-height: 1.6; margin-bottom: 24px;">
+                        ${escapeHtml(reason)}
+                    </div>
+                    <a href="https://wa.me/919326620579?text=${encodeURIComponent("Hello Admin, my ReelsBundles account has been suspended. Please unlock my account.")}" target="_blank" rel="noopener noreferrer" style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 10px;
+                        background: linear-gradient(135deg, #25d366, #128c7e);
+                        color: #ffffff;
+                        font-weight: 700;
+                        font-size: 14px;
+                        padding: 12px 26px;
+                        border-radius: 8px;
+                        text-decoration: none;
+                        box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4);
+                        transition: transform 0.2s;
+                    ">
+                        <span>💬</span> Contact Support on WhatsApp to Unlock Account
+                    </a>
+                `;
             }
             return;
         }

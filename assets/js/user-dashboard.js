@@ -62,10 +62,25 @@ document.addEventListener(
                     ">
                         <div style="font-size: 54px; margin-bottom: 16px;">🚫</div>
                         <h2 style="font-size: 22px; font-weight: 700; color: #f87171; margin-bottom: 12px; font-family: inherit;">ACCOUNT SUSPENDED</h2>
-                        <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 20px; font-family: inherit;">
+                        <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 24px; font-family: inherit;">
                             ${reason}
                         </p>
-                        <p style="color: #94a3b8; font-size: 13px; font-family: inherit;">Please contact Administrator to unlock your account access.</p>
+                        <a href="https://wa.me/919326620579?text=${encodeURIComponent("Hello Admin, my ReelsBundles account has been suspended. Please unlock my account.")}" target="_blank" rel="noopener noreferrer" style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 10px;
+                            background: linear-gradient(135deg, #25d366, #128c7e);
+                            color: #ffffff;
+                            font-weight: 700;
+                            font-size: 14px;
+                            padding: 12px 26px;
+                            border-radius: 8px;
+                            text-decoration: none;
+                            box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4);
+                            transition: transform 0.2s;
+                        ">
+                            <span>💬</span> Contact Support on WhatsApp to Unlock Account
+                        </a>
                     </div>
                 `;
             }
