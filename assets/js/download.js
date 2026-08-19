@@ -308,56 +308,46 @@ async function initializeDownloadPage() {
         const params = new URLSearchParams(window.location.search);
         if (params.get("suspended") === "true") {
             const reason = params.get("reason") || "Account suspended due to Developer Tools inspection detection.";
-            const loadingEl = document.getElementById("libraryLoading");
-            if (loadingEl) {
-                loadingEl.style.display = "none";
-                loadingEl.hidden = true;
-            }
-            const basicSec = document.getElementById("basicBundleSection");
-            const premSec = document.getElementById("premiumBundleSection");
-            if (basicSec) basicSec.style.display = "none";
-            if (premSec) premSec.style.display = "none";
-
-            const errEl = document.getElementById("libraryError");
-            const msgEl = document.getElementById("libraryErrorMessage");
-            if (errEl) {
-                errEl.hidden = false;
-                errEl.style.display = "flex";
-                errEl.style.flexDirection = "column";
-                errEl.style.alignItems = "center";
-                errEl.style.justifyContent = "center";
-                errEl.style.padding = "40px 24px";
-                errEl.style.margin = "30px auto";
-                errEl.style.maxWidth = "640px";
-                errEl.style.border = "1px solid rgba(239, 68, 68, 0.4)";
-                errEl.style.borderRadius = "16px";
-                errEl.style.backgroundColor = "rgba(30, 41, 59, 0.95)";
-                errEl.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.2)";
-            }
-            if (msgEl) {
-                msgEl.innerHTML = `
-                    <div style="font-size: 18px; font-weight: 700; color: #f87171; margin-bottom: 12px;">
-                        🚫 ACCOUNT SUSPENDED
-                    </div>
-                    <div style="font-size: 14px; color: #cbd5e1; font-weight: 500; line-height: 1.6; margin-bottom: 24px;">
-                        ${escapeHtml(reason)}
-                    </div>
-                    <a href="contact.html" style="
-                        display: inline-flex;
+            const mainContent = document.querySelector(".dashboard-content") || document.querySelector("main") || document.body;
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div style="
+                        display: flex;
+                        flex-direction: column;
                         align-items: center;
-                        gap: 10px;
-                        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-                        color: #ffffff;
-                        font-weight: 700;
-                        font-size: 14px;
-                        padding: 12px 26px;
-                        border-radius: 8px;
-                        text-decoration: none;
-                        box-shadow: 0 4px 18px rgba(59, 130, 246, 0.4);
-                        transition: transform 0.2s;
+                        justify-content: center;
+                        padding: 60px 24px;
+                        margin: 60px auto;
+                        max-width: 640px;
+                        border: 1px solid rgba(239, 68, 68, 0.4);
+                        border-radius: 16px;
+                        background-color: rgba(30, 41, 59, 0.95);
+                        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+                        text-align: center;
+                        font-family: system-ui, -apple-system, sans-serif;
                     ">
-                        <span>✉️</span> Go to Contact Support Page
-                    </a>
+                        <div style="font-size: 54px; margin-bottom: 16px;">🚫</div>
+                        <h2 style="font-size: 22px; font-weight: 700; color: #f87171; margin-bottom: 12px; font-family: inherit;">ACCOUNT SUSPENDED</h2>
+                        <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 24px; font-family: inherit;">
+                            ${escapeHtml(reason)}
+                        </p>
+                        <a href="contact.html" style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 10px;
+                            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                            color: #ffffff;
+                            font-weight: 700;
+                            font-size: 14px;
+                            padding: 12px 26px;
+                            border-radius: 8px;
+                            text-decoration: none;
+                            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.4);
+                            transition: transform 0.2s;
+                        ">
+                            <span>✉️</span> Go to Contact Support Page
+                        </a>
+                    </div>
                 `;
             }
             return;

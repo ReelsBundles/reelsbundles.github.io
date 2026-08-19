@@ -532,78 +532,79 @@
 
 
 
-    </section>
+
+
+            </div>
 
 
 
-    <!-- ==================================================
-         FOOTER
-    =================================================== -->
-
-    <footer class="dashboard-footer">
-
-        <div>
-            © 2026 ReelsBundles
-        </div>
-
-        <div>
-
-            Developed with
-            <span>❤️</span>
-            by Santosh Koli
-
-        </div>
-
-    </footer>
+            <div
+                class="access-badge"
+                id="accessBadge"
+            >
+                Active
+            </div>
 
 
-</main>
+        </section>
 
 
 
-<!-- ======================================================
-     LOCKED MODAL
-======================================================= -->
+        <!-- ==================================================
+             CATEGORY SELECTOR
+        =================================================== -->
 
-<div
-    id="lockedModal"
-    class="modal-overlay"
-    hidden
->
-
-    <div class="modal-card">
+        <section class="library-section">
 
 
-        <div class="modal-icon">
-            🔒
-        </div>
+            <div class="section-header">
 
 
-        <h2>
-            Download Locked
-        </h2>
+                <div>
+
+                    <span class="section-label">
+                        BUNDLE CATEGORY
+                    </span>
+
+                    <h2 id="selectedCategoryTitle">
+                        Basic Bundles
+                    </h2>
+
+                </div>
 
 
-        <p id="lockedModalMessage">
-            This bundle is currently unavailable
-            for download.
-        </p>
+            </div>
 
 
-        <button
-            type="button"
-            id="lockedModalClose"
-            class="modal-button"
-        >
-            OK
-        </button>
+
+            <!-- ==================================================
+                 CATEGORY TABS
+            =================================================== -->
+
+            <div
+                class="bundle-category-tabs"
+                id="bundleCategoryTabs"
+            >
+
+                <button
+                    type="button"
+                    class="category-tab active"
+                    data-plan="basic"
+                    id="basicTab"
+                >
+
+                    📦
+
+                    <span>
+                        Basic
+                    </span>
+
+                </button>
 
 
-    </div>
-
-</div>
-
-
+                <button
+                    type="button"
+                    class="category-tab"
                     data-plan="premium"
                     id="premiumTab"
                 >
@@ -806,12 +807,12 @@
 
 <script
     type="module"
-    src="assets/js/content-protection.js?v=2.0.9"
+    src="assets/js/content-protection.js?v=2.1.0"
 ></script>
 
 <script
     type="module"
-    src="assets/js/download.js?v=2.0.9"
+    src="assets/js/download.js?v=2.1.0"
 ></script>
 
 

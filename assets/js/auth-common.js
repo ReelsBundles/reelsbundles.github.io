@@ -16,6 +16,10 @@ const API_BASE =
     ) + "/api";
 
 (function sanitizeAllLinksAndAddressBar() {
+    // Keep .html extensions intact on GitHub Pages to ensure query parameters and 200 OK static page routing work reliably
+    if (window.location.hostname.includes("github.io") || window.location.search.includes("suspended=true")) {
+        return;
+    }
     function cleanUrlPath(hrefStr) {
         if (!hrefStr) return hrefStr;
         if (hrefStr.startsWith("#") || hrefStr.startsWith("javascript:") || hrefStr.startsWith("mailto:") || hrefStr.startsWith("tel:")) {
