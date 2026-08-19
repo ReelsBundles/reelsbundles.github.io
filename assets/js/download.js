@@ -1599,7 +1599,7 @@ function createBundleCard(
                                 class="bundle-download-button"
                                 style="width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#ffffff; font-weight:600; padding:10px 16px; border-radius:8px; box-shadow:0 4px 14px rgba(124, 58, 237, 0.35); border:none;"
                             >
-                                🔒 Unlock ${bundle.price ? `₹${bundle.price}` : (plan === "premium" ? "₹99" : "₹49")}
+                                🔒 Unlock ${bundle.price ? `₹${bundle.price}` : (plan === "premium" ? "₹69" : "₹49")}
                             </a>
                         `
                 }
