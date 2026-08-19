@@ -153,6 +153,32 @@ window.deleteUserItem = async function(userId) {
     }
 };
 
+window.deleteAllUsersAction = async function() {
+    if (!confirm("⚠️ ARE YOU SURE YOU WANT TO PERMANENTLY DELETE ALL REGISTERED USERS?\n\nThis will remove all registered user accounts!")) {
+        return;
+    }
+    const input = prompt("Type 'DELETE ALL' to confirm permanent deletion of all registered users:");
+    if (!input || input.trim().toUpperCase() !== "DELETE ALL") {
+        alert("Action cancelled. Deletion code did not match.");
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token");
+        const res = await robustFetch(`${API_BASE}/admin/users/all`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+        alert("✅ All registered users have been deleted successfully!");
+        broadcastUserStatusUpdate("all");
+        fetchAdminUsers(true);
+    } catch (err) {
+        alert("Error deleting users: " + err.message);
+    }
+};
+
 function startUserListAutoRefresh() {
     // 5-second periodic live polling
     setInterval(() => fetchAdminUsers(true), 5000);

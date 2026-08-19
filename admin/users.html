@@ -39,15 +39,12 @@
                 <a href="protection.html" class="admin-nav-item"><span>🛡️</span> Security & Protection</a>
             </nav>
 
-            <div class="admin-sidebar-footer">
-                <div class="admin-user-info">
-                    <span class="admin-avatar">A</span>
-                    <div>
-                        <strong id="adminSidebarName">Super Administrator</strong>
-                        <small id="adminSidebarEmail">admin@reelsbundles.com</small>
-                    </div>
+            <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+                <div class="admin-user-info" style="margin-bottom: 10px;">
+                    <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">admin5796</strong>
+                    <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
                 </div>
-                <button type="button" class="admin-logout-btn" id="adminLogoutBtn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; margin-top:8px;">🚪 Logout</button>
+                <button type="button" class="admin-logout-btn" id="adminLogoutBtn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">🚪 Logout</button>
             </div>
         </aside>
 
@@ -60,12 +57,17 @@
                 </div>
             </header>
 
-            <div class="users-toolbar">
-                <div class="users-search-box">
+            <div class="users-toolbar" style="display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:20px;">
+                <div class="users-search-box" style="flex:1;">
                     <input type="text" id="userSearchInput" class="form-control" placeholder="🔍 Search by name, email, or user ID...">
                 </div>
-                <div class="users-counter">
-                    Total Users: <span id="totalUsersCount">0</span>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="users-counter" style="background:rgba(255,255,255,0.06); padding:8px 16px; border-radius:10px; font-weight:600; color:#cbd5e1;">
+                        Total Users: <span id="totalUsersCount" style="color:#60a5fa;">0</span>
+                    </div>
+                    <button type="button" id="deleteAllUsersBtn" style="padding:8px 16px; background:rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.4); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;" onclick="deleteAllUsersAction()">
+                        🗑️ Delete All Users
+                    </button>
                 </div>
             </div>
 

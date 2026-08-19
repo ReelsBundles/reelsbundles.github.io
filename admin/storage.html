@@ -70,14 +70,14 @@
             <a href="protection.html" class="admin-nav-item"><span>🛡️</span> Security & Protection</a>
         </nav>
 
-        <div class="admin-sidebar-footer">
-            <button type="button" id="adminLogoutBtn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; margin-bottom:12px;">
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">admin5796</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
                 🚪 Logout
             </button>
-            <div class="footer-meta">
-                <span>ReelsBundles Admin v2.0</span>
-                <small>Secure Control Panel</small>
-            </div>
         </div>
     </aside>
 
