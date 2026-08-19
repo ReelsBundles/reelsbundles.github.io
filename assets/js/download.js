@@ -1915,11 +1915,16 @@ function createDriveItemCard(item, bundle) {
                     return;
                 }
 
-                const response = await apiFetch(`/api/user/bundles/${encodeURIComponent(bundleId)}/mega`);
+                let megaEndpoint = `/api/user/bundles/${encodeURIComponent(bundleId)}/mega`;
+                if (item.id && item.type !== "mega") {
+                    megaEndpoint += `?fileId=${encodeURIComponent(item.id)}`;
+                }
+
+                const response = await apiFetch(megaEndpoint);
                 if (response.redirected && response.url) {
                     window.open(response.url, "_blank", "noopener,noreferrer");
                 } else if (response.ok) {
-                    window.open(`${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/mega`, "_blank", "noopener,noreferrer");
+                    window.open(`${API_BASE}${megaEndpoint}`, "_blank", "noopener,noreferrer");
                 } else {
                     await throwApiError(response, "Unable to access MEGA storage.");
                 }
