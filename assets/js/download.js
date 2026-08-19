@@ -1261,9 +1261,6 @@ async function loadBundleLibrary() {
         );
 
 
-        hideLoading();
-
-
         console.log(
             "[Downloads] Authorized bundles:",
             allBundles.length
@@ -1281,6 +1278,12 @@ async function loadBundleLibrary() {
         );
 
         throw error;
+
+    }
+
+    finally {
+
+        hideLoading();
 
     }
 
@@ -1586,21 +1589,20 @@ function createBundleCard(
                                     class="bundle-download-button"
                                     data-bundle-action="download"
                                     data-bundle-id="${escapeAttribute(bundleId)}"
-                                    style="width:100%;"
+                                    style="width:100%; cursor:pointer;"
                                 >
                                     ⬇️ Download
                                 </button>
                             </div>
                         `
                         : `
-                            <button
-                                type="button"
+                            <a
+                                href="payment.html?bundle=${encodeURIComponent(bundleId)}&plan=${encodeURIComponent(plan)}"
                                 class="bundle-download-button"
-                                disabled
-                                style="width:100%;"
+                                style="width:100%; display:inline-flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; background:linear-gradient(135deg, #7c3aed, #4f46e5); color:#ffffff; font-weight:600; padding:10px 16px; border-radius:8px; box-shadow:0 4px 14px rgba(124, 58, 237, 0.35); border:none;"
                             >
-                                🔒 Locked
-                            </button>
+                                🔒 Unlock ${bundle.price ? `₹${bundle.price}` : (plan === "premium" ? "₹99" : "₹49")}
+                            </a>
                         `
                 }
 
@@ -2528,9 +2530,9 @@ function updateAccessUI(
             hasPremium ||
             hasBasic
 
-                ? "Active"
+                ? "Account Active"
 
-                : "No active access";
+                : "Free Plan";
 
     }
 
