@@ -3035,33 +3035,32 @@ function hideLoading() {
 }
 
 
-function showLibraryError(
-    message
-) {
-
+function showLibraryError(message) {
     hideLoading();
 
-
-    if (
-        libraryError
-    ) {
-
-        libraryError.style.display =
-            "";
-
+    if (libraryError) {
+        libraryError.hidden = false;
+        libraryError.style.display = "flex";
+        libraryError.style.flexDirection = "column";
+        libraryError.style.alignItems = "center";
+        libraryError.style.justifyContent = "center";
+        libraryError.style.padding = "40px 24px";
+        libraryError.style.margin = "20px auto";
+        libraryError.style.maxWidth = "600px";
+        libraryError.style.border = "1px solid rgba(239, 68, 68, 0.4)";
+        libraryError.style.borderRadius = "16px";
+        libraryError.style.backgroundColor = "rgba(30, 41, 59, 0.95)";
+        libraryError.style.boxShadow = "0 10px 30px rgba(239, 68, 68, 0.2)";
     }
 
-
-    if (
-        libraryErrorMessage
-    ) {
-
-        libraryErrorMessage.textContent =
-            message ||
-            "Unable to load your bundle library.";
-
+    if (libraryErrorMessage) {
+        libraryErrorMessage.textContent = message || "Unable to load your bundle library.";
+        libraryErrorMessage.style.color = "#f87171";
+        libraryErrorMessage.style.fontSize = "16px";
+        libraryErrorMessage.style.fontWeight = "600";
+        libraryErrorMessage.style.lineHeight = "1.6";
+        libraryErrorMessage.style.textAlign = "center";
     }
-
 }
 
 

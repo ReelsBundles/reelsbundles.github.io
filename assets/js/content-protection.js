@@ -207,6 +207,11 @@ function checkDevToolsDimensions() {
         return false;
     }
 
+    if (window.location.search.includes("suspended=true")) {
+        hideDevToolsWarningModal();
+        return false;
+    }
+
     const threshold = 160;
     const widthDiff = window.outerWidth - window.innerWidth > threshold;
     const heightDiff = window.outerHeight - window.innerHeight > threshold;
@@ -227,6 +232,11 @@ function startAntiDebuggingLoop() {
 
     antiDebugInterval = setInterval(() => {
         if (protectionConfig.protectionEnabled && protectionConfig.disableDevTools) {
+            if (window.location.search.includes("suspended=true")) {
+                hideDevToolsWarningModal();
+                return;
+            }
+
             const isDocked = checkDevToolsDimensions();
 
             if (!isDocked) {
