@@ -382,6 +382,7 @@ async function initializeDownloadPage() {
         }
 
         await loadBundleLibrary();
+        startLiveBundleSync();
 
         selectRequestedBundle();
 
@@ -1146,145 +1147,68 @@ function updateUserUI(
    bundle library.
 ========================================================== */
 
-async function loadBundleLibrary() {
-
-    showLoading();
-
+async function loadBundleLibrary(silent = false) {
+    if (!silent) showLoading();
 
     try {
+        const response = await apiFetch("/api/user/bundles");
 
-        const response =
-            await apiFetch(
-                "/api/user/bundles"
-            );
-
-
-        /* --------------------------------------------------
-           AUTH ERROR
-        -------------------------------------------------- */
-
-        if (
-            response.status === 401
-        ) {
-
-            window.location.href =
-                `login.html?redirect=${encodeURIComponent(
-                    window.location.href
-                )}`;
-
+        if (response.status === 401) {
+            window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
             return;
-
         }
 
-
-        /* --------------------------------------------------
-           API ERROR
-        -------------------------------------------------- */
-
-        if (
-            !response.ok
-        ) {
-
-            await throwApiError(
-                response,
-                "Unable to load your bundles."
-            );
-
+        if (!response.ok) {
+            if (!silent) await throwApiError(response, "Unable to load your bundles.");
+            return;
         }
 
+        const data = await response.json();
 
-        const data =
-            await response.json();
-
-
-        if (
-            data?.success === false
-        ) {
-
-            throw new Error(
-                data?.message ||
-                "Unable to load your bundles."
-            );
-
+        if (data?.success === false) {
+            if (!silent) throw new Error(data?.message || "Unable to load your bundles.");
+            return;
         }
 
-
-        /* --------------------------------------------------
-           AUTHORIZED BUNDLES
-        -------------------------------------------------- */
-
-        allBundles =
-            Array.isArray(
-                data?.bundles
-            )
-                ? data.bundles
-                : [];
-
-
-        /* --------------------------------------------------
-           BASIC
-        -------------------------------------------------- */
-
-        basicBundles =
-            allBundles.filter(
-                bundle =>
-                    normalizePlan(
-                        bundle?.plan
-                    ) === "basic"
-            );
-
-
-        /* --------------------------------------------------
-           PREMIUM
-        -------------------------------------------------- */
-
-        premiumBundles =
-            allBundles.filter(
-                bundle =>
-                    normalizePlan(
-                        bundle?.plan
-                    ) === "premium"
-            );
-
-
-        /* --------------------------------------------------
-           RENDER
-        -------------------------------------------------- */
+        allBundles = Array.isArray(data?.bundles) ? data.bundles : [];
+        basicBundles = allBundles.filter(bundle => normalizePlan(bundle?.plan) === "basic");
+        premiumBundles = allBundles.filter(bundle => normalizePlan(bundle?.plan) === "premium");
 
         renderBundles();
+        updateAccessUI(data);
 
-
-        updateAccessUI(
-            data
-        );
-
-
-        console.log(
-            "[Downloads] Authorized bundles:",
-            allBundles.length
-        );
-
+        console.log("[Downloads] Live synced bundles count:", allBundles.length);
+    } catch (error) {
+        console.error("[Downloads] Bundle library error:", error);
+        if (!silent) throw error;
+    } finally {
+        if (!silent) hideLoading();
     }
+}
 
-    catch (
-        error
-    ) {
+function startLiveBundleSync() {
+    setInterval(() => {
+        if (currentUser && !document.hidden && localStorage.getItem("rb_is_suspended") !== "true") {
+            loadBundleLibrary(true);
+        }
+    }, 5000);
 
-        console.error(
-            "[Downloads] Bundle library error:",
-            error
-        );
+    window.addEventListener("focus", () => {
+        if (currentUser && localStorage.getItem("rb_is_suspended") !== "true") {
+            loadBundleLibrary(true);
+        }
+    });
 
-        throw error;
-
-    }
-
-    finally {
-
-        hideLoading();
-
-    }
-
+    try {
+        if ('BroadcastChannel' in window) {
+            const bc = new BroadcastChannel("rb_user_status_sync");
+            bc.onmessage = () => {
+                if (currentUser && localStorage.getItem("rb_is_suspended") !== "true") {
+                    loadBundleLibrary(true);
+                }
+            };
+        }
+    } catch (e) {}
 }
 
 
