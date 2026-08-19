@@ -334,11 +334,6 @@ async function initializeDownloadPage() {
         const requestedBundleId =
             getBundleIdFromUrl();
 
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
         const requestedCategory =
             params.get("category") || params.get("plan");
 
