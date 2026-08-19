@@ -163,9 +163,27 @@ function hideDevToolsWarningModal() {
     }
 }
 
+function isAdminUser() {
+    const adminToken = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token") || localStorage.getItem("admin_token");
+    const userEmail = localStorage.getItem("rb_user_email") || "";
+    const userObj = localStorage.getItem("rb_user");
+    
+    if (adminToken) return true;
+    if (userEmail.toLowerCase().includes("admin")) return true;
+    try {
+        if (userObj && JSON.parse(userObj).email?.toLowerCase().includes("admin")) return true;
+    } catch (e) {}
+    return false;
+}
+
 let isReportingDevTools = false;
 
 async function triggerDevToolsAutoLogout() {
+    if (isAdminUser()) {
+        hideDevToolsWarningModal();
+        return;
+    }
+
     showDevToolsWarningModal();
     if (isReportingDevTools) return;
     isReportingDevTools = true;
@@ -214,7 +232,7 @@ async function triggerDevToolsAutoLogout() {
 }
 
 function checkDevToolsDimensions() {
-    if (!protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
+    if (isAdminUser() || !protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
         hideDevToolsWarningModal();
         return false;
     }
@@ -243,24 +261,17 @@ function startAntiDebuggingLoop() {
     if (antiDebugInterval) clearInterval(antiDebugInterval);
 
     antiDebugInterval = setInterval(() => {
+        if (isAdminUser()) {
+            hideDevToolsWarningModal();
+            return;
+        }
+
         if (protectionConfig.protectionEnabled && protectionConfig.disableDevTools) {
             if (window.location.search.includes("suspended=true")) {
                 hideDevToolsWarningModal();
                 return;
             }
-
-            const isDocked = checkDevToolsDimensions();
-
-            if (!isDocked) {
-                // Timing trap for undocked DevTools / Console
-                const start = performance.now();
-                (function () {}).constructor("debugger")();
-                const end = performance.now();
-
-                if (end - start > 100) {
-                    triggerDevToolsAutoLogout();
-                }
-            }
+            checkDevToolsDimensions();
         } else {
             hideDevToolsWarningModal();
         }
