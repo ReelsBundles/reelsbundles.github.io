@@ -1908,7 +1908,7 @@ function createDriveItemCard(item, bundle) {
                 return;
             }
 
-            if (isMega) {
+            if (isMega && item.type === "mega") {
                 const token = await getAuthToken();
                 if (!token) {
                     redirectToLogin();
