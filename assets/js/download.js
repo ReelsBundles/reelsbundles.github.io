@@ -306,8 +306,16 @@ async function initializeDownloadPage() {
         setupUI();
 
         const params = new URLSearchParams(window.location.search);
-        if (params.get("suspended") === "true") {
-            const reason = params.get("reason") || "Account suspended due to Developer Tools inspection detection.";
+        const isSuspendedUrl = params.get("suspended") === "true";
+        const isSuspendedStorage = localStorage.getItem("rb_is_suspended") === "true";
+
+        if (isSuspendedUrl || isSuspendedStorage) {
+            const reason = params.get("reason") || localStorage.getItem("rb_suspended_reason") || "Account suspended due to Developer Tools inspection detection.";
+            try {
+                localStorage.setItem("rb_is_suspended", "true");
+                localStorage.setItem("rb_suspended_reason", reason);
+            } catch (e) {}
+
             const mainContent = document.querySelector(".dashboard-content") || document.querySelector("main") || document.body;
             if (mainContent) {
                 mainContent.innerHTML = `

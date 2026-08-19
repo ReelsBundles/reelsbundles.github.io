@@ -191,8 +191,18 @@ export const logoutUser = async () => {
         console.warn("[Auth] Firebase signOut error:", err);
     }
     try {
+        const isSuspended = localStorage.getItem("rb_is_suspended");
+        const suspendedReason = localStorage.getItem("rb_suspended_reason");
+        const userEmail = localStorage.getItem("rb_user_email");
+
         localStorage.clear();
         sessionStorage.clear();
+
+        if (isSuspended === "true") {
+            localStorage.setItem("rb_is_suspended", "true");
+            if (suspendedReason) localStorage.setItem("rb_suspended_reason", suspendedReason);
+            if (userEmail) localStorage.setItem("rb_user_email", userEmail);
+        }
     } catch (err) {}
 };
 
@@ -200,12 +210,18 @@ let isStatusSyncStarted = false;
 
 export function handleAccountSuspendedAlert(reason) {
     const reasonMsg = reason || "Account suspended due to Developer Tools inspection detection.";
-    logoutUser().then(() => {
-        const isDashboard = window.location.pathname.includes("dashboard");
-        const targetPage = isDashboard ? "dashboard.html" : "download.html";
-        const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(reasonMsg)}`;
+    try {
+        localStorage.setItem("rb_is_suspended", "true");
+        localStorage.setItem("rb_suspended_reason", reasonMsg);
+    } catch (e) {}
+
+    const isDashboard = window.location.pathname.includes("dashboard");
+    const targetPage = isDashboard ? "dashboard.html" : "download.html";
+    const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(reasonMsg)}`;
+
+    if (!window.location.href.includes("suspended=true")) {
         window.location.replace(redirectUrl);
-    });
+    }
 }
 
 function handleAccountDisabledAlert() {
@@ -220,6 +236,8 @@ export const syncUserToBackend = async (user) => {
     if (!user) return { disabled: false };
     try {
         const providerId = user.providerData?.[0]?.providerId || (user.email ? "password" : "google.com");
+        if (user.email) localStorage.setItem("rb_user_email", user.email);
+
         const res = await fetch(`${API_BASE}/auth/sync-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -236,6 +254,12 @@ export const syncUserToBackend = async (user) => {
         if (res.status === 403 || data.disabled === true || data.status === "disabled" || data.status === "SUSPENDED") {
             handleAccountSuspendedAlert(data.message);
             return { disabled: true };
+        } else if (res.ok && (data.status === "active" || data.status === "ACTIVE")) {
+            if (localStorage.getItem("rb_is_suspended") === "true") {
+                localStorage.removeItem("rb_is_suspended");
+                localStorage.removeItem("rb_suspended_reason");
+                window.location.href = window.location.pathname;
+            }
         }
         return data;
     } catch (e) {
@@ -245,20 +269,32 @@ export const syncUserToBackend = async (user) => {
 };
 
 export const checkUserLiveStatus = async (user) => {
-    if (!user) return;
+    const savedEmail = user?.email || localStorage.getItem("rb_user_email") || "";
+    const uid = user?.uid ? encodeURIComponent(user.uid) : "";
+    const email = savedEmail ? encodeURIComponent(savedEmail) : "";
+
+    if (!uid && !email) return;
+
     try {
-        const uid = encodeURIComponent(user.uid || '');
-        const email = encodeURIComponent(user.email || '');
+        if (savedEmail) localStorage.setItem("rb_user_email", savedEmail);
         const headers = {};
         try {
             const token = await getFirebaseIdToken();
             if (token) headers["Authorization"] = `Bearer ${token}`;
         } catch (e) {}
 
-        const res = await fetch(`${API_BASE}/user/status?uid=${uid}&email=${email}`, { headers });
+        const queryStr = uid ? `uid=${uid}&email=${email}` : `email=${email}`;
+        const res = await fetch(`${API_BASE}/user/status?${queryStr}`, { headers });
         const data = await res.json();
+
         if (res.status === 403 || data.disabled === true || data.status === "disabled" || data.status === "SUSPENDED") {
             handleAccountSuspendedAlert(data.message);
+        } else if (res.ok && (data.status === "active" || data.status === "ACTIVE")) {
+            if (localStorage.getItem("rb_is_suspended") === "true") {
+                localStorage.removeItem("rb_is_suspended");
+                localStorage.removeItem("rb_suspended_reason");
+                window.location.href = window.location.pathname;
+            }
         }
     } catch (e) {}
 };

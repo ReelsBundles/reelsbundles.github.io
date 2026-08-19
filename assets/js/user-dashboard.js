@@ -40,8 +40,22 @@ document.addEventListener(
     async () => {
 
         const params = new URLSearchParams(window.location.search);
-        if (params.get("suspended") === "true") {
-            const reason = params.get("reason") || "Account suspended due to Developer Tools inspection detection.";
+        const isSuspendedUrl = params.get("suspended") === "true";
+        const isSuspendedStorage = localStorage.getItem("rb_is_suspended") === "true";
+
+        if (isSuspendedUrl || isSuspendedStorage) {
+            const reason = params.get("reason") || localStorage.getItem("rb_suspended_reason") || "Account suspended due to Developer Tools inspection detection.";
+            try {
+                localStorage.setItem("rb_is_suspended", "true");
+                localStorage.setItem("rb_suspended_reason", reason);
+            } catch (e) {}
+
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+
             const mainEl = document.querySelector(".dashboard-content") || document.querySelector("main") || document.body;
             if (mainEl) {
                 mainEl.innerHTML = `
@@ -63,7 +77,7 @@ document.addEventListener(
                         <div style="font-size: 54px; margin-bottom: 16px;">🚫</div>
                         <h2 style="font-size: 22px; font-weight: 700; color: #f87171; margin-bottom: 12px; font-family: inherit;">ACCOUNT SUSPENDED</h2>
                         <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 24px; font-family: inherit;">
-                            ${reason}
+                            ${escapeHtml(reason)}
                         </p>
                         <a href="contact.html" style="
                             display: inline-flex;
