@@ -30,7 +30,7 @@
         href="assets/css/user-dashboard.css"
     >
 
-    <script src="assets/js/content-protection.js"></script>
+    <script src="assets/js/content-protection.js?v=2.0.2"></script>
 </head>
 
 
@@ -604,6 +604,201 @@
 </div>
 
 
+                    data-plan="premium"
+                    id="premiumTab"
+                >
+
+                    👑
+
+                    <span>
+                        Premium
+                    </span>
+
+                </button>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 LOADING
+            =================================================== -->
+
+            <div
+                class="library-empty"
+                id="libraryLoading"
+            >
+
+                <div class="loading-spinner"></div>
+
+                <p>
+                    Loading your bundles...
+                </p>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 ERROR
+            =================================================== -->
+
+            <div
+                class="library-empty"
+                id="libraryError"
+                hidden
+            >
+
+                <div>
+                    ⚠️
+                </div>
+
+                <p id="libraryErrorMessage">
+                    Unable to load your bundles.
+                </p>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 EMPTY
+            =================================================== -->
+
+            <div
+                class="library-empty"
+                id="libraryEmpty"
+                hidden
+            >
+
+                <div>
+                    📦
+                </div>
+
+                <h3>
+                    No Bundles Available
+                </h3>
+
+                <p>
+                    Your purchased bundles will appear here.
+                </p>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 BASIC BUNDLES
+            =================================================== -->
+
+            <div
+                id="basicBundleSection"
+                class="bundle-category-section"
+            >
+
+                <div
+                    class="bundle-grid"
+                    id="basicBundleGrid"
+                ></div>
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 PREMIUM BUNDLES
+            =================================================== -->
+
+            <div
+                id="premiumBundleSection"
+                class="bundle-category-section"
+                style="display: none;"
+            >
+
+                <div
+                    class="bundle-grid"
+                    id="premiumBundleGrid"
+                ></div>
+
+            </div>
+
+
+        </section>
+
+
+
+    </section>
+
+
+
+    <!-- ==================================================
+         FOOTER
+    =================================================== -->
+
+    <footer class="dashboard-footer">
+
+        <div>
+            © 2026 ReelsBundles
+        </div>
+
+        <div>
+
+            Developed with
+            <span>❤️</span>
+            by Santosh Koli
+
+        </div>
+
+    </footer>
+
+
+</main>
+
+
+
+<!-- ======================================================
+     LOCKED MODAL
+======================================================= -->
+
+<div
+    id="lockedModal"
+    class="modal-overlay"
+    hidden
+>
+
+    <div class="modal-card">
+
+
+        <div class="modal-icon">
+            🔒
+        </div>
+
+
+        <h2>
+            Download Locked
+        </h2>
+
+
+        <p id="lockedModalMessage">
+            This bundle is currently unavailable
+            for download.
+        </p>
+
+
+        <button
+            type="button"
+            id="lockedModalClose"
+            class="modal-button"
+        >
+            OK
+        </button>
+
+
+    </div>
+
+</div>
+
+
 
 <!-- ======================================================
      JAVASCRIPT
@@ -611,7 +806,12 @@
 
 <script
     type="module"
-    src="assets/js/download.js"
+    src="assets/js/content-protection.js?v=2.0.2"
+></script>
+
+<script
+    type="module"
+    src="assets/js/download.js?v=2.0.2"
 ></script>
 
 
