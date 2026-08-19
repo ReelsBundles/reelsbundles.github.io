@@ -1,12 +1,3 @@
-if (typeof window.escapeHtml !== "function") {
-    window.escapeHtml = function escapeHtml(str) {
-        return String(str || "").replace(/[&<>"']/g, match => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-        }[match]));
-    };
-}
-const escapeHtml = window.escapeHtml;
-
 import {
     auth
 } from "./firebase-client.js";
