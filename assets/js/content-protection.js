@@ -95,12 +95,128 @@ function applyCssRestrictions() {
     }
 }
 
+let devToolsModalElement = null;
+
+function showDevToolsWarningModal() {
+    if (devToolsModalElement || !document.body) return;
+
+    devToolsModalElement = document.createElement("div");
+    devToolsModalElement.id = "devtools-warning-overlay";
+    devToolsModalElement.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 15, 30, 0.98);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 99999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-family: system-ui, -apple-system, sans-serif;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        ">
+            <div style="
+                background: rgba(30, 41, 59, 0.9);
+                border: 1px solid rgba(239, 68, 68, 0.4);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.2);
+                border-radius: 16px;
+                padding: 36px 28px;
+                max-width: 480px;
+                width: 90%;
+            ">
+                <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+                <h2 style="font-size: 22px; font-weight: 700; color: #f87171; margin: 0 0 12px 0;">
+                    Developer Tools Restricted
+                </h2>
+                <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0 0 20px 0;">
+                    Developer Tools & Console Inspection have been disabled on <strong>ReelsBundles</strong> to protect content security and system integrity.
+                </p>
+                <div style="
+                    background: rgba(15, 23, 42, 0.6);
+                    border: 1px dashed rgba(248, 113, 113, 0.3);
+                    border-radius: 8px;
+                    padding: 12px;
+                    font-size: 12px;
+                    color: #cbd5e1;
+                ">
+                    Please close Developer Tools / Console to return to your session.
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(devToolsModalElement);
+}
+
+function hideDevToolsWarningModal() {
+    if (devToolsModalElement) {
+        devToolsModalElement.remove();
+        devToolsModalElement = null;
+    }
+}
+
+function checkDevToolsDimensions() {
+    if (!protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
+        hideDevToolsWarningModal();
+        return false;
+    }
+
+    const threshold = 160;
+    const widthDiff = window.outerWidth - window.innerWidth > threshold;
+    const heightDiff = window.outerHeight - window.innerHeight > threshold;
+
+    if (widthDiff || heightDiff) {
+        showDevToolsWarningModal();
+        return true;
+    } else {
+        hideDevToolsWarningModal();
+        return false;
+    }
+}
+
+let antiDebugInterval = null;
+
+function startAntiDebuggingLoop() {
+    if (antiDebugInterval) clearInterval(antiDebugInterval);
+
+    antiDebugInterval = setInterval(() => {
+        if (protectionConfig.protectionEnabled && protectionConfig.disableDevTools) {
+            const isDocked = checkDevToolsDimensions();
+
+            if (!isDocked) {
+                // Timing trap for undocked DevTools / Console
+                const start = performance.now();
+                (function () {}).constructor("debugger")();
+                const end = performance.now();
+
+                if (end - start > 100) {
+                    showDevToolsWarningModal();
+                }
+            }
+        } else {
+            hideDevToolsWarningModal();
+        }
+    }, 800);
+}
+
+window.addEventListener("resize", checkDevToolsDimensions);
+
 let isProtectionInitialized = false;
 
 function initContentProtection() {
     applyCssRestrictions();
     if (isProtectionInitialized) return;
     isProtectionInitialized = true;
+
+    startAntiDebuggingLoop();
 
     // 1. Right Click Protection
     document.addEventListener("contextmenu", (event) => {
@@ -191,13 +307,9 @@ async function fetchProtectionSettings() {
         if (response.ok) {
             const data = await response.json();
             if (data.success && data.settings) {
-                const changed = (
-                    protectionConfig.protectionEnabled !== Boolean(data.settings.protectionEnabled) ||
-                    protectionConfig.disableRightClick !== Boolean(data.settings.disableRightClick) ||
-                    protectionConfig.disableDevTools !== Boolean(data.settings.disableDevTools)
-                );
                 protectionConfig = { ...protectionConfig, ...data.settings };
                 applyCssRestrictions();
+                checkDevToolsDimensions();
             }
         }
     } catch (e) {
