@@ -193,7 +193,9 @@ async function triggerDevToolsAutoLogout() {
             localStorage.clear();
             sessionStorage.clear();
             const reasonMsg = "Account suspended due to Developer Tools inspection detection.";
-            const redirectUrl = `download.html?suspended=true&reason=${encodeURIComponent(reasonMsg)}`;
+            const isDashboard = window.location.pathname.includes("dashboard");
+            const targetPage = isDashboard ? "dashboard.html" : "download.html";
+            const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(reasonMsg)}`;
             if (!window.location.href.includes("suspended=true")) {
                 window.location.href = redirectUrl;
             }

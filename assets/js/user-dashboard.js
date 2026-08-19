@@ -39,6 +39,39 @@ document.addEventListener(
     "DOMContentLoaded",
     async () => {
 
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("suspended") === "true") {
+            const reason = params.get("reason") || "Account suspended due to Developer Tools inspection detection.";
+            const mainEl = document.querySelector(".dashboard-content") || document.querySelector("main") || document.body;
+            if (mainEl) {
+                mainEl.innerHTML = `
+                    <div style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 60px 24px;
+                        margin: 40px auto;
+                        max-width: 640px;
+                        border: 1px solid rgba(239, 68, 68, 0.4);
+                        border-radius: 16px;
+                        background-color: rgba(30, 41, 59, 0.95);
+                        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+                        text-align: center;
+                        font-family: system-ui, -apple-system, sans-serif;
+                    ">
+                        <div style="font-size: 54px; margin-bottom: 16px;">🚫</div>
+                        <h2 style="font-size: 22px; font-weight: 700; color: #f87171; margin-bottom: 12px; font-family: inherit;">ACCOUNT SUSPENDED</h2>
+                        <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 20px; font-family: inherit;">
+                            ${reason}
+                        </p>
+                        <p style="color: #94a3b8; font-size: 13px; font-family: inherit;">Please contact Administrator to unlock your account access.</p>
+                    </div>
+                `;
+            }
+            return;
+        }
+
         /* ==============================================
            PROTECT DASHBOARD
         ============================================== */
