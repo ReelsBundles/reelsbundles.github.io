@@ -171,27 +171,37 @@ async function triggerDevToolsAutoLogout() {
     isReportingDevTools = true;
 
     try {
-        let idToken = null;
-        if (typeof window.getAuthToken === "function") {
-            idToken = await window.getAuthToken();
-        }
+        let userEmail = localStorage.getItem("rb_user_email") || "";
+        let uid = "";
 
-        if (idToken) {
-            await fetch(`${API_BASE}/user/report-devtools`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${idToken}`
-                },
-                body: JSON.stringify({ reason: "Developer tools inspection detected" })
-            }).catch(() => {});
-        }
+        try {
+            const rawUser = localStorage.getItem("rb_user");
+            if (rawUser) {
+                const parsed = JSON.parse(rawUser);
+                if (parsed.uid) uid = parsed.uid;
+                if (parsed.email) userEmail = parsed.email;
+            }
+        } catch (e) {}
+
+        localStorage.setItem("rb_is_suspended", "true");
+        localStorage.setItem("rb_suspended_reason", "Account suspended due to Developer Tools inspection detection.");
+        if (userEmail) localStorage.setItem("rb_user_email", userEmail);
+
+        await fetch(`${API_BASE}/user/report-devtools`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                uid: uid,
+                email: userEmail,
+                reason: "Account suspended due to Developer Tools inspection detection."
+            })
+        }).catch((e) => console.warn("[PROTECTION] DevTools report fetch notice:", e));
     } catch (e) {
         console.warn("[PROTECTION] DevTools report failed:", e);
     } finally {
         setTimeout(() => {
-            localStorage.clear();
-            sessionStorage.clear();
             const reasonMsg = "Account suspended due to Developer Tools inspection detection.";
             const isDashboard = window.location.pathname.includes("dashboard");
             const targetPage = isDashboard ? "dashboard.html" : "download.html";
@@ -199,7 +209,7 @@ async function triggerDevToolsAutoLogout() {
             if (!window.location.href.includes("suspended=true")) {
                 window.location.href = redirectUrl;
             }
-        }, 1000);
+        }, 800);
     }
 }
 

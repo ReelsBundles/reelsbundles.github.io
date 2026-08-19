@@ -237,6 +237,9 @@ export const syncUserToBackend = async (user) => {
     try {
         const providerId = user.providerData?.[0]?.providerId || (user.email ? "password" : "google.com");
         if (user.email) localStorage.setItem("rb_user_email", user.email);
+        try {
+            localStorage.setItem("rb_user", JSON.stringify({ uid: user.uid, email: user.email }));
+        } catch (e) {}
 
         const res = await fetch(`${API_BASE}/auth/sync-user`, {
             method: "POST",
