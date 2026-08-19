@@ -65,21 +65,21 @@ document.addEventListener(
                         <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 24px; font-family: inherit;">
                             ${reason}
                         </p>
-                        <a href="https://wa.me/919326620579?text=${encodeURIComponent("Hello Admin, my ReelsBundles account has been suspended. Please unlock my account.")}" target="_blank" rel="noopener noreferrer" style="
+                        <a href="contact.html" style="
                             display: inline-flex;
                             align-items: center;
                             gap: 10px;
-                            background: linear-gradient(135deg, #25d366, #128c7e);
+                            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
                             color: #ffffff;
                             font-weight: 700;
                             font-size: 14px;
                             padding: 12px 26px;
                             border-radius: 8px;
                             text-decoration: none;
-                            box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4);
+                            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.4);
                             transition: transform 0.2s;
                         ">
-                            <span>💬</span> Contact Support on WhatsApp to Unlock Account
+                            <span>✉️</span> Go to Contact Support Page
                         </a>
                     </div>
                 `;
