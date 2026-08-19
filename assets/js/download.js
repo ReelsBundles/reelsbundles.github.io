@@ -291,6 +291,12 @@ document.addEventListener(
    INITIALIZE
 ========================================================== */
 
+function escapeHtml(str) {
+    return String(str || "").replace(/[&<>"']/g, match => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[match]));
+}
+
 async function initializeDownloadPage() {
 
     try {
@@ -307,6 +313,11 @@ async function initializeDownloadPage() {
                 loadingEl.style.display = "none";
                 loadingEl.hidden = true;
             }
+            const basicSec = document.getElementById("basicBundleSection");
+            const premSec = document.getElementById("premiumBundleSection");
+            if (basicSec) basicSec.style.display = "none";
+            if (premSec) premSec.style.display = "none";
+
             const errEl = document.getElementById("libraryError");
             const msgEl = document.getElementById("libraryErrorMessage");
             if (errEl) {
