@@ -194,6 +194,16 @@ export const logoutUser = async () => {
 
 let isStatusSyncStarted = false;
 
+export function handleAccountSuspendedAlert(reason) {
+    const reasonMsg = reason || "Account suspended due to Developer Tools inspection detection.";
+    logoutUser().then(() => {
+        const isDashboard = window.location.pathname.includes("dashboard");
+        const targetPage = isDashboard ? "dashboard.html" : "download.html";
+        const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(reasonMsg)}`;
+        window.location.replace(redirectUrl);
+    });
+}
+
 function handleAccountDisabledAlert() {
     alert("⛔ Access Denied!\n\nYour account has been disabled by the admin.");
     logoutUser().then(() => {
@@ -219,8 +229,8 @@ export const syncUserToBackend = async (user) => {
         });
 
         const data = await res.json();
-        if (res.status === 403 || data.disabled === true || data.status === "disabled") {
-            handleAccountDisabledAlert();
+        if (res.status === 403 || data.disabled === true || data.status === "disabled" || data.status === "SUSPENDED") {
+            handleAccountSuspendedAlert(data.message);
             return { disabled: true };
         }
         return data;
@@ -243,8 +253,8 @@ export const checkUserLiveStatus = async (user) => {
 
         const res = await fetch(`${API_BASE}/user/status?uid=${uid}&email=${email}`, { headers });
         const data = await res.json();
-        if (res.status === 403 || data.disabled === true || data.status === "disabled") {
-            handleAccountDisabledAlert();
+        if (res.status === 403 || data.disabled === true || data.status === "disabled" || data.status === "SUSPENDED") {
+            handleAccountSuspendedAlert(data.message);
         }
     } catch (e) {}
 };
