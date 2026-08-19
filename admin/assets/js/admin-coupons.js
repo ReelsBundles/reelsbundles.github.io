@@ -34,7 +34,9 @@ async function fetchCoupons() {
                     </span>
                 </td>
                 <td>${c.usageCount || 0} / ${c.maxUses ? c.maxUses : '∞'}</td>
-                <td>${c.expiryDate ? new Date(c.expiryDate).toLocaleDateString() : 'No Expiry'}</td>
+                <td>
+                    ${c.expiryDate ? `<span style="color:#38bdf8; font-weight:500;">📅 ${new Date(c.expiryDate).toLocaleDateString()}</span>` : '<span style="color:#4ade80; font-weight:600;">♾️ No Expiry</span>'}
+                </td>
                 <td>
                     <span class="badge ${c.active ? 'badge-active' : 'badge-inactive'}">
                         ${c.active ? 'Active' : 'Inactive'}
@@ -64,7 +66,11 @@ async function handleCreateCoupon(e) {
     const discountType = document.getElementById("discountType").value;
     const discountValue = parseFloat(document.getElementById("discountValue").value);
     const maxUses = document.getElementById("maxUses").value ? parseInt(document.getElementById("maxUses").value) : null;
-    const expiryDate = document.getElementById("expiryDate").value || null;
+    
+    const expiryType = document.getElementById("expiryType")?.value || "none";
+    const expiryDate = (expiryType === "custom" && document.getElementById("expiryDate")?.value)
+        ? document.getElementById("expiryDate").value
+        : null;
 
     try {
         const res = await robustFetch(`${API_BASE}/admin/coupons`, {
@@ -77,6 +83,10 @@ async function handleCreateCoupon(e) {
 
         msg.innerHTML = `<span style="color:#4ade80;">✓ ${data.message}</span>`;
         document.getElementById("createCouponForm").reset();
+        
+        const expiryDateContainer = document.getElementById("expiryDateContainer");
+        if (expiryDateContainer) expiryDateContainer.style.display = "none";
+
         fetchCoupons();
     } catch (err) {
         msg.innerHTML = `<span style="color:#ef4444;">✕ ${err.message}</span>`;
@@ -116,6 +126,26 @@ window.deleteCouponItem = async function(id) {
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchCoupons();
+    
+    const expiryTypeSelect = document.getElementById("expiryType");
+    const expiryDateContainer = document.getElementById("expiryDateContainer");
+    const expiryDateInput = document.getElementById("expiryDate");
+
+    if (expiryTypeSelect && expiryDateContainer) {
+        expiryTypeSelect.addEventListener("change", () => {
+            if (expiryTypeSelect.value === "custom") {
+                expiryDateContainer.style.display = "block";
+                if (expiryDateInput) expiryDateInput.required = true;
+            } else {
+                expiryDateContainer.style.display = "none";
+                if (expiryDateInput) {
+                    expiryDateInput.required = false;
+                    expiryDateInput.value = "";
+                }
+            }
+        });
+    }
+
     const form = document.getElementById("createCouponForm");
     if (form) form.addEventListener("submit", handleCreateCoupon);
 });

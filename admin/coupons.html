@@ -118,6 +118,14 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="expiryType">Expiry Mode *</label>
+                        <select id="expiryType" class="form-control" style="margin-bottom:10px;">
+                            <option value="none">♾️ No Expiry (Never Expires)</option>
+                            <option value="custom">📅 Choose Expiry Date</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="expiryDateContainer" style="display:none;">
                         <label for="expiryDate">Expiry Date</label>
                         <input type="date" id="expiryDate" class="form-control">
                     </div>
