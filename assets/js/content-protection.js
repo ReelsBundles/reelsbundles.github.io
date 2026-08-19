@@ -209,7 +209,7 @@ function checkDevToolsDimensions() {
         return false;
     }
 
-    if (window.location.search.includes("suspended=true")) {
+    if (window.location.search.includes("suspended=true") || localStorage.getItem("rb_is_suspended") === "true") {
         hideDevToolsWarningModal();
         return false;
     }
