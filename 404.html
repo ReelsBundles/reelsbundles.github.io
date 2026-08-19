@@ -22,7 +22,9 @@
             "/refund": "refund.html",
             "/terms": "terms.html",
             "/admin": "admin/index.html",
+            "/admin/": "admin/index.html",
             "/admin/login": "admin/index.html",
+            "/admin/login.html": "admin/index.html",
             "/admin/dashboard": "admin/dashboard.html",
             "/admin/bundles": "admin/bundles.html",
             "/admin/orders": "admin/orders.html",
@@ -38,10 +40,12 @@
             pathname = pathname.slice(0, -1);
         }
         var lowerPath = pathname.toLowerCase();
+        var cleanPath = lowerPath.replace(/\.html$/, "");
         var segments = lowerPath.split('/').filter(Boolean);
         var pageKey = segments.length > 0 ? '/' + segments[segments.length - 1] : '/';
+        var cleanPageKey = pageKey.replace(/\.html$/, "");
 
-        var targetFile = routeMap[lowerPath] || routeMap[pageKey];
+        var targetFile = routeMap[lowerPath] || routeMap[cleanPath] || routeMap[pageKey] || routeMap[cleanPageKey];
 
         if (targetFile) {
             var queryAndHash = window.location.search + window.location.hash;
@@ -57,11 +61,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     
     <!-- Base Site Stylesheets -->
-    <link rel="stylesheet" href="assets/css/variables.css">
-    <link rel="stylesheet" href="assets/css/reset.css">
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/navbar.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/reset.css">
+    <link rel="stylesheet" href="/assets/css/global.css">
+    <link rel="stylesheet" href="/assets/css/navbar.css">
+    <link rel="stylesheet" href="/assets/css/footer.css">
 
     <style>
         .notfound-wrapper {
