@@ -4,21 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Site Security & Code Protection | ReelsBundles Admin</title>
+    
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="assets/css/admin-dashboard.css">
     <link rel="stylesheet" href="assets/css/admin-bundles.css">
+
     <style>
         .security-card {
             background: rgba(30, 41, 59, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 28px;
-            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(12px);
             margin-top: 24px;
-            max-width: 800px;
+            max-width: 900px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
+
         .toggle-row {
             display: flex;
             align-items: center;
@@ -26,28 +33,34 @@
             padding: 20px;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
+            border-radius: 14px;
             margin-bottom: 16px;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
+
         .toggle-row:hover {
-            border-color: rgba(167, 139, 250, 0.3);
-            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(167, 139, 250, 0.35);
+            background: rgba(15, 23, 42, 0.85);
+            transform: translateY(-1px);
         }
+
         .toggle-info h4 {
             font-size: 16px;
             font-weight: 700;
             color: #fff;
-            margin: 0 0 4px 0;
+            margin: 0 0 6px 0;
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .toggle-info p {
             font-size: 13px;
             color: #94a3b8;
             margin: 0;
+            line-height: 1.4;
         }
+
         /* Modern Switch */
         .switch {
             position: relative;
@@ -56,11 +69,13 @@
             height: 28px;
             flex-shrink: 0;
         }
+
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -70,6 +85,7 @@
             border-radius: 34px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .slider:before {
             position: absolute;
             content: "";
@@ -82,13 +98,16 @@
             border-radius: 50%;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
+
         input:checked + .slider {
             background: linear-gradient(135deg, #10b981, #059669);
             border-color: #10b981;
         }
+
         input:checked + .slider:before {
             transform: translateX(23px);
         }
+
         .btn-save {
             background: linear-gradient(135deg, #7c3aed, #6366f1);
             color: #fff;
@@ -102,15 +121,21 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
         }
+
         .btn-save:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            opacity: 0.95;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
         }
     </style>
 </head>
 <body>
+
 <div class="admin-layout">
+
+    <!-- ================= SIDEBAR ================= -->
     <aside class="admin-sidebar">
         <div class="admin-brand">
             <div class="admin-brand-icon">▶</div>
@@ -119,54 +144,81 @@
                 <span>ADMIN PANEL</span>
             </div>
         </div>
-                <nav class="admin-nav">
-            <a href="dashboard.html" class="admin-nav-item ">
+
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item">
                 <span>📊</span> Dashboard
             </a>
-            <a href="users.html" class="admin-nav-item ">
+            <a href="users.html" class="admin-nav-item">
                 <span>👥</span> Users
             </a>
-            <a href="bundles.html" class="admin-nav-item ">
+            <a href="bundles.html" class="admin-nav-item">
                 <span>📦</span> Bundles
             </a>
-            <a href="orders.html" class="admin-nav-item ">
+            <a href="orders.html" class="admin-nav-item">
                 <span>🧾</span> Orders
             </a>
-            <a href="coupons.html" class="admin-nav-item ">
+            <a href="coupons.html" class="admin-nav-item">
                 <span>🎟️</span> Coupons
             </a>
-            <a href="demo-videos.html" class="admin-nav-item ">
+            <a href="demo-videos.html" class="admin-nav-item">
                 <span>🎬</span> Demo Videos
             </a>
-            <a href="download.html" class="admin-nav-item ">
+            <a href="download.html" class="admin-nav-item">
                 <span>⬇️</span> Downloads
             </a>
-            <a href="storage.html" class="admin-nav-item ">
+            <a href="storage.html" class="admin-nav-item">
                 <span>☁️</span> Cloud Storage
             </a>
             <a href="protection.html" class="admin-nav-item active">
                 <span>🛡️</span> Security & Protection
             </a>
         </nav>
-        <div class="admin-user-footer">
-            <div class="admin-user-info">
-                <span class="admin-user-name" id="adminName">Admin User</span>
-                <span class="admin-user-role">Super Administrator</span>
+
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminName" style="color:#fff; font-size:13.5px; display:block;">Admin User</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
             </div>
-            <button class="btn-logout" id="logoutBtn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; margin-top:8px;">🚪 Logout</button>
+            <button type="button" id="logoutBtn" class="admin-logout-btn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
         </div>
     </aside>
 
+    <!-- ================= MAIN CONTENT ================= -->
     <main class="admin-main">
-        <header class="admin-header">
+        <!-- TOPBAR -->
+        <header class="admin-topbar">
             <div>
-                <h2>🛡️ Site Security & Code Protection System</h2>
-                <p>Control anti-theft source code restrictions and developer tool blocks site-wide.</p>
+                <span class="page-eyebrow">SECURITY CONTROL</span>
+                <h1 style="font-size:24px; font-weight:800; color:#fff; margin:4px 0 2px;">🛡️ Security & Protection</h1>
+                <p style="font-size:13px; color:#94a3b8; margin:0;">Control anti-theft source code restrictions and developer tool blocks site-wide.</p>
+            </div>
+
+            <div style="display:flex; gap:12px; align-items:center;">
+                <span style="font-size:12px; color:#4ade80; background:rgba(74, 222, 128, 0.1); border:1px solid rgba(74, 222, 128, 0.2); padding:6px 14px; border-radius:999px; font-weight:600; display:flex; align-items:center; gap:6px;">
+                    <span style="width:8px; height:8px; background:#4ade80; border-radius:50%; display:inline-block; box-shadow:0 0 8px #4ade80;"></span> Live Sync Active
+                </span>
             </div>
         </header>
 
+        <!-- SECURITY CARD -->
         <div class="security-card">
-            <div id="statusMessage" style="margin-bottom: 18px; font-size: 13.5px;"></div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:20px; margin-bottom:24px; border-bottom:1px solid rgba(255,255,255,0.08);">
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <div style="width:48px; height:48px; background:rgba(124, 58, 237, 0.15); border:1px solid rgba(167, 139, 250, 0.3); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px;">
+                        🔒
+                    </div>
+                    <div>
+                        <h3 style="font-size:18px; font-weight:700; color:#fff; margin:0 0 4px 0;">Content Protection Engine</h3>
+                        <p style="font-size:13px; color:#94a3b8; margin:0;">Changes take effect instantly on all open user sessions</p>
+                    </div>
+                </div>
+                <span style="background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 12px;">GLOBAL SHIELD</span>
+            </div>
+
+            <div id="statusMessage" style="margin-bottom: 20px; font-size: 13.5px; font-weight: 600;"></div>
 
             <div class="toggle-row">
                 <div class="toggle-info">
@@ -201,12 +253,13 @@
                 </label>
             </div>
 
-            <div style="margin-top: 24px; text-align: right;">
+            <div style="margin-top: 28px; text-align: right;">
                 <button type="button" id="saveProtectionBtn" class="btn-save">💾 Save Protection Settings</button>
             </div>
         </div>
     </main>
 </div>
+
 <script type="module" src="assets/js/admin-protection.js"></script>
 </body>
 </html>
