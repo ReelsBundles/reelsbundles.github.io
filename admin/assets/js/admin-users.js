@@ -9,6 +9,13 @@ const API_BASE = (
         : "https://reelsbundles-backend.onrender.com"
 ) + "/api";
 
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") || "";
+}
+
 let allUsers = [];
 
 async function fetchAdminUsers(isSilent = false) {
@@ -17,7 +24,7 @@ async function fetchAdminUsers(isSilent = false) {
     if (!tbody) return;
 
     try {
-        const token = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token");
+        const token = getAdminToken();
         const res = await robustFetch(`${API_BASE}/admin/users`, {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -122,7 +129,7 @@ function broadcastUserStatusUpdate(userId) {
 
 window.toggleUser = async function(userId) {
     try {
-        const token = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token");
+        const token = getAdminToken();
         const res = await robustFetch(`${API_BASE}/admin/users/${userId}/toggle-status`, {
             method: "PUT",
             headers: { "Authorization": `Bearer ${token}` }
@@ -139,7 +146,7 @@ window.toggleUser = async function(userId) {
 window.deleteUserItem = async function(userId) {
     if (!confirm("Are you sure you want to permanently delete this user account?")) return;
     try {
-        const token = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token");
+        const token = getAdminToken();
         const res = await robustFetch(`${API_BASE}/admin/users/${userId}`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${token}` }
@@ -164,7 +171,7 @@ window.deleteAllUsersAction = async function() {
     }
 
     try {
-        const token = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token");
+        const token = getAdminToken();
         const res = await robustFetch(`${API_BASE}/admin/users/all`, {
             method: "DELETE",
             headers: { "Authorization": `Bearer ${token}` }

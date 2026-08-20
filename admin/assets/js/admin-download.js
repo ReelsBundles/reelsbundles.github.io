@@ -13,6 +13,13 @@ const RAW_API_BASE =
 
 const API_BASE_URL = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") || "";
+}
+
 
 let currentPage = 1;
 let currentLimit = 20;
@@ -126,7 +133,10 @@ async function loadDownloads(
                     headers: {
 
                         "Accept":
-                            "application/json"
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${getAdminToken()}`
 
                     }
 
@@ -1607,119 +1617,246 @@ if (!button) {
             );
 
         }
+}
+
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value ??
+        ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* ==========================================================
+   UI STATES
+========================================================== */
+
+function showLoading() {
+
+    if (
+        !tableBody
+    ) {
+        return;
+    }
+
+
+    tableBody.innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="12"
+                class="loading-state"
+            >
+
+                Loading downloads...
+
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
+
+function showError(
+    message
+) {
+
+    if (
+        !tableBody
+    ) {
+        return;
+    }
+
+
+    tableBody.innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="12"
+                class="error-state"
+            >
+
+                ${escapeHtml(
+                    message ||
+                    "Unable to load downloads."
+                )}
+
+            </td>
+
+        </tr>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   INITIAL LOAD
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        loadDownloads(
+            1
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   VIEW DOWNLOAD BUTTON
+   CSP-SAFE EVENT HANDLER
+========================================================== */
+
+if (tableBody) {
+
+    tableBody.addEventListener(
+        "click",
+        (event) => {
+
+            const deleteButton =
+    event.target.closest(
+        ".delete-download-btn"
     );
 
+
+if (deleteButton) {
+
+    const index =
+        Number(
+            deleteButton.dataset.downloadIndex
+        );
+
+
+    if (
+        Number.isInteger(index)
+    ) {
+
+        window.deleteAdminDownload(
+            index
+        );
+
+    }
+
+
+    return;
+
+}
+
+
+const button =
+    event.target.closest(
+        ".view-download-btn"
+    );
+
+
+if (!button) {
+    return;
+}
+
+            const index =
+                Number(
+                    button.dataset.downloadIndex
+                );
+
+
+            if (
+                !Number.isInteger(index)
+            ) {
+
+                console.error(
+                    "[Admin Downloads] Invalid download index:",
+                    button.dataset.downloadIndex
+                );
+
+                return;
+
+            }
+
+
+            window.viewAdminDownload(
+                index
+            );
+
+        }
+    );
 }
 /* ==========================================================
    DELETE ALL DOWNLOADS
 ========================================================== */
 
-if (
-    deleteAllDownloadsButton
-) {
+if (deleteAllDownloadsButton) {
+    deleteAllDownloadsButton.addEventListener("click", async () => {
+        const confirmed = window.confirm(
+            "⚠️ DELETE ALL DOWNLOADS?\n\nThis will permanently delete all download records.\n\nPayment and order records will NOT be deleted.\n\nThis action cannot be undone."
+        );
 
-    deleteAllDownloadsButton.addEventListener(
-        "click",
-        async () => {
+        if (!confirmed) return;
 
-            const confirmed =
-                window.confirm(
-                    "⚠️ DELETE ALL DOWNLOADS?\n\nThis will permanently delete all download records.\n\nPayment and order records will NOT be deleted.\n\nThis action cannot be undone."
-                );
+        try {
+            deleteAllDownloadsButton.disabled = true;
+            deleteAllDownloadsButton.textContent = "Deleting...";
 
-
-            if (!confirmed) {
-                return;
-            }
-
-
-            try {
-
-                deleteAllDownloadsButton.disabled =
-                    true;
-
-
-                deleteAllDownloadsButton.textContent =
-                    "Deleting...";
-
-
-                const response =
-                    await robustFetch(
-                        `${API_BASE_URL}/api/admin/downloads`,
-                        {
-                            method:
-                                "DELETE",
-
-                            credentials:
-                                "include",
-
-                            headers: {
-
-                                "Accept":
-                                    "application/json"
-
-                            }
-
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (
-                    !response.ok ||
-                    !data.success
-                ) {
-
-                    throw new Error(
-                        data.message ||
-                        "Failed to delete downloads."
-                    );
-
+            const response = await robustFetch(
+                `${API_BASE_URL}/api/admin/downloads`,
+                {
+                    method: "DELETE",
+                    credentials: "include",
+                    headers: {
+                        "Accept": "application/json",
+                        "Authorization": `Bearer ${getAdminToken()}`
+                    }
                 }
+            );
 
+            const data = await response.json();
 
-                await loadDownloads(
-                    1
-                );
-
-
-                alert(
-                    data.message ||
-                    "All downloads deleted successfully."
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "[Admin Downloads] Delete all failed:",
-                    error
-                );
-
-
-                alert(
-                    error.message ||
-                    "Failed to delete all downloads."
-                );
-
-
-            } finally {
-
-                deleteAllDownloadsButton.disabled =
-                    false;
-
-
-                deleteAllDownloadsButton.textContent =
-                    "🗑️ Delete All";
-
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Failed to delete downloads.");
             }
 
+            await loadDownloads(1);
+            alert(data.message || "All downloads deleted successfully.");
+        } catch (error) {
+            console.error("[Admin Downloads] Delete all failed:", error);
+            alert(error.message || "Failed to delete all downloads.");
+        } finally {
+            deleteAllDownloadsButton.disabled = false;
+            deleteAllDownloadsButton.textContent = "🗑️ Delete All";
         }
-    );
-
+    });
 }
 
 
