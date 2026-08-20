@@ -389,15 +389,68 @@ async function fetchProtectionSettings() {
     }
 }
 
+async function checkBackendSuspensionStatus() {
+    if (isAdminUser()) return;
+
+    try {
+        let identifier = localStorage.getItem("rb_user_email") || "";
+        if (!identifier) {
+            try {
+                const rawUser = localStorage.getItem("rb_user");
+                if (rawUser) {
+                    const parsed = JSON.parse(rawUser);
+                    if (parsed.email) identifier = parsed.email;
+                    else if (parsed.uid) identifier = parsed.uid;
+                }
+            } catch (e) {}
+        }
+
+        if (!identifier) return;
+
+        const response = await fetch(`${API_BASE}/user/suspension-status?email=${encodeURIComponent(identifier)}`, { cache: "no-store" });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                if (data.suspended) {
+                    const reason = data.reason || "Account suspended due to Developer Tools inspection detection.";
+                    localStorage.setItem("rb_is_suspended", "true");
+                    localStorage.setItem("rb_suspended_reason", reason);
+
+                    const isDashboard = window.location.pathname.includes("dashboard");
+                    const targetPage = isDashboard ? "dashboard.html" : "download.html";
+                    const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(reason)}`;
+                    if (!window.location.href.includes("suspended=true")) {
+                        window.location.href = redirectUrl;
+                    }
+                } else if (localStorage.getItem("rb_is_suspended") === "true") {
+                    localStorage.removeItem("rb_is_suspended");
+                    localStorage.removeItem("rb_suspended_reason");
+                    if (window.location.search.includes("suspended=true")) {
+                        const cleanUrl = window.location.pathname;
+                        window.location.href = cleanUrl;
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("[PROTECTION] Suspension status check notice:", e);
+    }
+}
+
 // 1. Initialize protection & fetch initial settings
 initContentProtection();
 fetchProtectionSettings();
+checkBackendSuspensionStatus();
 
-// 2. Periodic Auto-Refresh Polling (Every 5 seconds)
+// 2. Periodic Auto-Refresh Polling (Every 5 seconds for settings, 3 seconds for suspension enforcement)
 setInterval(fetchProtectionSettings, 5000);
+setInterval(checkBackendSuspensionStatus, 3000);
 
 // 3. Tab Focus Auto-Refresh
-window.addEventListener("focus", fetchProtectionSettings);
+window.addEventListener("focus", () => {
+    fetchProtectionSettings();
+    checkBackendSuspensionStatus();
+});
 
 // 4. Cross-Tab Live Broadcast Sync
 try {
@@ -405,6 +458,7 @@ try {
     protectionChannel.onmessage = (event) => {
         if (event.data && (event.data.type === "PROTECTION_UPDATED" || event.data.type === "PROTECTION_CHANGED")) {
             fetchProtectionSettings();
+            checkBackendSuspensionStatus();
         }
     };
 } catch (err) {}
@@ -413,5 +467,6 @@ try {
 window.addEventListener("storage", (event) => {
     if (event.key === "reelsbundles_protection_sync_time") {
         fetchProtectionSettings();
+        checkBackendSuspensionStatus();
     }
 });
