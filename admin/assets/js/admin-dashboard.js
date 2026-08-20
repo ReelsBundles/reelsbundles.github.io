@@ -4,7 +4,16 @@ const API_BASE = window.REELS_BUNDLES_API_BASE || (
         : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
 );
 
-const token = localStorage.getItem("admin_token");
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           localStorage.getItem("token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("token") || "";
+}
+
+const token = getAdminToken();
 const admin = JSON.parse(localStorage.getItem("admin_data") || "{}");
 
 if (!token) {
