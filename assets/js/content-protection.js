@@ -164,15 +164,16 @@ function hideDevToolsWarningModal() {
 }
 
 function isAdminUser() {
-    const adminToken = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token") || localStorage.getItem("admin_token");
-    const userEmail = localStorage.getItem("rb_user_email") || "";
-    const userObj = localStorage.getItem("rb_user");
+    // Admin exemption ONLY applies when navigating inside the /admin/ control panel directory.
+    // On all user-facing storefront pages (dashboard.html, download.html, etc.),
+    // security protection and account suspension enforce strictly for all users.
+    const isAdminPath = window.location.pathname.includes("/admin/");
+    if (!isAdminPath) {
+        return false;
+    }
     
+    const adminToken = localStorage.getItem("rb_admin_token") || sessionStorage.getItem("rb_admin_token") || localStorage.getItem("admin_token");
     if (adminToken) return true;
-    if (userEmail.toLowerCase().includes("admin")) return true;
-    try {
-        if (userObj && JSON.parse(userObj).email?.toLowerCase().includes("admin")) return true;
-    } catch (e) {}
     return false;
 }
 
@@ -242,7 +243,7 @@ function checkDevToolsDimensions() {
         return false;
     }
 
-    const threshold = 160;
+    const threshold = 120;
     const widthDiff = window.outerWidth - window.innerWidth > threshold;
     const heightDiff = window.outerHeight - window.innerHeight > threshold;
 
@@ -275,7 +276,7 @@ function startAntiDebuggingLoop() {
         } else {
             hideDevToolsWarningModal();
         }
-    }, 800);
+    }, 500);
 }
 
 window.addEventListener("resize", checkDevToolsDimensions);
@@ -304,7 +305,7 @@ function initContentProtection() {
         }
     }, true);
 
-    // 3. DevTools & Inspection Keyboard Shortcuts
+    // 3. DevTools & Inspection Keyboard Shortcuts -> Trigger Suspension Immediately
     document.addEventListener("keydown", (event) => {
         if (!protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
             return;
@@ -318,7 +319,7 @@ function initContentProtection() {
         if (key === "f12" || code === "f12") {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            triggerDevToolsAutoLogout();
             return false;
         }
 
@@ -326,7 +327,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (event.shiftKey || event.altKey) && (key === "i" || code === "keyi")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            triggerDevToolsAutoLogout();
             return false;
         }
 
@@ -334,7 +335,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (event.shiftKey || event.altKey) && (key === "j" || code === "keyj")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            triggerDevToolsAutoLogout();
             return false;
         }
 
@@ -342,7 +343,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (event.shiftKey || event.altKey) && (key === "c" || code === "keyc")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            triggerDevToolsAutoLogout();
             return false;
         }
 
