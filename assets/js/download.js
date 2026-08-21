@@ -301,10 +301,6 @@ async function initializeDownloadPage() {
 
     try {
 
-        protectUserPage();
-
-        setupUI();
-
         const params = new URLSearchParams(window.location.search);
         const isSuspendedUrl = params.get("suspended") === "true";
         const isSuspendedStorage = localStorage.getItem("rb_is_suspended") === "true";
@@ -360,6 +356,10 @@ async function initializeDownloadPage() {
             }
             return;
         }
+
+        protectUserPage();
+
+        setupUI();
 
         const bundleId =
             getBundleIdFromUrl();
