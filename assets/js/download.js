@@ -302,6 +302,72 @@ async function initializeDownloadPage() {
     try {
 
         const params = new URLSearchParams(window.location.search);
+        const isSuspendedUrl = params.get("suspended") === "true";
+        const isSuspendedStorage = localStorage.getItem("rb_is_suspended") === "true";
+
+        if (isSuspendedUrl || isSuspendedStorage) {
+            const reason = params.get("reason") || localStorage.getItem("rb_suspended_reason") || "Account banned due to repeated security inspection attempts (3/3 Warnings Exceeded).";
+            try {
+                localStorage.setItem("rb_is_suspended", "true");
+                localStorage.setItem("rb_suspended_reason", reason);
+            } catch (e) {}
+
+            const mainContent = document.querySelector(".dashboard-content") || document.querySelector("main") || document.body;
+            if (mainContent) {
+                mainContent.innerHTML = `
+                    <div style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 60px 24px;
+                        margin: 60px auto;
+                        max-width: 640px;
+                        border: 1px solid rgba(239, 68, 68, 0.4);
+                        border-radius: 16px;
+                        background-color: rgba(30, 41, 59, 0.95);
+                        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
+                        text-align: center;
+                        font-family: system-ui, -apple-system, sans-serif;
+                    ">
+                        <div style="font-size: 54px; margin-bottom: 16px;">🚫</div>
+                        <h2 style="font-size: 22px; font-weight: 800; color: #f87171; margin-bottom: 12px; font-family: inherit;">ACCOUNT BANNED</h2>
+                        <p style="color: #cbd5e1; font-size: 15px; font-weight: 500; line-height: 1.6; margin-bottom: 24px; font-family: inherit;">
+                            ${escapeHtml(reason)}
+                        </p>
+                        <div style="
+                            background: rgba(15, 23, 42, 0.6);
+                            border: 1px solid rgba(248, 113, 113, 0.3);
+                            border-radius: 10px;
+                            padding: 14px 20px;
+                            font-size: 13px;
+                            color: #fca5a5;
+                            margin-bottom: 24px;
+                            line-height: 1.5;
+                        ">
+                            🔒 Account locked across all devices.<br>Reactivation can only be performed by a Super Administrator.
+                        </div>
+                        <a href="contact.html" style="
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 10px;
+                            background: linear-gradient(135deg, #ef4444, #b91c1c);
+                            color: #ffffff;
+                            font-weight: 700;
+                            font-size: 14px;
+                            padding: 12px 26px;
+                            border-radius: 8px;
+                            text-decoration: none;
+                            box-shadow: 0 4px 18px rgba(239, 68, 68, 0.4);
+                            transition: transform 0.2s;
+                        ">
+                            <span>✉️</span> Contact Support Page
+                        </a>
+                    </div>
+                `;
+            }
+            return;
+        }
 
         protectUserPage();
 

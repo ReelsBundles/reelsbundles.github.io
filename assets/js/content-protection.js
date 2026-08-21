@@ -1,8 +1,6 @@
 /* ==========================================================
    REELSBUNDLES — SITE-WIDE CONTENT PROTECTION MODULE
-   PREVENTS SOURCE CODE THEFT & UNAUTHORIZED COPYING
-   DYNAMICALLY CONTROLLED BY ADMIN PANEL CONTROL SYSTEM
-   TOAST NOTIFICATION ONLY — NO PAGE REDIRECTS OR MODAL OVERLAYS
+   3-STRIKE SECURITY WARNING SYSTEM & ADMIN UNBAN ENGINE
 ========================================================== */
 
 const API_BASE = (
@@ -22,7 +20,7 @@ let activeToast = null;
 let toastTimeout = null;
 let styleElement = null;
 
-function showProtectionToast(message) {
+function showProtectionToast(message, isCritical = false) {
     if (activeToast) {
         activeToast.remove();
         if (toastTimeout) clearTimeout(toastTimeout);
@@ -30,28 +28,28 @@ function showProtectionToast(message) {
 
     const toast = document.createElement("div");
     toast.className = "protection-warning-toast";
-    toast.innerHTML = `<span style="margin-right:8px; font-size:14px;">⚠️</span> ${message}`;
+    toast.innerHTML = `<span style="margin-right:8px; font-size:14px;">${isCritical ? '🚨' : '⚠️'}</span> ${message}`;
 
     Object.assign(toast.style, {
         position: "fixed",
         bottom: "24px",
         left: "50%",
         transform: "translateX(-50%) translateY(20px)",
-        backgroundColor: "rgba(15, 23, 42, 0.95)",
-        color: "#f87171",
-        border: "1px solid rgba(248, 113, 113, 0.3)",
-        borderRadius: "8px",
-        padding: "10px 20px",
+        backgroundColor: isCritical ? "rgba(153, 27, 27, 0.98)" : "rgba(15, 23, 42, 0.95)",
+        color: isCritical ? "#fecaca" : "#f87171",
+        border: isCritical ? "1px solid rgba(239, 68, 68, 0.6)" : "1px solid rgba(248, 113, 113, 0.3)",
+        borderRadius: "10px",
+        padding: "12px 24px",
         fontSize: "13px",
-        fontWeight: "600",
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+        fontWeight: "700",
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.6)",
         zIndex: "999999",
         pointerEvents: "none",
         opacity: "0",
         transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
         fontFamily: "system-ui, -apple-system, sans-serif",
         textAlign: "center",
-        maxWidth: "90vw"
+        maxWidth: "92vw"
     });
 
     document.body.appendChild(toast);
@@ -66,7 +64,7 @@ function showProtectionToast(message) {
         toast.style.opacity = "0";
         toast.style.transform = "translateX(-50%) translateY(10px)";
         setTimeout(() => toast.remove(), 250);
-    }, 2500);
+    }, 3000);
 }
 
 function applyCssRestrictions() {
@@ -106,10 +104,99 @@ function isAdminUser() {
     return false;
 }
 
-let lastDevToolsToastTime = 0;
+// -----------------------------------------------------------
+// 3 WARNING STRIKE SYSTEM
+// -----------------------------------------------------------
+
+function getWarningCount() {
+    try {
+        const localVal = parseInt(localStorage.getItem("rb_warning_count") || "0", 10);
+        return isNaN(localVal) ? 0 : localVal;
+    } catch (e) {
+        return 0;
+    }
+}
+
+let isBanningUser = false;
+
+async function triggerAccountBan(reason) {
+    if (isAdminUser() || isBanningUser) return;
+    isBanningUser = true;
+
+    const actualReason = reason || "Account banned due to repeated security inspection attempts (3/3 Warnings Exceeded).";
+    
+    try {
+        localStorage.setItem("rb_is_suspended", "true");
+        localStorage.setItem("rb_warning_count", "3");
+        localStorage.setItem("rb_suspended_reason", actualReason);
+    } catch (e) {}
+
+    let userEmail = localStorage.getItem("rb_user_email") || "";
+    let uid = "";
+    try {
+        const rawUser = localStorage.getItem("rb_user");
+        if (rawUser) {
+            const parsed = JSON.parse(rawUser);
+            if (parsed.uid) uid = parsed.uid;
+            if (parsed.email) userEmail = parsed.email;
+        }
+    } catch (e) {}
+
+    try {
+        await fetch(`${API_BASE}/user/report-devtools`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                uid: uid,
+                email: userEmail,
+                reason: actualReason
+            })
+        });
+    } catch (e) {
+        console.warn("[PROTECTION] Report ban notice:", e);
+    }
+
+    const isDashboard = window.location.pathname.includes("dashboard");
+    const isDownload = window.location.pathname.includes("download");
+    
+    if (isDashboard || isDownload) {
+        const targetPage = isDashboard ? "dashboard.html" : "download.html";
+        const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(actualReason)}`;
+        if (!window.location.href.includes("suspended=true")) {
+            window.location.href = redirectUrl;
+        }
+    } else {
+        showProtectionToast("🚨 ACCOUNT BANNED: Security policy violated (3/3 Warnings Exceeded).", true);
+    }
+}
+
+function recordSecurityViolation(violationType) {
+    if (isAdminUser() || !protectionConfig.protectionEnabled) return;
+    if (localStorage.getItem("rb_is_suspended") === "true") return;
+
+    let currentWarnings = getWarningCount() + 1;
+    localStorage.setItem("rb_warning_count", String(currentWarnings));
+
+    if (currentWarnings === 1) {
+        showProtectionToast(`Security Warning (1/3): ${violationType} is restricted on ReelsBundles.`, false);
+    } else if (currentWarnings === 2) {
+        showProtectionToast(`Final Warning (2/3)! One more inspection attempt will ban your account.`, true);
+    } else if (currentWarnings >= 3) {
+        triggerAccountBan(`Account banned due to repeated security inspection attempts (3/3 Warnings Exceeded).`);
+    }
+}
+
+// -----------------------------------------------------------
+// DEVTOOLS DIMENSION POLLING
+// -----------------------------------------------------------
+
+let lastDevToolsCheckTime = 0;
 
 function checkDevToolsDimensions() {
     if (isAdminUser() || !protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
+        return false;
+    }
+    if (localStorage.getItem("rb_is_suspended") === "true") {
         return false;
     }
 
@@ -119,9 +206,9 @@ function checkDevToolsDimensions() {
 
     if (widthDiff || heightDiff) {
         const now = Date.now();
-        if (now - lastDevToolsToastTime > 3000) {
-            lastDevToolsToastTime = now;
-            showProtectionToast("Developer tools access is restricted.");
+        if (now - lastDevToolsCheckTime > 4000) {
+            lastDevToolsCheckTime = now;
+            recordSecurityViolation("Developer Tools Inspection");
         }
         return true;
     }
@@ -132,7 +219,6 @@ let antiDebugInterval = null;
 
 function startAntiDebuggingLoop() {
     if (antiDebugInterval) clearInterval(antiDebugInterval);
-
     antiDebugInterval = setInterval(() => {
         if (isAdminUser()) return;
         if (protectionConfig.protectionEnabled && protectionConfig.disableDevTools) {
@@ -143,6 +229,10 @@ function startAntiDebuggingLoop() {
 
 window.addEventListener("resize", checkDevToolsDimensions);
 
+// -----------------------------------------------------------
+// EVENT LISTENERS & SHORTCUT SUPPRESSION
+// -----------------------------------------------------------
+
 let isProtectionInitialized = false;
 
 function initContentProtection() {
@@ -152,11 +242,11 @@ function initContentProtection() {
 
     startAntiDebuggingLoop();
 
-    // 1. Right Click Protection -> Toast Only
+    // 1. Right Click Protection
     document.addEventListener("contextmenu", (event) => {
         if (protectionConfig.protectionEnabled && protectionConfig.disableRightClick) {
             event.preventDefault();
-            showProtectionToast("Right-click is disabled to protect content library.");
+            recordSecurityViolation("Right-Click Context Menu");
         }
     }, true);
 
@@ -167,7 +257,7 @@ function initContentProtection() {
         }
     }, true);
 
-    // 3. Shortcuts Protection -> Toast Only
+    // 3. Shortcuts Protection
     document.addEventListener("keydown", (event) => {
         if (!protectionConfig.protectionEnabled || !protectionConfig.disableDevTools) {
             return;
@@ -181,7 +271,7 @@ function initContentProtection() {
         if (key === "f12" || code === "f12") {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            recordSecurityViolation("F12 Developer Tools Shortcut");
             return false;
         }
 
@@ -189,7 +279,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (event.shiftKey || event.altKey) && (key === "i" || code === "keyi")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            recordSecurityViolation("Inspect Element Shortcut");
             return false;
         }
 
@@ -197,7 +287,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (event.shiftKey || event.altKey) && (key === "j" || code === "keyj")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            recordSecurityViolation("Developer Console Shortcut");
             return false;
         }
 
@@ -205,7 +295,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (event.shiftKey || event.altKey) && (key === "c" || code === "keyc")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Developer tools access is restricted.");
+            recordSecurityViolation("Element Selector Shortcut");
             return false;
         }
 
@@ -213,7 +303,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (key === "u" || code === "keyu")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Source code viewing is disabled.");
+            recordSecurityViolation("View Source Shortcut");
             return false;
         }
 
@@ -221,7 +311,7 @@ function initContentProtection() {
         if (isCmdOrCtrl && (key === "s" || code === "keys")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Saving web page is disabled.");
+            showProtectionToast("Saving web page is disabled.", false);
             return false;
         }
 
@@ -229,10 +319,70 @@ function initContentProtection() {
         if (isCmdOrCtrl && (key === "p" || code === "keyp")) {
             event.preventDefault();
             event.stopPropagation();
-            showProtectionToast("Printing page source is disabled.");
+            showProtectionToast("Printing page source is disabled.", false);
             return false;
         }
     }, true);
+}
+
+// -----------------------------------------------------------
+// LIVE BACKEND SUSPENSION & ADMIN UNBAN SYNC
+// -----------------------------------------------------------
+
+async function checkBackendSuspensionStatus() {
+    if (isAdminUser()) return;
+
+    try {
+        let identifier = localStorage.getItem("rb_user_email") || "";
+        if (!identifier) {
+            try {
+                const rawUser = localStorage.getItem("rb_user");
+                if (rawUser) {
+                    const parsed = JSON.parse(rawUser);
+                    if (parsed.email) identifier = parsed.email;
+                    else if (parsed.uid) identifier = parsed.uid;
+                }
+            } catch (e) {}
+        }
+
+        if (!identifier) return;
+
+        const response = await fetch(`${API_BASE}/user/suspension-status?email=${encodeURIComponent(identifier)}`, { cache: "no-store" });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                if (data.suspended) {
+                    // User IS suspended on backend
+                    const reason = data.reason || "Account suspended by security policy.";
+                    localStorage.setItem("rb_is_suspended", "true");
+                    localStorage.setItem("rb_warning_count", "3");
+                    localStorage.setItem("rb_suspended_reason", reason);
+
+                    const isDashboard = window.location.pathname.includes("dashboard");
+                    const isDownload = window.location.pathname.includes("download");
+                    if (isDashboard || isDownload) {
+                        const targetPage = isDashboard ? "dashboard.html" : "download.html";
+                        const redirectUrl = `${targetPage}?suspended=true&reason=${encodeURIComponent(reason)}`;
+                        if (!window.location.href.includes("suspended=true")) {
+                            window.location.href = redirectUrl;
+                        }
+                    }
+                } else if (localStorage.getItem("rb_is_suspended") === "true") {
+                    // User was UNBANNED / REACTIVATED by Admin!
+                    localStorage.removeItem("rb_is_suspended");
+                    localStorage.removeItem("rb_suspended_reason");
+                    localStorage.setItem("rb_warning_count", "0");
+
+                    if (window.location.search.includes("suspended=true")) {
+                        const cleanUrl = window.location.pathname;
+                        window.location.href = cleanUrl;
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("[PROTECTION] Backend status check notice:", e);
+    }
 }
 
 async function fetchProtectionSettings() {
@@ -251,29 +401,16 @@ async function fetchProtectionSettings() {
     }
 }
 
-// 1. Initialize protection & fetch initial settings
+// Initialize
 initContentProtection();
 fetchProtectionSettings();
+checkBackendSuspensionStatus();
 
-// 2. Periodic Auto-Refresh Polling
+// Polling intervals
 setInterval(fetchProtectionSettings, 5000);
+setInterval(checkBackendSuspensionStatus, 3000);
 
-// 3. Tab Focus Auto-Refresh
-window.addEventListener("focus", fetchProtectionSettings);
-
-// 4. Cross-Tab Live Broadcast Sync
-try {
-    const protectionChannel = new BroadcastChannel("reelsbundles_protection_sync");
-    protectionChannel.onmessage = (event) => {
-        if (event.data && (event.data.type === "PROTECTION_UPDATED" || event.data.type === "PROTECTION_CHANGED")) {
-            fetchProtectionSettings();
-        }
-    };
-} catch (err) {}
-
-// 5. LocalStorage Fallback Storage Event Sync
-window.addEventListener("storage", (event) => {
-    if (event.key === "reelsbundles_protection_sync_time") {
-        fetchProtectionSettings();
-    }
+window.addEventListener("focus", () => {
+    fetchProtectionSettings();
+    checkBackendSuspensionStatus();
 });
