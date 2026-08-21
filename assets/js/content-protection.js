@@ -124,30 +124,34 @@ function showDevToolsWarningModal() {
             box-sizing: border-box;
         ">
             <div style="
-                background: rgba(30, 41, 59, 0.9);
-                border: 1px solid rgba(239, 68, 68, 0.4);
-                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.2);
-                border-radius: 16px;
-                padding: 36px 28px;
-                max-width: 480px;
-                width: 90%;
+                background: rgba(30, 41, 59, 0.95);
+                border: 1px solid rgba(239, 68, 68, 0.5);
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.25);
+                border-radius: 20px;
+                padding: 40px 32px;
+                max-width: 500px;
+                width: 92%;
             ">
-                <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
-                <h2 style="font-size: 22px; font-weight: 700; color: #f87171; margin: 0 0 12px 0;">
-                    Developer Tools Restricted
+                <div style="font-size: 54px; margin-bottom: 16px;">🚫</div>
+                <h2 style="font-size: 24px; font-weight: 800; color: #f87171; margin: 0 0 12px 0; letter-spacing: 0.5px;">
+                    ACCOUNT SUSPENDED
                 </h2>
-                <p style="font-size: 14px; color: #94a3b8; line-height: 1.6; margin: 0 0 20px 0;">
-                    Developer Tools & Console Inspection have been disabled on <strong>ReelsBundles</strong> to protect content security and system integrity.
+                <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin: 0 0 24px 0;">
+                    Developer tools or source code inspection was detected on your session. Your account has been <strong>permanently suspended</strong> by system security policy.
                 </p>
                 <div style="
-                    background: rgba(15, 23, 42, 0.6);
-                    border: 1px dashed rgba(248, 113, 113, 0.3);
-                    border-radius: 8px;
-                    padding: 12px;
-                    font-size: 12px;
-                    color: #cbd5e1;
+                    background: rgba(15, 23, 42, 0.75);
+                    border: 1px solid rgba(248, 113, 113, 0.3);
+                    border-radius: 12px;
+                    padding: 16px;
+                    font-size: 13px;
+                    color: #fca5a5;
+                    line-height: 1.5;
                 ">
-                    Please close Developer Tools / Console to return to your session.
+                    🔒 <strong>Locked Across All Devices</strong><br>
+                    <span style="font-size: 12px; color: #94a3b8; display: block; margin-top: 4px;">
+                        Mobile, Laptop, Tablet & Desktop access is locked. Account access can only be restored by a Super Administrator.
+                    </span>
                 </div>
             </div>
         </div>
