@@ -214,14 +214,18 @@
             document.body.appendChild(bellBtn);
         }
 
-        bellBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            toggleDrawer();
-        });
-
         fetchPublicNotifications();
         setInterval(fetchPublicNotifications, 10000);
     }
+
+    // Global Click Delegation for Bell Button
+    document.addEventListener("click", (e) => {
+        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn");
+        if (bell) {
+            e.stopPropagation();
+            toggleDrawer();
+        }
+    });
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", initNotificationUI);

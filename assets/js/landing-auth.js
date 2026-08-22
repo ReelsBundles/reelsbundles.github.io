@@ -38,10 +38,14 @@ document.addEventListener(
 
 
         /* ======================================================
-           ALWAYS SHOW PUBLIC LANDING ACTIONS
+           ALWAYS SHOW PUBLIC LANDING ACTIONS & NOTIFICATION BELL
         ====================================================== */
 
         authActions.innerHTML = `
+
+            <button type="button" class="notif-bell-btn" id="notifBellBtn" title="Notifications & Coupons">
+                🔔<span class="notif-badge hidden" id="notifBadge">0</span>
+            </button>
 
             <a
                 href="login.html"
