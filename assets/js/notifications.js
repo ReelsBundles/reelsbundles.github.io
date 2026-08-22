@@ -202,14 +202,22 @@
             document.getElementById("notifCloseBtn")?.addEventListener("click", closeDrawer);
         }
 
-        // Attach event listener to Bell button
-        const bellBtn = document.getElementById("notifBellBtn");
-        if (bellBtn) {
-            bellBtn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                toggleDrawer();
-            });
+        // Auto-inject Bell Button if missing on current page
+        let bellBtn = document.getElementById("notifBellBtn");
+        if (!bellBtn) {
+            bellBtn = document.createElement("button");
+            bellBtn.type = "button";
+            bellBtn.id = "notifBellBtn";
+            bellBtn.className = "notif-bell-btn floating";
+            bellBtn.title = "Notifications & Coupons";
+            bellBtn.innerHTML = `🔔<span class="notif-badge hidden" id="notifBadge">0</span>`;
+            document.body.appendChild(bellBtn);
         }
+
+        bellBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDrawer();
+        });
 
         fetchPublicNotifications();
         setInterval(fetchPublicNotifications, 10000);
