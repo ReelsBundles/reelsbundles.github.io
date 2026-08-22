@@ -39,10 +39,8 @@ document.addEventListener(
     "DOMContentLoaded",
     async () => {
 
-           PROTECT DASHBOARD
-        ============================================== */
 
-        protectUserPage();
+
 
 
         /* ==============================================

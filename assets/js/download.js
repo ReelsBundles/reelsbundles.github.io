@@ -301,6 +301,8 @@ async function initializeDownloadPage() {
 
     try {
 
+        const params = new URLSearchParams(window.location.search);
+
         setupUI();
 
         const bundleId =
