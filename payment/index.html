@@ -1,16 +1,981 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        (function() {
-            var target = "../payment.html" + window.location.search + window.location.hash;
-            window.location.replace(target);
-        })();
-    </script>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Secure ReelsBundles checkout for Basic and Premium Instagram Reels Bundles."
+    >
+
+    <title>Secure Checkout | ReelsBundles</title>
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/payment.css"
+    >
+
     <script src="../assets/js/content-protection.js"></script>
 </head>
-<body>    
+
+
+<body>
+
+<div class="checkout-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="checkout-header">
+
+        <div class="header-inner">
+
+            <a
+                href="index.html"
+                class="brand"
+            >
+
+                <span class="brand-logo">
+                    ▶
+                </span>
+
+                <span>
+                    ReelsBundles
+                </span>
+
+            </a>
+
+
+            <div class="secure-header">
+
+                <span class="secure-indicator"></span>
+
+                <span>
+                    Secure Checkout
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="checkout-main">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="checkout-hero">
+
+            <div class="hero-badge">
+                🔒 SECURE PAYMENT
+            </div>
+
+
+            <h1>
+                Complete Your
+                <span>Purchase</span>
+            </h1>
+
+
+            <p>
+                Choose your ReelsBundles plan and complete
+                your secure payment to continue.
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STEP 1 — PLAN
+        ================================================== -->
+
+        <section class="plans-section">
+
+            <div class="section-title">
+
+                <span>
+                    STEP 1
+                </span>
+
+                <h2>
+                    Choose Your Bundle
+                </h2>
+
+                <p>
+                    Select the plan that fits your needs.
+                </p>
+
+            </div>
+
+
+
+            <div class="plans-grid">
+
+
+                <!-- =========================================
+                     PREMIUM
+                ========================================== -->
+
+                <article
+                    class="plan-card premium-card active"
+                    data-plan="premium"
+                >
+
+                    <div class="popular-badge">
+                        ⭐ MOST POPULAR
+                    </div>
+
+
+                    <div class="plan-icon premium-icon">
+                        👑
+                    </div>
+
+
+                    <div class="plan-content">
+
+                        <h3>
+                            Premium Bundle
+                        </h3>
+
+
+                        <p class="plan-subtitle">
+                            Best for creators & businesses
+                        </p>
+
+
+                        <div class="price-row">
+
+                            <strong class="plan-price">
+                                ₹69
+                            </strong>
+
+                            <del>
+                                ₹149
+                            </del>
+
+                            <span class="save-badge">
+                                SAVE ₹80
+                            </span>
+
+                        </div>
+
+
+                        <div class="plan-divider"></div>
+
+
+                        <ul class="plan-features">
+
+                            <li>
+                                <span>✓</span>
+                                All Basic Bundles
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                All Premium Bundles
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Lifetime Access
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                No Expiry
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Future Updates
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Priority Support
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Secure Download
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Commercial Usage
+                            </li>
+
+                        </ul>
+
+
+                        <button
+                            type="button"
+                            class="plan-select"
+                        >
+                            ✓ Selected
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- =========================================
+                     BASIC
+                ========================================== -->
+
+                <article
+                    class="plan-card basic-card"
+                    data-plan="basic"
+                >
+
+                    <div class="plan-icon basic-icon">
+                        📦
+                    </div>
+
+
+                    <div class="plan-content">
+
+                        <h3>
+                            Basic Bundle
+                        </h3>
+
+
+                        <p class="plan-subtitle">
+                            Perfect for getting started
+                        </p>
+
+
+                        <div class="price-row">
+
+                            <strong class="plan-price">
+                                ₹49
+                            </strong>
+
+                            <del>
+                                ₹99
+                            </del>
+
+                            <span class="save-badge">
+                                SAVE ₹50
+                            </span>
+
+                        </div>
+
+
+                        <div class="plan-divider"></div>
+
+
+                        <ul class="plan-features">
+
+                            <li>
+                                <span>✓</span>
+                                Limited Bundle Access
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Lifetime Access
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                No Expiry
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Secure Download
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Standard Support
+                            </li>
+
+                            <li>
+                                <span>✓</span>
+                                Commercial Usage
+                            </li>
+
+                        </ul>
+
+
+                        <button
+                            type="button"
+                            class="plan-select"
+                        >
+                            Select Plan
+                        </button>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             CHECKOUT
+        ================================================== -->
+
+        <section class="checkout-grid">
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================== -->
+
+            <div class="checkout-left">
+
+
+                <!-- =========================================
+                     STEP 2 — CUSTOMER
+                ========================================== -->
+
+                <div class="checkout-card">
+
+                    <div class="card-title">
+
+                        <div class="step-number">
+                            2
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Customer Details
+                            </h2>
+
+                            <p>
+                                Enter your details for your order.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-grid">
+
+
+                        <!-- NAME -->
+
+                        <div class="field full">
+
+                            <label for="fullName">
+                                Full Name
+                            </label>
+
+                            <input
+                                id="fullName"
+                                name="fullName"
+                                type="text"
+                                placeholder="Enter your full name"
+                                autocomplete="name"
+                                maxlength="100"
+                            >
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        <div class="field">
+
+                            <label for="email">
+                                Email Address
+                            </label>
+
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="example@gmail.com"
+                                autocomplete="email"
+                                maxlength="150"
+                            >
+
+                        </div>
+
+
+
+                        <!-- PHONE -->
+
+                        <div class="field">
+
+                            <label for="phone">
+                                Phone Number
+                            </label>
+
+                            <input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                placeholder="9876543210"
+                                autocomplete="tel"
+                                inputmode="numeric"
+                                maxlength="15"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     STEP 3 — PAYMENT METHOD
+                ========================================== -->
+
+                <div class="checkout-card">
+
+                    <div class="card-title">
+
+                        <div class="step-number">
+                            3
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Payment Method
+                            </h2>
+
+                            <p>
+                                Secure payment powered by Cashfree.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="payment-method">
+
+                        <div class="payment-method-icon">
+                            💳
+                        </div>
+
+
+                        <div class="payment-method-content">
+
+                            <strong>
+                                Cashfree Secure Checkout
+                            </strong>
+
+                            <p>
+                                UPI, Cards, Net Banking & Wallets
+                            </p>
+
+                        </div>
+
+
+                        <div class="payment-method-check">
+                            ✓
+                        </div>
+
+                    </div>
+
+
+                    <div class="payment-brands">
+
+                        <span>UPI</span>
+
+                        <span>Visa</span>
+
+                        <span>Mastercard</span>
+
+                        <span>RuPay</span>
+
+                        <span>GPay</span>
+
+                        <span>PhonePe</span>
+
+                        <span>Paytm</span>
+
+                    </div>
+
+
+                    <div class="security-row">
+
+                        <span>
+                            🔒 SSL Protected
+                        </span>
+
+                        <span>
+                            🛡 Secure Payment
+                        </span>
+
+                        <span>
+                            ⚡ Instant Confirmation
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =========================================
+                     COUPON
+                ========================================== -->
+
+                <div class="checkout-card">
+
+                    <div class="coupon-heading">
+
+                        <div class="coupon-icon">
+                            🎟️
+                        </div>
+
+
+                        <div>
+
+                            <h2>
+                                Coupon Code
+                            </h2>
+
+                            <p>
+                                Have a discount code?
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="coupon-row">
+
+                        <input
+                            id="coupon"
+                            name="coupon"
+                            type="text"
+                            placeholder="Enter coupon code"
+                            maxlength="30"
+                            autocomplete="off"
+                        >
+
+
+                        <button
+                            id="couponButton"
+                            type="button"
+                        >
+                            Apply
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="couponMessage"
+                        class="coupon-message"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT COLUMN — SUMMARY
+            ================================================== -->
+
+            <aside class="summary-column">
+
+                <div class="summary-card">
+
+
+                    <!-- SUMMARY HEADER -->
+
+                    <div class="summary-heading">
+
+                        <div>
+
+                            <small>
+                                ORDER SUMMARY
+                            </small>
+
+                            <h2>
+                                Your Order
+                            </h2>
+
+                        </div>
+
+
+                        <div class="summary-lock">
+                            🔒
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- SELECTED PLAN -->
+
+                    <div class="selected-product">
+
+
+                        <div
+                            id="summaryIcon"
+                            class="selected-product-icon"
+                        >
+                            👑
+                        </div>
+
+
+                        <div class="selected-product-info">
+
+                            <small>
+                                Selected Bundle
+                            </small>
+
+
+                            <h3 id="summaryProduct">
+                                Premium Bundle
+                            </h3>
+
+
+                            <p id="summaryAccess">
+                                Lifetime Access
+                            </p>
+
+                        </div>
+
+
+                        <strong id="summaryPrice">
+                            ₹69
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- SUMMARY PRICE -->
+
+                    <div class="summary-lines">
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong id="subtotalPrice">
+                                ₹69
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                Discount
+                            </span>
+
+                            <strong id="discountPrice">
+                                ₹0
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="summary-row saving-row"
+                        >
+
+                            <span>
+                                You Save
+                            </span>
+
+                            <strong id="savingPrice">
+                                ₹80
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-row">
+
+                            <span>
+                                GST
+                            </span>
+
+                            <strong>
+                                Included
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- TOTAL -->
+
+                    <div class="summary-total">
+
+                        <span>
+                            Total
+                        </span>
+
+
+                        <strong id="totalPrice">
+                            ₹69
+                        </strong>
+
+                    </div>
+
+
+
+                    <!-- ORDER ID -->
+
+                    <div class="order-id-row">
+
+                        <span>
+                            Order ID
+                        </span>
+
+
+                        <code id="orderId">
+                            Generated during checkout
+                        </code>
+
+                    </div>
+
+
+
+                    <!-- SECURITY -->
+
+                    <div class="secure-box">
+
+                        <div class="secure-box-icon">
+                            🔐
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Secure Payment
+                            </strong>
+
+
+                            <p>
+                                Your payment is securely processed
+                                by Cashfree Payments.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- TERMS -->
+
+                    <label class="terms-row">
+
+                        <input
+                            id="agreeTerms"
+                            type="checkbox"
+                        >
+
+
+                        <span>
+
+                            I agree to the
+
+                            <a href="terms.html">
+                                Terms
+                            </a>
+
+                            and
+
+                            <a href="privacy.html">
+                                Privacy Policy
+                            </a>
+
+                        </span>
+
+                    </label>
+
+
+
+                    <!-- CHECKOUT -->
+
+                    <button
+                        id="checkoutButton"
+                        type="button"
+                        class="checkout-button"
+                    >
+                        🔒 Pay ₹69 Securely
+                    </button>
+
+
+                    <div class="checkout-trust">
+
+                        <span>
+                            🔒 Secure Checkout
+                        </span>
+
+                        <span>
+                            •
+                        </span>
+
+                        <span>
+                            ⚡ Instant Confirmation
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="checkout-footer">
+
+
+        <div class="footer-brand">
+
+            <strong>
+                ▶ ReelsBundles
+            </strong>
+
+
+            <p>
+                200,000+ Ready-To-Post Instagram Reels
+                for Creators & Businesses.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="privacy.html">
+                Privacy
+            </a>
+
+            <a href="terms.html">
+                Terms
+            </a>
+
+            <a href="refund.html">
+                Refund
+            </a>
+
+            <a href="contact.html">
+                Support
+            </a>
+
+        </div>
+
+
+        <div class="footer-copy">
+
+            © 2026 ReelsBundles
+
+            <br>
+
+            Made with ❤️ by Santosh Koli
+
+        </div>
+
+    </footer>
+
+</div>
+
+
+
+<!-- =====================================================
+     PAYMENT LOADER
+====================================================== -->
+
+<div
+    id="paymentLoader"
+    class="payment-loader hidden"
+>
+
+    <div class="loader-box">
+
+        <div class="spinner"></div>
+
+
+        <h3>
+            Preparing Secure Payment
+        </h3>
+
+
+        <p>
+            Please wait...
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ==========================================================
+     CASHFREE SDK
+========================================================== -->
+
+<script
+    src="https://sdk.cashfree.com/js/v3/cashfree.js">
+</script>
+
+
+<!-- ==========================================================
+     REELSBUNDLES PAYMENT JS
+========================================================== -->
+
+<script
+    type="module"
+    src="../assets/js/payment.js">
+</script>
+
+    
 </body>
 </html>

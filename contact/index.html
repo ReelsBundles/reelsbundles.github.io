@@ -2,15 +2,428 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        (function() {
-            var target = "../contact.html" + window.location.search + window.location.hash;
-            window.location.replace(target);
-        })();
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contact Support • ReelsBundles</title>
+
+    <meta
+        name="description"
+        content="Contact ReelsBundles support. Send us your question and our support team will reply within 24 hours."
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Existing ReelsBundles CSS -->
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+
+    <!-- Contact Page CSS -->
+    <link rel="stylesheet" href="../assets/css/contact.css">
     <script src="../assets/js/content-protection.js"></script>
 </head>
-<body>    
+
+<body>
+
+    <!-- Background -->
+    <div class="background">
+        <div class="background__blur background__blur--left"></div>
+        <div class="background__blur background__blur--right"></div>
+    </div>
+
+
+    <!-- ==============================
+         NAVBAR
+    =============================== -->
+
+    <header class="navbar">
+
+        <div class="container navbar__container">
+
+            <!-- Logo -->
+            <a href="index.html" class="navbar__logo">
+
+                <span class="navbar__logo-icon">
+                    ▶
+                </span>
+
+                <span>
+                    ReelsBundles
+                </span>
+
+            </a>
+
+
+            <!-- Menu -->
+            <nav class="navbar__menu">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="demo.html">
+                    Demo
+                </a>
+
+                <a href="index.html#features">
+                    Features
+                </a>
+
+                <a href="index.html#pricing">
+                    Pricing
+                </a>
+
+                <a href="index.html#faq">
+                    FAQ
+                </a>
+
+                <!-- Button -->
+                <div class="navbar__buttons">
+
+                    <a
+                        href="index.html#pricing"
+                        class="btn btn--primary"
+                    >
+                        Buy Now
+                    </a>
+
+                </div>
+
+            </nav>
+
+
+            <!-- Mobile Menu -->
+            <button
+                class="navbar__toggle"
+                type="button"
+                aria-label="Toggle Navigation"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==============================
+         MAIN
+    =============================== -->
+
+    <main class="contact-page">
+
+
+        <!-- ==============================
+             HERO
+        =============================== -->
+
+        <section class="contact-hero">
+
+            <div class="container">
+
+                <span class="contact-badge">
+                    ✉️ SUPPORT
+                </span>
+
+                <h1>
+                    How Can We Help?
+                </h1>
+
+                <p>
+                    Have a question about your order, payment, or download?
+                    Send us a message and our support team will get back to you
+                    within <strong>24 hours</strong>.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==============================
+             CONTACT SECTION
+        =============================== -->
+
+        <section class="contact-section">
+
+            <div class="container contact-grid">
+
+
+                <!-- ==========================
+                     CONTACT FORM CARD
+                =========================== -->
+
+                <div class="contact-card contact-form-card">
+
+                    <div class="contact-card-header">
+
+                        <span class="contact-icon">
+                            ✉️
+                        </span>
+
+                        <div>
+
+                            <h2>
+                                Contact Support
+                            </h2>
+
+                            <p>
+                                Send us your question and we'll help you.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PHASE 1: UI ONLY -->
+                    <form id="contactForm">
+
+
+                        <!-- Name -->
+                        <div class="form-group">
+
+                            <label for="name">
+                                Name <span style="color: #ef4444;">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                placeholder="Your name"
+                                autocomplete="name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="form-group">
+
+                            <label for="email">
+                                Email <span style="color: #ef4444;">*</span>
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+
+                        <!-- Subject -->
+                        <div class="form-group">
+
+                            <label for="subject">
+                                Subject <span style="color: #ef4444;">*</span>
+                            </label>
+
+                            <select
+                                id="subject"
+                                name="subject"
+                                required
+                            >
+                                <option value="" disabled selected>-- Select a Subject --</option>
+                                <option value="Payment / Order Issue">💳 Payment / Order Issue</option>
+                                <option value="Download / Access Issue">📥 Download / Access Issue</option>
+                                <option value="Bundle Content / Quality Issue">📦 Bundle Content / Quality Issue</option>
+                                <option value="Account / Login Issue">🔑 Account / Login Issue</option>
+                                <option value="Refund / Policy Inquiry">🔄 Refund / Policy Inquiry</option>
+                                <option value="Other">💬 Other (Specify in message below)</option>
+                            </select>
+
+                        </div>
+
+
+                        <!-- Message -->
+                        <div class="form-group">
+
+                            <label for="message">
+                                Message <span style="color: #ef4444;">*</span>
+                            </label>
+
+                            <textarea
+                                id="message"
+                                name="message"
+                                rows="6"
+                                placeholder="Tell us what happened..."
+                                required
+                            ></textarea>
+
+                        </div>
+
+
+                        <!-- Submit -->
+                        <button
+                            class="btn btn--primary contact-submit"
+                            type="submit"
+                        >
+                            ✉ Send Message
+                        </button>
+
+
+                        <!-- Privacy Note -->
+                        <p class="form-note">
+                            🔒 Your information is used only to respond
+                            to your support request.
+                        </p>
+
+                    </form>
+
+                </div>
+
+
+
+                <!-- ==========================
+                     RIGHT SIDE
+                =========================== -->
+
+                <aside class="contact-side">
+
+
+                    <!-- 24 HOURS CARD -->
+                    <div class="contact-card response-card">
+
+                        <span class="contact-icon">
+                            ⏱️
+                        </span>
+
+                        <h2>
+                            Reply Within 24 Hours
+                        </h2>
+
+                        <p>
+                            Our support team aims to reply to every request
+                            within 24 hours.
+                        </p>
+
+
+                        <!-- Support Email -->
+                        <a
+                          href="mailto:reelsbundles.support@gmail.com"
+                             class="support-email"
+                            >
+                         reelsbundles.support@gmail.com
+                        </a>
+
+                 <p class="small-note">
+                            If you don't see our reply, please check your
+                            spam or junk folder.
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- ORDER HELP CARD -->
+                    <div class="contact-card info-card">
+
+                        <span class="contact-icon">
+                            💡
+                        </span>
+
+                        <h2>
+                            Need Help With an Order?
+                        </h2>
+
+                        <p>
+                            For payment or download issues, keep your
+                            Order ID ready. It can help us resolve your
+                            request faster.
+                        </p>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ==============================
+         FOOTER
+    =============================== -->
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand -->
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <span class="footer-logo-icon">▶</span>
+                        <span>ReelsBundles</span>
+                    </a>
+                    <p>
+                        Premium Instagram Reels Library for creators, businesses and digital marketers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Instagram">📸</a>
+                        <a href="#" aria-label="Telegram">✈️</a>
+                        <a href="#" aria-label="YouTube">▶️</a>
+                        <a href="#" aria-label="WhatsApp">💬</a>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div class="footer-links">
+                    <h3>Products</h3>
+                    <a href="index.html#pricing">Basic Plan</a>
+                    <a href="index.html#pricing">Premium Plan</a>
+                    <a href="demo.html">Demo Library</a>
+                    <a href="index.html#features">Features</a>
+                </div>
+
+                <!-- Support -->
+                <div class="footer-links">
+                    <h3>Support</h3>
+                    <a href="index.html#faq">FAQ</a>
+                    <a href="contact.html">Contact Support</a>
+                </div>
+
+                <!-- Legal -->
+                <div class="footer-links">
+                    <h3>Legal</h3>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms &amp; Conditions</a>
+                    <a href="refund.html">Refund Policy</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 ReelsBundles. All Rights Reserved.</p>
+                <p>Developed with ❤️ by Santosh Koli</p>
+            </div>
+        </div>
+    </footer>
+<script
+    type="module"
+    src="../assets/js/navbar.js"></script>
+<script
+    type="module"
+    src="../assets/js/contact.js"></script>
+    
 </body>
 </html>

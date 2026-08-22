@@ -1,16 +1,527 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        (function() {
-            var target = "../dashboard.html" + window.location.search + window.location.hash;
-            window.location.replace(target);
-        })();
-    </script>
-    <script src="../assets/js/content-protection.js"></script>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard | ReelsBundles</title>
+
+    <meta
+        name="description"
+        content="Your ReelsBundles dashboard."
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/user-dashboard.css"
+    >
+
+    <script src="../assets/js/content-protection.js?v=2.0.4"></script>
 </head>
-<body>    
+
+
+<body>
+
+    <!-- ======================================================
+         MOBILE OVERLAY
+    ======================================================= -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay">
+    </div>
+
+
+    <!-- ======================================================
+         SIDEBAR
+    ======================================================= -->
+
+    <aside
+        class="user-sidebar"
+        id="userSidebar">
+
+
+        <!-- Logo -->
+
+        <a
+            href="index.html"
+            class="sidebar-logo">
+
+            <span class="sidebar-logo-icon">
+                ▶
+            </span>
+
+            <span>
+                ReelsBundles
+            </span>
+
+        </a>
+
+
+        <!-- Navigation -->
+
+        <nav class="sidebar-nav">
+
+
+            <a
+                href="dashboard.html"
+                class="sidebar-link active">
+
+                <span class="sidebar-icon">
+                    🏠
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a
+                href="download.html"
+                class="sidebar-link">
+
+                <span class="sidebar-icon">
+                    ⬇️
+                </span>
+
+                <span>
+                    Downloads
+                </span>
+
+            </a>
+
+
+            <a
+                href="download.html?category=basic"
+                class="sidebar-link">
+
+                <span class="sidebar-icon">
+                    📦
+                </span>
+
+                <span>
+                    Basic
+                </span>
+
+            </a>
+
+
+            <a
+                href="download.html?category=premium"
+                class="sidebar-link">
+
+                <span class="sidebar-icon">
+                    👑
+                </span>
+
+                <span>
+                    Premium
+                </span>
+
+            </a>
+
+
+        </nav>
+
+
+        <!-- Sidebar Bottom -->
+
+        <div class="sidebar-bottom">
+
+
+            <a
+                href="index.html"
+                class="sidebar-link">
+
+                <span class="sidebar-icon">
+                    🌐
+                </span>
+
+                <span>
+                    Website
+                </span>
+
+            </a>
+
+
+            <button
+                type="button"
+                class="sidebar-link logout-button"
+                id="logoutButton">
+
+                <span class="sidebar-icon">
+                    🚪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </button>
+
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- ======================================================
+         MAIN
+    ======================================================= -->
+
+    <main class="dashboard-main">
+
+
+        <!-- ==================================================
+             HEADER
+        =================================================== -->
+
+        <header class="dashboard-header">
+
+
+            <button
+                type="button"
+                class="mobile-menu-button"
+                id="mobileMenuButton"
+                aria-label="Open menu">
+
+                ☰
+
+            </button>
+
+
+            <div class="header-title">
+
+                <span class="header-label">
+                    USER DASHBOARD
+                </span>
+
+                <h1>
+                    My Dashboard
+                </h1>
+
+            </div>
+
+
+            <div class="header-user">
+
+                <div
+                    class="user-avatar"
+                    id="userAvatar">
+
+                    U
+
+                </div>
+
+                <div class="header-user-info">
+
+                    <strong id="headerUserName">
+                        User
+                    </strong>
+
+                    <span id="headerUserEmail">
+                        Loading...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </header>
+
+
+        <!-- ==================================================
+             CONTENT
+        =================================================== -->
+
+        <section class="dashboard-content">
+
+
+            <!-- ==================================================
+                 WELCOME
+            =================================================== -->
+
+            <section class="welcome-card">
+
+
+                <div class="welcome-content">
+
+                    <span class="welcome-badge">
+                        ✨ YOUR REELSBUNDLES LIBRARY
+                    </span>
+
+
+                    <h2>
+                        Welcome back,
+                        <span id="welcomeUserName">
+                            Creator
+                        </span>
+                        👋
+                    </h2>
+
+
+                    <p>
+                        Manage your bundles, downloads and
+                        account access from one place.
+                    </p>
+
+                </div>
+
+
+                <div class="welcome-status">
+
+                    <span class="status-dot"></span>
+
+                    <span>
+                        Account Active
+                    </span>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- ==================================================
+                 STATS
+            =================================================== -->
+
+            <section class="stats-grid">
+
+
+                <!-- Total Bundles -->
+
+                <article class="stat-card">
+
+                    <div class="stat-icon">
+                        📦
+                    </div>
+
+                    <div>
+
+                        <span class="stat-label">
+                            Total Bundles
+                        </span>
+
+                        <strong
+                            class="stat-value"
+                            id="totalBundles">
+
+                            —
+
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Unlocked -->
+
+                <article class="stat-card stat-card--success">
+
+                    <div class="stat-icon">
+                        🔓
+                    </div>
+
+                    <div>
+
+                        <span class="stat-label">
+                            Unlocked
+                        </span>
+
+                        <strong
+                            class="stat-value"
+                            id="unlockedBundles">
+
+                            —
+
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Locked -->
+
+                <article class="stat-card stat-card--locked">
+
+                    <div class="stat-icon">
+                        🔒
+                    </div>
+
+                    <div>
+
+                        <span class="stat-label">
+                            Locked
+                        </span>
+
+                        <strong
+                            class="stat-value"
+                            id="lockedBundles">
+
+                            —
+
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Plan -->
+
+                <article class="stat-card stat-card--plan">
+
+                    <div class="stat-icon">
+                        👑
+                    </div>
+
+                    <div>
+
+                        <span class="stat-label">
+                            Current Plan
+                        </span>
+
+                        <strong
+                            class="stat-value stat-plan"
+                            id="currentPlan">
+
+                            Free
+
+                        </strong>
+
+                    </div>
+
+                </article>
+
+
+            </section>
+
+
+            <!-- ==================================================
+                 ACCESS STATUS
+            =================================================== -->
+
+            <section class="access-card">
+
+
+                <div class="access-left">
+
+                    <div class="access-icon">
+                        ♾️
+                    </div>
+
+
+                    <div>
+
+                        <span class="access-label">
+                            ACCESS STATUS
+                        </span>
+
+                        <h3 id="accessTitle">
+                            Lifetime Access
+                        </h3>
+
+                        <p id="accessDescription">
+                            Your account access status is being
+                            checked.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="access-badge"
+                    id="accessBadge">
+
+                    Checking...
+
+                </div>
+
+
+            </section>
+
+
+            <!-- ==================================================
+                 BUNDLE LIBRARY
+            =================================================== -->
+
+            <section class="library-section">
+
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            MY CONTENT
+                        </span>
+
+                        <h2>
+                            My Bundle Library
+                        </h2>
+
+                    </div>
+
+                    <a href="basic.html" class="view-all-button">
+                        View Library →
+                    </a>
+
+                </div>
+
+                <!-- Bundle container -->
+                <div class="bundle-grid" id="bundleGrid"></div>
+
+            </section>
+
+        </section>
+
+        <!-- ==================================================
+             FOOTER
+        =================================================== -->
+
+        <footer class="dashboard-footer">
+
+            <div>
+                © 2026 ReelsBundles
+            </div>
+
+            <div>
+                Developed with <span>❤️</span> by Santosh Koli
+            </div>
+
+        </footer>
+
+
+    </main>
+
+
+
+    <!-- ======================================================
+         JAVASCRIPT
+    ======================================================= -->
+
+    <script
+        type="module"
+        src="../assets/js/user-dashboard.js?v=2.2.0">
+    </script>
+
+
+    
 </body>
+
 </html>

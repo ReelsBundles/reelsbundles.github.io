@@ -1,16 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        (function() {
-            var target = "../failed.html" + window.location.search + window.location.hash;
-            window.location.replace(target);
-        })();
-    </script>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Payment Failed • ReelsBundles
+    </title>
+
+
+    <!-- Google Font -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Existing Global CSS -->
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/variables.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/reset.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/global.css"
+    >
+
+
+    <!-- Failed Payment CSS -->
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/failed.css"
+    >
+
     <script src="../assets/js/content-protection.js"></script>
 </head>
-<body>    
+
+
+<body>
+
+
+    <!-- ======================================================
+         BACKGROUND
+    ======================================================= -->
+
+    <div class="failed-bg"></div>
+
+
+    <main class="failed-page">
+
+        <div class="container">
+
+
+            <!-- ==================================================
+                 HEADER
+            =================================================== -->
+
+            <header class="failed-header">
+
+                <a
+                    href="index.html"
+                    class="failed-logo"
+                >
+                    ▶ ReelsBundles
+                </a>
+
+
+                <div class="failed-badge">
+
+                    🔒 Payment Security
+
+                </div>
+
+            </header>
+
+
+
+            <!-- ==================================================
+                 FAILED CARD
+            =================================================== -->
+
+            <section class="failed-card">
+
+
+                <!-- Icon -->
+
+                <div class="failed-icon">
+
+                    ✕
+
+                </div>
+
+
+                <!-- Title -->
+
+                <h1>
+                    Payment Failed
+                </h1>
+
+
+                <!-- Message -->
+
+                <p class="failed-description">
+
+                    We could not complete your payment.
+                    No bundle access has been created.
+
+                </p>
+
+
+                <!-- ==================================================
+                     PAYMENT DETAILS
+                =================================================== -->
+
+                <div class="failed-details">
+
+
+                    <div class="failed-detail-row">
+
+                        <span>
+                            Order ID
+                        </span>
+
+                        <strong
+                            id="orderId"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="failed-detail-row">
+
+                        <span>
+                            Payment Status
+                        </span>
+
+                        <strong
+                            id="paymentStatus"
+                            class="failed-status"
+                        >
+                            FAILED
+                        </strong>
+
+                    </div>
+
+
+                    <div class="failed-detail-row">
+
+                        <span>
+                            Amount
+                        </span>
+
+                        <strong
+                            id="amount"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="failed-detail-row">
+
+                        <span>
+                            Reason
+                        </span>
+
+                        <strong
+                            id="failureReason"
+                        >
+                            Payment could not be completed
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     MAIN MESSAGE
+                =================================================== -->
+
+                <div
+                    class="failed-message"
+                    id="failedMessage"
+                >
+
+                    Your payment was not successful.
+                    You can try again using the button below.
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     ACTIONS
+                =================================================== -->
+
+                <div class="failed-actions">
+
+
+                    <button
+                        id="retryButton"
+                        class="retry-button"
+                        type="button"
+                    >
+
+                        🔄 Try Payment Again
+
+                    </button>
+
+
+                    <a
+                        href="index.html"
+                        class="home-button"
+                    >
+
+                        🏠 Back to Home
+
+                    </a>
+
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     SUPPORT
+                =================================================== -->
+
+                <div class="failed-support">
+
+                    <h2>
+                        Payment charged but still showing failed?
+                    </h2>
+
+
+                    <p>
+
+                        If your bank or UPI shows a successful
+                        transaction but this page says failed,
+                        please contact our support team.
+
+                    </p>
+
+
+                    <a
+                        href="mailto:reelsbundles.support@gmail.com"
+                    >
+
+                        📧 Contact Support
+
+                    </a>
+
+                </div>
+
+
+            </section>
+
+
+
+            <!-- ==================================================
+                 SECURITY
+            =================================================== -->
+
+            <div class="failed-security">
+
+
+                <span>
+                    🔒 Secure Payment
+                </span>
+
+
+                <span>
+                    💳 Powered by Cashfree
+                </span>
+
+
+                <span>
+                    🛡️ Protected Checkout
+                </span>
+
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 FOOTER
+            =================================================== -->
+
+            <footer class="failed-footer">
+
+                <div>
+
+                    <strong>
+                        ▶ ReelsBundles
+                    </strong>
+
+                    <p>
+                        200,000+ Ready-To-Post Instagram Reels
+                        for Creators, Businesses & Agencies.
+                    </p>
+
+                </div>
+
+
+                <div class="footer-links">
+
+                    <a href="index.html">
+                        Home
+                    </a>
+
+                    <a href="privacy.html">
+                        Privacy Policy
+                    </a>
+
+                    <a href="terms.html">
+                        Terms & Conditions
+                    </a>
+
+                    <a href="refund.html">
+                        Refund Policy
+                    </a>
+
+                    <a href="contact.html">
+                        Contact
+                    </a>
+
+                </div>
+
+
+                <div class="footer-copy">
+
+                    © 2026 ReelsBundles
+
+                    <br>
+
+                    Made with ❤️ by Santosh Koli
+
+                </div>
+
+            </footer>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- ======================================================
+         FAILED PAYMENT JAVASCRIPT
+    ======================================================= -->
+
+    <script
+        type="module"
+        src="../assets/js/failed.js"
+    ></script>
+
+
+    
 </body>
+
 </html>

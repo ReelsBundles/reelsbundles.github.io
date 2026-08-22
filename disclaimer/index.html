@@ -2,15 +2,162 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        (function() {
-            var target = "../disclaimer.html" + window.location.search + window.location.hash;
-            window.location.replace(target);
-        })();
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Disclaimer • ReelsBundles</title>
+    <meta name="description" content="Disclaimer for ReelsBundles. Read our earnings disclaimer, trademark notices, and content usage terms.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/global.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
+    <link rel="stylesheet" href="../assets/css/footer.css">
+    <link rel="stylesheet" href="../assets/css/legal.css">
     <script src="../assets/js/content-protection.js"></script>
 </head>
-<body>    
+<body>
+
+    <!-- Background -->
+    <div class="background">
+        <div class="background__blur background__blur--left"></div>
+        <div class="background__blur background__blur--right"></div>
+    </div>
+
+    <!-- ==============================
+         NAVBAR
+    =============================== -->
+    <header class="navbar">
+        <div class="container navbar__container">
+            <!-- Logo -->
+            <a href="index.html" class="navbar__logo">
+                <span class="navbar__logo-icon">▶</span>
+                <span>ReelsBundles</span>
+            </a>
+
+            <!-- Menu -->
+            <nav class="navbar__menu">
+                <a href="index.html">Home</a>
+                <a href="demo.html">Demo</a>
+                <a href="index.html#features">Features</a>
+                <a href="index.html#pricing">Pricing</a>
+                <a href="index.html#faq">FAQ</a>
+
+                <!-- Action Button -->
+                <div class="navbar__buttons">
+                    <a href="index.html#pricing" class="btn btn--primary">Buy Now</a>
+                </div>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar__toggle" type="button" aria-label="Toggle Navigation">
+                ☰
+            </button>
+        </div>
+    </header>
+
+    <!-- ==============================
+         MAIN CONTENT
+    =============================== -->
+    <main class="legal-page">
+        <section class="legal-hero">
+            <div class="container">
+                <span class="legal-badge">⚠️ LEGAL DISCLAIMER</span>
+                <h1>Disclaimer</h1>
+                <p>Last updated: August 13, 2026</p>
+            </div>
+        </section>
+
+        <section class="legal-section">
+            <div class="container">
+                <div class="legal-card">
+                    <div class="legal-content">
+                        <h2>1. General Information</h2>
+                        <p>The information and digital assets provided by ReelsBundles ("we," "us," or "our") on our website are for general informational, educational, and content creation purposes only. All information on the site is provided in good faith, however we make no representation or warranty of any kind, express or implied, regarding the accuracy, adequacy, validity, reliability, or completeness of any content assets.</p>
+
+                        <h2>2. Trademark &amp; Affiliation Disclaimer</h2>
+                        <p><strong>ReelsBundles is an independent provider of ready-to-post digital video content packages.</strong></p>
+                        <p>We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with <strong>Instagram, Meta Platforms, Inc., YouTube, Google LLC, TikTok, or ByteDance Ltd.</strong>, or any of their subsidiaries or affiliates.</p>
+                        <p>The names "Instagram," "Reels," "YouTube," and "TikTok" as well as related names, marks, emblems, and images are registered trademarks of their respective owners.</p>
+
+                        <h2>3. Results &amp; Earnings Disclaimer</h2>
+                        <p>Any statements, statistics, growth numbers, or reach metrics displayed on our website (such as "Rated 4.9/5 by 10,000+ Creators" or "Grow Your Page Faster") represent potential content creation tools and user feedback.</p>
+                        <p>We cannot and do not guarantee that using our reels packages will result in specific follower counts, viral algorithm distribution, or financial revenue. Your success depends entirely on your content strategy, consistency, niche targeting, and overall account performance.</p>
+
+                        <h2>4. Copyright &amp; Fair Use Notice</h2>
+                        <p>ReelsBundles curated content packages consist of royalty-free, commercial-use, or fair-use formatted video templates designed for digital creators. If you believe that any material available on or through our platform infringes upon any copyright you own or control, please notify us immediately at <strong>reelsbundles.support@gmail.com</strong> for prompt evaluation and removal.</p>
+
+                        <h2>5. Contact Us</h2>
+                        <p>If you have any questions or require further clarification regarding this Disclaimer, please reach out to us at <strong>reelsbundles.support@gmail.com</strong>.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==========================================
+         FOOTER
+    ========================================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand -->
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo">
+                        <span class="footer-logo-icon">▶</span>
+                        <span>ReelsBundles</span>
+                    </a>
+                    <p>
+                        Premium Instagram Reels Library for creators, businesses and digital marketers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Instagram">📸</a>
+                        <a href="#" aria-label="Telegram">✈️</a>
+                        <a href="#" aria-label="YouTube">▶️</a>
+                        <a href="#" aria-label="WhatsApp">💬</a>
+                    </div>
+                </div>
+
+                <!-- Products -->
+                <div class="footer-links">
+                    <h3>Products</h3>
+                    <a href="index.html#pricing">Basic Plan</a>
+                    <a href="index.html#pricing">Premium Plan</a>
+                    <a href="demo.html">Demo Library</a>
+                    <a href="index.html#features">Features</a>
+                </div>
+
+                <!-- Support -->
+                <div class="footer-links">
+                    <h3>Support</h3>
+                    <a href="index.html#faq">FAQ</a>
+                    <a href="contact.html">Contact Support</a>
+                </div>
+
+                <!-- Legal -->
+                <div class="footer-links">
+                    <h3>Legal</h3>
+                    <a href="privacy.html">Privacy Policy</a>
+                    <a href="terms.html">Terms &amp; Conditions</a>
+                    <a href="refund.html">Refund Policy</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 ReelsBundles. All Rights Reserved.</p>
+                <p>Developed with ❤️ by Santosh Koli</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Nav JS -->
+    <script type="module" src="../assets/js/navbar.js"></script>
+    
 </body>
 </html>
