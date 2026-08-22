@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Manager | ReelsBundles Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-bundles.css">
+    <style>
+        .notif-grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; margin-top: 24px; }
+        @media (max-width: 991px) { .notif-grid { grid-template-columns: 1fr; } }
+        .form-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2); }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .badge-coupon { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .badge-announcement { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .badge-alert { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .btn-action { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-action:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-danger { color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="users.html" class="admin-nav-item">
+                <span>👥</span> Users
+            </a>
+            <a href="bundles.html" class="admin-nav-item">
+                <span>📦</span> Bundles
+            </a>
+            <a href="orders.html" class="admin-nav-item">
+                <span>🧾</span> Orders
+            </a>
+            <a href="coupons.html" class="admin-nav-item">
+                <span>🎟️</span> Coupons
+            </a>
+            <a href="notifications.html" class="admin-nav-item active">
+                <span>🔔</span> Notifications
+            </a>
+            <a href="demo-videos.html" class="admin-nav-item">
+                <span>🎬</span> Demo Videos
+            </a>
+            <a href="download.html" class="admin-nav-item">
+                <span>⬇️</span> Downloads
+            </a>
+            <a href="storage.html" class="admin-nav-item">
+                <span>☁️</span> Cloud Storage
+            </a>
+        </nav>
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">admin5796</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <span class="page-eyebrow">ANNOUNCEMENTS & PROMOTIONS</span>
+                <h1 style="font-size:24px; font-weight:800; color:#fff; margin:4px 0 2px;">🔔 Notification Manager</h1>
+                <p style="font-size:13px; color:#94a3b8; margin:0;">Create announcements, alert banners, and welcome coupon popups for users.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <span style="font-size:12px; color:#4ade80; background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.2); padding:6px 14px; border-radius:999px; font-weight:600; display:flex; align-items:center; gap:6px;">
+                    <span style="width:8px; height:8px; background:#4ade80; border-radius:50%; display:inline-block; box-shadow:0 0 8px #4ade80;"></span> Live Bell Notification Engine
+                </span>
+            </div>
+        </header>
+
+        <div class="notif-grid">
+            <div class="form-card">
+                <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Create Notification</h3>
+                <form id="createNotifForm">
+                    <div class="form-group">
+                        <label for="notifTitle">Title *</label>
+                        <input type="text" id="notifTitle" class="form-control" placeholder="e.g. 🎉 Welcome Gift: Get 10% Off!" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notifMessage">Message *</label>
+                        <textarea id="notifMessage" class="form-control" rows="3" placeholder="Enter notification message / offer description..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notifType">Type *</label>
+                        <select id="notifType" class="form-control">
+                            <option value="coupon">🎁 Coupon Code Offer</option>
+                            <option value="announcement" selected>📢 General Announcement</option>
+                            <option value="alert">⚠️ Important Alert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="couponCode">Coupon Code (Optional)</label>
+                        <input type="text" id="couponCode" class="form-control" placeholder="e.g. WELCOME10" style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label for="targetAudience">Target Audience</label>
+                        <select id="targetAudience" class="form-control">
+                            <option value="all" selected>👥 All Users & Guests</option>
+                            <option value="new_users">✨ New Users Only</option>
+                            <option value="premium">👑 Premium Users</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn">➕ Publish Notification</button>
+                </form>
+            </div>
+
+            <div class="admin-table-container">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <h3 style="font-size:18px; color:#fff; margin:0;">Active Notifications</h3>
+                    <span id="notifCount" style="font-size:12px; color:#94a3b8; font-weight:600;">0 total</span>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>TITLE & MESSAGE</th>
+                            <th>TYPE</th>
+                            <th>COUPON</th>
+                            <th>AUDIENCE</th>
+                            <th>STATUS</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="notificationsTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align:center; padding:30px; color:#94a3b8;">Loading notifications...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="assets/js/admin-notifications.js"></script>
+</body>
+</html>

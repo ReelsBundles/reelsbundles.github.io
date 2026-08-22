@@ -21,8 +21,10 @@
         rel="stylesheet"
         href="../assets/css/user-dashboard.css"
     >
-
-    <script src="../assets/js/content-protection.js?v=2.0.4"></script>
+    <link
+        rel="stylesheet"
+        href="../assets/css/notifications.css"
+    >
 </head>
 
 
@@ -213,6 +215,10 @@
 
 
             <div class="header-user">
+
+                <button type="button" class="notif-bell-btn" id="notifBellBtn" title="Notifications & Coupons" style="margin-right: 8px;">
+                    🔔<span class="notif-badge hidden" id="notifBadge">0</span>
+                </button>
 
                 <div
                     class="user-avatar"
@@ -519,8 +525,7 @@
         type="module"
         src="../assets/js/user-dashboard.js?v=2.2.0">
     </script>
-
-
+    <script src="../assets/js/notifications.js"></script>
     
 </body>
 

@@ -74,6 +74,7 @@
         <link rel="stylesheet" href="assets/css/faq.css">
         <link rel="stylesheet" href="assets/css/cta.css">
         <link rel="stylesheet" href="assets/css/footer.css">
+        <link rel="stylesheet" href="assets/css/notifications.css">
 </head>
 
 <body>
@@ -105,6 +106,9 @@
 
                 <!-- Action Buttons -->
                 <div class="navbar__buttons" id="landingAuthActions">
+                    <button type="button" class="notif-bell-btn" id="notifBellBtn" title="Notifications & Coupons">
+                        🔔<span class="notif-badge hidden" id="notifBadge">0</span>
+                    </button>
                     <a href="login.html" class="btn btn--secondary">Sign In</a>
                     <a href="signup.html" class="btn btn--primary">Get Started</a>
                 </div>
@@ -1203,7 +1207,7 @@ FOOTER
     <script
         type="module"
         src="assets/js/app.js"></script>
-
+    <script src="assets/js/notifications.js"></script>
     
 </body>
 
