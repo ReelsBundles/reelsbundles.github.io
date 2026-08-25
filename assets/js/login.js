@@ -68,6 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
             message.style.color = "#ef4444";
             message.textContent = "⛔ Your account has been disabled by the admin. Please contact support.";
         }
+    } else if (params.get("redirect") && params.get("redirect").includes("payment")) {
+        if (message) {
+            message.style.display = "block";
+            message.style.color = "#a78bfa";
+            message.style.backgroundColor = "rgba(124, 58, 237, 0.15)";
+            message.style.border = "1px solid rgba(124, 58, 237, 0.3)";
+            message.style.padding = "10px 14px";
+            message.style.borderRadius = "8px";
+            message.style.marginBottom = "16px";
+            message.textContent = "🔑 Please sign in to complete your Reels Bundle purchase.";
+        }
     }
 });
 
