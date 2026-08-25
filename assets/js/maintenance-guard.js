@@ -1,8 +1,13 @@
 /* ==========================================================
-   REELSBUNDLES — MAINTENANCE GUARD & LIVE COUNTDOWN TIMER
+   REELSBUNDLES — INSTANT ZERO-FLASH MAINTENANCE GUARD & TIMER
 ========================================================== */
 
 (function () {
+    // Skip maintenance check on Admin routes completely
+    if (window.location.pathname.includes("/admin/") || window.location.href.includes("/admin/")) {
+        return;
+    }
+
     const API_BASE = (
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
@@ -10,10 +15,24 @@
             : "https://reelsbundles-backend.onrender.com"
     ) + "/api";
 
-    // Skip maintenance check on Admin routes
-    if (window.location.pathname.includes("/admin/") || window.location.href.includes("/admin/")) {
-        return;
-    }
+    // 1. FAST SYNC PRE-BLOCK: Prevent 2-3s flash of index page on refresh
+    try {
+        const isCachedActive = localStorage.getItem("rb_maint_active") === "true";
+        if (isCachedActive) {
+            const preStyle = document.createElement("style");
+            preStyle.id = "maintPreBlockStyle";
+            preStyle.textContent = `
+                body > *:not(#maintOverlay) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+                html { background: #030712 !important; }
+            `;
+            (document.head || document.documentElement).appendChild(preStyle);
+
+            const cachedData = localStorage.getItem("rb_maint_data");
+            if (cachedData) {
+                renderMaintenanceOverlay(JSON.parse(cachedData));
+            }
+        }
+    } catch (e) {}
 
     let countdownInterval = null;
 
@@ -23,22 +42,39 @@
             if (!res.ok) return;
 
             const data = await res.json();
-            if (data.success && data.maintenance) {
-                renderMaintenanceOverlay(data);
+            if (data.success) {
+                if (data.maintenance) {
+                    try {
+                        localStorage.setItem("rb_maint_active", "true");
+                        localStorage.setItem("rb_maint_data", JSON.stringify(data));
+                    } catch (e) {}
+                    renderMaintenanceOverlay(data);
+                } else {
+                    // Maintenance is OFF -> Clear cache & unblock instantly
+                    try {
+                        localStorage.setItem("rb_maint_active", "false");
+                        localStorage.removeItem("rb_maint_data");
+                    } catch (e) {}
+                    removeMaintenanceOverlay();
+                }
             }
         } catch (err) {
             console.warn("[MAINTENANCE GUARD] Telemetry check warning:", err);
         }
     }
 
+    function removeMaintenanceOverlay() {
+        const style = document.getElementById("maintPreBlockStyle");
+        if (style) style.remove();
+
+        const overlay = document.getElementById("maintOverlay");
+        if (overlay) overlay.remove();
+
+        if (countdownInterval) clearInterval(countdownInterval);
+    }
+
     function renderMaintenanceOverlay(data) {
-        // Prevent duplicate overlays
-        if (document.getElementById("maintOverlay")) return;
-
-        const overlay = document.createElement("div");
-        overlay.id = "maintOverlay";
-        overlay.className = "maint-overlay";
-
+        let overlay = document.getElementById("maintOverlay");
         const message = data.message || "🛠️ ReelsBundles is undergoing scheduled maintenance. We will be back online shortly!";
         const expectedBack = data.expectedBack ? new Date(data.expectedBack) : null;
 
@@ -67,7 +103,7 @@
             `;
         }
 
-        overlay.innerHTML = `
+        const innerContent = `
             <div class="maint-card">
                 <div class="maint-gear-box">
                     <span class="maint-gear-main">⚙️</span>
@@ -91,7 +127,22 @@
             </div>
         `;
 
-        document.body.appendChild(overlay);
+        if (!overlay) {
+            overlay = document.createElement("div");
+            overlay.id = "maintOverlay";
+            overlay.className = "maint-overlay";
+            overlay.innerHTML = innerContent;
+
+            if (document.body) {
+                document.body.appendChild(overlay);
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.appendChild(overlay);
+                });
+            }
+        } else {
+            overlay.innerHTML = innerContent;
+        }
 
         if (expectedBack) {
             startCountdownTimer(expectedBack);
@@ -99,6 +150,8 @@
     }
 
     function startCountdownTimer(targetDate) {
+        if (countdownInterval) clearInterval(countdownInterval);
+
         function updateClock() {
             const now = new Date().getTime();
             const distance = targetDate.getTime() - now;
@@ -137,6 +190,7 @@
         }[match]));
     }
 
+    // Execute telemetry check
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", checkMaintenanceStatus);
     } else {
