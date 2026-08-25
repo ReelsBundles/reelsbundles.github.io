@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Control | ReelsBundles Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/admin-bundles.css">
+    <style>
+        .maint-grid { display: grid; grid-template-columns: 420px 1fr; gap: 24px; margin-top: 24px; }
+        @media (max-width: 991px) { .maint-grid { grid-template-columns: 1fr; } }
+        .form-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2); }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .preview-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 20px; padding: 32px; text-align: center; color: #fff; }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="users.html" class="admin-nav-item">
+                <span>👥</span> Users
+            </a>
+            <a href="bundles.html" class="admin-nav-item">
+                <span>📦</span> Bundles
+            </a>
+            <a href="orders.html" class="admin-nav-item">
+                <span>🧾</span> Orders
+            </a>
+            <a href="coupons.html" class="admin-nav-item">
+                <span>🎟️</span> Coupons
+            </a>
+            <a href="notifications.html" class="admin-nav-item">
+                <span>🔔</span> Notifications
+            </a>
+            <a href="maintenance.html" class="admin-nav-item active">
+                <span>🛠️</span> Maintenance
+            </a>
+            <a href="demo-videos.html" class="admin-nav-item">
+                <span>🎬</span> Demo Videos
+            </a>
+            <a href="download.html" class="admin-nav-item">
+                <span>⬇️</span> Downloads
+            </a>
+            <a href="storage.html" class="admin-nav-item">
+                <span>☁️</span> Cloud Storage
+            </a>
+        </nav>
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">admin5796</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <span class="page-eyebrow">SYSTEM CONTROLS</span>
+                <h1 style="font-size:24px; font-weight:800; color:#fff; margin:4px 0 2px;">🛠️ Maintenance Mode Manager</h1>
+                <p style="font-size:13px; color:#94a3b8; margin:0;">Toggle Maintenance Mode ON/OFF, set completion countdown timers, and manage user announcements.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <button type="button" id="adminMaintToggleBtn" onclick="openMaintenanceConfigModal()" style="font-size:12px; border-radius:999px; font-weight:700; padding:6px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.25); color:#4ade80; outline:none;">
+                    <span style="width:8px; height:8px; background:#4ade80; border-radius:50%; display:inline-block; box-shadow:0 0 8px #4ade80;"></span> 🟢 System Active
+                </button>
+            </div>
+        </header>
+
+        <div class="maint-grid">
+            <div class="form-card">
+                <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Configure Maintenance Mode</h3>
+                <form id="pageMaintForm">
+                    <div class="form-group">
+                        <label for="pageMaintStatus">Maintenance Status *</label>
+                        <select id="pageMaintStatus" class="form-control">
+                            <option value="false">🟢 Normal Operations (OFF)</option>
+                            <option value="true">🔴 Under Maintenance (ON)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pageMaintMessage">User Announcement Message *</label>
+                        <textarea id="pageMaintMessage" class="form-control" rows="4" placeholder="Enter message to display to public visitors..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pageMaintDate">Completion Date & Time (Optional for Countdown Timer)</label>
+                        <input type="datetime-local" id="pageMaintDate" class="form-control">
+                        <small style="color:#94a3b8; font-size:11px; margin-top:4px; display:block;">Supports setting hours or multi-day live countdown timer for users.</small>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="pageMaintSubmitBtn">💾 Update Maintenance Mode</button>
+                </form>
+            </div>
+
+            <div class="preview-card">
+                <span style="font-size:42px; display:block; margin-bottom:12px;">⚙️</span>
+                <h3 style="font-size:20px; font-weight:800; margin:0 0 8px; color:#a78bfa;">Live User Screen Preview</h3>
+                <p style="font-size:13px; color:#cbd5e1; margin-bottom:20px;">This is what public visitors will see when Maintenance Mode is ON.</p>
+
+                <div style="background:rgba(30, 41, 59, 0.6); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:16px; margin-bottom:20px; text-align:left;">
+                    <strong style="color:#4ade80; font-size:12px; display:block; margin-bottom:4px;">STATUS:</strong>
+                    <span id="prevMaintStatus" style="font-size:14px; font-weight:700; color:#f87171;">System Active</span>
+                    
+                    <strong style="color:#4ade80; font-size:12px; display:block; margin-top:12px; margin-bottom:4px;">CURRENT MESSAGE:</strong>
+                    <p id="prevMaintMsg" style="font-size:13px; color:#cbd5e1; margin:0;">-</p>
+
+                    <strong style="color:#4ade80; font-size:12px; display:block; margin-top:12px; margin-bottom:4px;">EXPECTED COMPLETION:</strong>
+                    <span id="prevMaintDate" style="font-size:13px; color:#c4b5fd; font-weight:600;">No Date Set</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="../assets/js/admin-maintenance.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadPageMaintData();
+        document.getElementById("pageMaintForm").addEventListener("submit", handlePageMaintSubmit);
+    });
+
+    async function loadPageMaintData() {
+        try {
+            const res = await fetch(`${MAINT_API_BASE}/system/maintenance`, { cache: "no-store" });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById("pageMaintStatus").value = String(Boolean(data.maintenance));
+                document.getElementById("pageMaintMessage").value = data.message || "";
+                if (data.expectedBack) {
+                    const d = new Date(data.expectedBack);
+                    document.getElementById("pageMaintDate").value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                    document.getElementById("prevMaintDate").textContent = new Date(data.expectedBack).toLocaleString();
+                } else {
+                    document.getElementById("prevMaintDate").textContent = "No Date Set";
+                }
+
+                document.getElementById("prevMaintStatus").textContent = data.maintenance ? "🔴 UNDER MAINTENANCE (ON)" : "🟢 SYSTEM ACTIVE (OFF)";
+                document.getElementById("prevMaintStatus").style.color = data.maintenance ? "#f87171" : "#4ade80";
+                document.getElementById("prevMaintMsg").textContent = data.message || "-";
+            }
+        } catch (e) {}
+    }
+
+    async function handlePageMaintSubmit(e) {
+        e.preventDefault();
+        const btn = document.getElementById("pageMaintSubmitBtn");
+        btn.disabled = true;
+
+        const maintenanceVal = document.getElementById("pageMaintStatus").value === "true";
+        const messageVal = document.getElementById("pageMaintMessage").value.trim();
+        const dateVal = document.getElementById("pageMaintDate").value;
+
+        const payload = {
+            maintenance: maintenanceVal,
+            message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
+            expectedBack: dateVal ? new Date(dateVal).toISOString() : null,
+            showTimer: true
+        };
+
+        try {
+            const res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error("Failed to update maintenance settings");
+
+            const data = await res.json();
+            alert(data.message || "Maintenance settings updated!");
+            loadPageMaintData();
+            if (typeof fetchMaintenanceState === "function") fetchMaintenanceState();
+        } catch (err) {
+            alert("Error: " + err.message);
+        } finally {
+            btn.disabled = false;
+        }
+    }
+</script>
+</body>
+</html>
