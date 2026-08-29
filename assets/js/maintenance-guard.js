@@ -159,8 +159,7 @@
             if (distance <= 0) {
                 if (countdownInterval) clearInterval(countdownInterval);
                 const grid = document.querySelector(".maint-timer-grid");
-                if (grid) grid.innerHTML = `<div style="grid-column: 1 / -1; color: #4ade80; font-weight:700; font-size:16px;">✨ Maintenance finishing up! Refreshing page...</div>`;
-                setTimeout(() => location.reload(), 3000);
+                if (grid) grid.innerHTML = `<div style="grid-column: 1 / -1; color: #a78bfa; font-weight:700; font-size:15px; background:rgba(124, 58, 237, 0.15); border:1px solid rgba(124, 58, 237, 0.3); padding:10px 14px; border-radius:10px;">✨ Finalizing system upgrades... We will be back online shortly!</div>`;
                 return;
             }
 
