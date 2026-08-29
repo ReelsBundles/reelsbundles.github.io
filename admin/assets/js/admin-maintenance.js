@@ -115,6 +115,16 @@ function openMaintenanceConfigModal() {
                         </select>
                     </div>
                     <div style="margin-bottom:16px;">
+                        <label style="display:block; font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">Maintenance Reason Preset</label>
+                        <select id="modalMaintPreset" style="width:100%; padding:10px 14px; background:#0f172a; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:14px; outline:none;">
+                            <option value="upgrades">🛠️ Scheduled System Upgrades</option>
+                            <option value="servers">🚀 Server Performance Enhancement</option>
+                            <option value="bundles">📦 Uploading New Reels & Bundle Packs</option>
+                            <option value="security">🔒 Platform Security Updates</option>
+                            <option value="other" selected>✏️ Other (Custom Message)</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom:16px;">
                         <label style="display:block; font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">User Announcement Message</label>
                         <textarea id="maintMessageInput" rows="3" style="width:100%; padding:10px 14px; background:#0f172a; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:14px; outline:none;" placeholder="Enter message to display to users...">${escapeHtml(currentMaintenanceState.message)}</textarea>
                     </div>
@@ -131,6 +141,23 @@ function openMaintenanceConfigModal() {
             </div>
         `;
         document.body.appendChild(modal);
+
+        const modalPreset = document.getElementById("modalMaintPreset");
+        const modalMsg = document.getElementById("maintMessageInput");
+        if (modalPreset && modalMsg) {
+            const PRESET_MESSAGES = {
+                upgrades: "🛠️ ReelsBundles is currently undergoing scheduled system upgrades. We will be back online shortly!",
+                servers: "🚀 We are upgrading our cloud servers for faster downloads and better performance. Back shortly!",
+                bundles: "📦 Uploading new viral reels and HD bundle packs to the library! Stay tuned.",
+                security: "🔒 Performing routine platform security maintenance & updates."
+            };
+            modalPreset.addEventListener("change", () => {
+                const val = modalPreset.value;
+                if (val !== "other" && PRESET_MESSAGES[val]) {
+                    modalMsg.value = PRESET_MESSAGES[val];
+                }
+            });
+        }
 
         document.getElementById("maintConfigForm").addEventListener("submit", saveMaintenanceConfig);
     } else {

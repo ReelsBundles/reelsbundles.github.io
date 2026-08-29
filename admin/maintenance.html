@@ -102,6 +102,17 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="pageMaintReasonPreset">Maintenance Reason Preset *</label>
+                        <select id="pageMaintReasonPreset" class="form-control">
+                            <option value="upgrades">🛠️ Scheduled System Upgrades</option>
+                            <option value="servers">🚀 Server Performance Enhancement</option>
+                            <option value="bundles">📦 Uploading New Reels & Bundle Packs</option>
+                            <option value="security">🔒 Platform Security Updates</option>
+                            <option value="other" selected>✏️ Other (Custom Message)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="customMsgGroup">
                         <label for="pageMaintMessage">User Announcement Message *</label>
                         <textarea id="pageMaintMessage" class="form-control" rows="4" placeholder="Enter message to display to public visitors..." required></textarea>
                     </div>
@@ -138,9 +149,28 @@
 
 <script src="assets/js/admin-maintenance.js"></script>
 <script>
+    const PRESET_MESSAGES = {
+        upgrades: "🛠️ ReelsBundles is currently undergoing scheduled system upgrades. We will be back online shortly!",
+        servers: "🚀 We are upgrading our cloud servers for faster downloads and better performance. Back shortly!",
+        bundles: "📦 Uploading new viral reels and HD bundle packs to the library! Stay tuned.",
+        security: "🔒 Performing routine platform security maintenance & updates."
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
         loadPageMaintData();
         document.getElementById("pageMaintForm").addEventListener("submit", handlePageMaintSubmit);
+
+        const presetSelect = document.getElementById("pageMaintReasonPreset");
+        const msgTextarea = document.getElementById("pageMaintMessage");
+
+        if (presetSelect && msgTextarea) {
+            presetSelect.addEventListener("change", () => {
+                const val = presetSelect.value;
+                if (val !== "other" && PRESET_MESSAGES[val]) {
+                    msgTextarea.value = PRESET_MESSAGES[val];
+                }
+            });
+        }
     });
 
     async function loadPageMaintData() {
