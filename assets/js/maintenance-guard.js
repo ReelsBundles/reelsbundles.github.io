@@ -77,30 +77,41 @@
         let overlay = document.getElementById("maintOverlay");
         const message = data.message || "🛠️ ReelsBundles is undergoing scheduled maintenance. We will be back online shortly!";
         const expectedBack = data.expectedBack ? new Date(data.expectedBack) : null;
+        const isValidDate = expectedBack && !isNaN(expectedBack.getTime());
 
         let timerGridHtml = "";
-        if (expectedBack && expectedBack > new Date() && data.showTimer !== false) {
-            timerGridHtml = `
-                <div class="maint-timer-title">⌛ Expected Completion In</div>
-                <div class="maint-timer-grid">
-                    <div class="maint-timer-card">
-                        <div class="maint-timer-num" id="maintDays">00</div>
-                        <div class="maint-timer-lbl">Days</div>
+        if (isValidDate) {
+            if (expectedBack > new Date()) {
+                timerGridHtml = `
+                    <div class="maint-timer-title">⌛ Expected Completion In</div>
+                    <div class="maint-timer-grid">
+                        <div class="maint-timer-card">
+                            <div class="maint-timer-num" id="maintDays">00</div>
+                            <div class="maint-timer-lbl">Days</div>
+                        </div>
+                        <div class="maint-timer-card">
+                            <div class="maint-timer-num" id="maintHours">00</div>
+                            <div class="maint-timer-lbl">Hours</div>
+                        </div>
+                        <div class="maint-timer-card">
+                            <div class="maint-timer-num" id="maintMins">00</div>
+                            <div class="maint-timer-lbl">Mins</div>
+                        </div>
+                        <div class="maint-timer-card">
+                            <div class="maint-timer-num" id="maintSecs">00</div>
+                            <div class="maint-timer-lbl">Secs</div>
+                        </div>
                     </div>
-                    <div class="maint-timer-card">
-                        <div class="maint-timer-num" id="maintHours">00</div>
-                        <div class="maint-timer-lbl">Hours</div>
+                `;
+            } else {
+                timerGridHtml = `
+                    <div class="maint-timer-grid" style="grid-template-columns: 1fr;">
+                        <div style="grid-column: 1 / -1; color: #a78bfa; font-weight:700; font-size:15px; background:rgba(124, 58, 237, 0.15); border:1px solid rgba(124, 58, 237, 0.3); padding:12px 16px; border-radius:12px;">
+                            ✨ Finalizing system upgrades... We will be back online shortly!
+                        </div>
                     </div>
-                    <div class="maint-timer-card">
-                        <div class="maint-timer-num" id="maintMins">00</div>
-                        <div class="maint-timer-lbl">Mins</div>
-                    </div>
-                    <div class="maint-timer-card">
-                        <div class="maint-timer-num" id="maintSecs">00</div>
-                        <div class="maint-timer-lbl">Secs</div>
-                    </div>
-                </div>
-            `;
+                `;
+            }
         }
 
         const innerContent = `
@@ -144,7 +155,7 @@
             overlay.innerHTML = innerContent;
         }
 
-        if (expectedBack) {
+        if (isValidDate && expectedBack > new Date()) {
             startCountdownTimer(expectedBack);
         }
     }
@@ -159,7 +170,7 @@
             if (distance <= 0) {
                 if (countdownInterval) clearInterval(countdownInterval);
                 const grid = document.querySelector(".maint-timer-grid");
-                if (grid) grid.innerHTML = `<div style="grid-column: 1 / -1; color: #a78bfa; font-weight:700; font-size:15px; background:rgba(124, 58, 237, 0.15); border:1px solid rgba(124, 58, 237, 0.3); padding:10px 14px; border-radius:10px;">✨ Finalizing system upgrades... We will be back online shortly!</div>`;
+                if (grid) grid.innerHTML = `<div style="grid-column: 1 / -1; color: #a78bfa; font-weight:700; font-size:15px; background:rgba(124, 58, 237, 0.15); border:1px solid rgba(124, 58, 237, 0.3); padding:12px 16px; border-radius:12px;">✨ Finalizing system upgrades... We will be back online shortly!</div>`;
                 return;
             }
 

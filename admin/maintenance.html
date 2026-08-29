@@ -175,10 +175,18 @@
         const messageVal = document.getElementById("pageMaintMessage").value.trim();
         const dateVal = document.getElementById("pageMaintDate").value;
 
+        let parsedDate = null;
+        if (dateVal) {
+            const d = new Date(dateVal);
+            if (!isNaN(d.getTime())) {
+                parsedDate = d.toISOString();
+            }
+        }
+
         const payload = {
             maintenance: maintenanceVal,
             message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
-            expectedBack: dateVal ? new Date(dateVal).toISOString() : null,
+            expectedBack: parsedDate,
             showTimer: true
         };
 

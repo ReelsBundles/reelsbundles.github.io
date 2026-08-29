@@ -147,12 +147,20 @@ async function saveMaintenanceConfig(e) {
     const messageVal = document.getElementById("maintMessageInput").value.trim();
     const dateVal = document.getElementById("maintDateInput").value;
 
-    const payload = {
-        maintenance: maintenanceVal,
-        message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
-        expectedBack: dateVal ? new Date(dateVal).toISOString() : null,
-        showTimer: true
-    };
+        let parsedDate = null;
+        if (dateVal) {
+            const d = new Date(dateVal);
+            if (!isNaN(d.getTime())) {
+                parsedDate = d.toISOString();
+            }
+        }
+
+        const payload = {
+            maintenance: maintenanceVal,
+            message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
+            expectedBack: parsedDate,
+            showTimer: true
+        };
 
     try {
         const res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
