@@ -76,43 +76,41 @@
     function renderMaintenanceOverlay(data) {
         let overlay = document.getElementById("maintOverlay");
         const message = data.message || "🛠️ ReelsBundles is undergoing scheduled maintenance. We will be back online shortly!";
-        const expectedBack = data.expectedBack ? new Date(data.expectedBack) : null;
-        const isValidDate = expectedBack && !isNaN(expectedBack.getTime());
-
-        let timerGridHtml = "";
-        if (isValidDate) {
-            if (expectedBack > new Date()) {
-                timerGridHtml = `
-                    <div class="maint-timer-title">⌛ Expected Completion In</div>
-                    <div class="maint-timer-grid">
-                        <div class="maint-timer-card">
-                            <div class="maint-timer-num" id="maintDays">00</div>
-                            <div class="maint-timer-lbl">Days</div>
-                        </div>
-                        <div class="maint-timer-card">
-                            <div class="maint-timer-num" id="maintHours">00</div>
-                            <div class="maint-timer-lbl">Hours</div>
-                        </div>
-                        <div class="maint-timer-card">
-                            <div class="maint-timer-num" id="maintMins">00</div>
-                            <div class="maint-timer-lbl">Mins</div>
-                        </div>
-                        <div class="maint-timer-card">
-                            <div class="maint-timer-num" id="maintSecs">00</div>
-                            <div class="maint-timer-lbl">Secs</div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                timerGridHtml = `
-                    <div class="maint-timer-grid" style="grid-template-columns: 1fr;">
-                        <div style="grid-column: 1 / -1; color: #a78bfa; font-weight:700; font-size:15px; background:rgba(124, 58, 237, 0.15); border:1px solid rgba(124, 58, 237, 0.3); padding:12px 16px; border-radius:12px;">
-                            ✨ Finalizing system upgrades... We will be back online shortly!
-                        </div>
-                    </div>
-                `;
+        
+        let targetDate = null;
+        if (data.expectedBack) {
+            const d = new Date(data.expectedBack);
+            if (!isNaN(d.getTime()) && d > new Date()) {
+                targetDate = d;
             }
         }
+
+        // If no date or date passed, set fallback target to 2 hours from now so timer boxes ALWAYS display
+        if (!targetDate) {
+            targetDate = new Date(Date.now() + 2 * 3600 * 1000);
+        }
+
+        const timerGridHtml = `
+            <div class="maint-timer-title">⌛ Estimated Completion In</div>
+            <div class="maint-timer-grid">
+                <div class="maint-timer-card">
+                    <div class="maint-timer-num" id="maintDays">00</div>
+                    <div class="maint-timer-lbl">Days</div>
+                </div>
+                <div class="maint-timer-card">
+                    <div class="maint-timer-num" id="maintHours">00</div>
+                    <div class="maint-timer-lbl">Hours</div>
+                </div>
+                <div class="maint-timer-card">
+                    <div class="maint-timer-num" id="maintMins">00</div>
+                    <div class="maint-timer-lbl">Mins</div>
+                </div>
+                <div class="maint-timer-card">
+                    <div class="maint-timer-num" id="maintSecs">00</div>
+                    <div class="maint-timer-lbl">Secs</div>
+                </div>
+            </div>
+        `;
 
         const innerContent = `
             <div class="maint-card">
@@ -155,9 +153,7 @@
             overlay.innerHTML = innerContent;
         }
 
-        if (isValidDate && expectedBack > new Date()) {
-            startCountdownTimer(expectedBack);
-        }
+        startCountdownTimer(targetDate);
     }
 
     function startCountdownTimer(targetDate) {

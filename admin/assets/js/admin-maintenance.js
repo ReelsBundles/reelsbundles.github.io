@@ -165,6 +165,14 @@ function openMaintenanceConfigModal() {
     }
 }
 
+function setQuickMaintDate(inputId, hours) {
+    const target = new Date(Date.now() + hours * 3600 * 1000);
+    const formatted = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+    const input = document.getElementById(inputId);
+    if (input) input.value = formatted;
+}
+window.setQuickMaintDate = setQuickMaintDate;
+
 async function saveMaintenanceConfig(e) {
     e.preventDefault();
     const btn = document.getElementById("saveMaintBtn");
