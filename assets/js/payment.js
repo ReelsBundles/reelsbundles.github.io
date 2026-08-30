@@ -633,8 +633,36 @@ function normalizePhone(
     phone
 ) {
 
-    return String(phone)
+    let digits = String(phone || "")
         .replace(/\D/g, "");
+
+    if (
+        digits.length === 12 &&
+        digits.startsWith("91")
+    ) {
+
+        digits = digits.slice(2);
+
+    }
+
+    if (
+        digits.length === 11 &&
+        digits.startsWith("0")
+    ) {
+
+        digits = digits.slice(1);
+
+    }
+
+    if (
+        digits.length > 10
+    ) {
+
+        digits = digits.slice(-10);
+
+    }
+
+    return digits;
 
 }
 
@@ -647,10 +675,7 @@ function isValidPhone(
         normalizePhone(phone);
 
 
-    return (
-        normalized.length >= 10 &&
-        normalized.length <= 15
-    );
+    return normalized.length === 10;
 
 }
 
