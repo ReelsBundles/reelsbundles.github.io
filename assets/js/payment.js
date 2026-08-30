@@ -38,7 +38,7 @@ const API_BASE =
  */
 
 const CASHFREE_MODE =
-    "sandbox";
+    "production";
 
 
 /* ==========================================================
@@ -1244,7 +1244,8 @@ function waitForCashfree(
 ========================================================== */
 
 async function openCashfreeCheckout(
-    paymentSessionId
+    paymentSessionId,
+    mode = undefined
 ) {
 
     /*
@@ -1284,11 +1285,17 @@ async function openCashfreeCheckout(
     /*
      * Initialize Cashfree
      */
+    const targetMode =
+        String(mode || CASHFREE_MODE)
+            .toLowerCase() === "sandbox"
+            ? "sandbox"
+            : "production";
+
     const cashfree =
         Cashfree({
 
             mode:
-                CASHFREE_MODE
+                targetMode
 
         });
 
@@ -1487,7 +1494,13 @@ checkoutButton?.addEventListener(
 
                 data
                     .payment
-                    .payment_session_id
+                    .payment_session_id,
+
+                data
+                    .environment ||
+                data
+                    .payment
+                    ?.environment
 
             );
 
