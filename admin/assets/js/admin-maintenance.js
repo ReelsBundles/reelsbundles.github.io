@@ -224,6 +224,18 @@ function setQuickMaintDate(inputId, hours) {
     if (input) input.value = formatted;
 }
 
+function testPublicVisitorView() {
+    try {
+        localStorage.removeItem("rb_maint_tester_unlocked");
+        localStorage.setItem("rb_maint_active", "true");
+    } catch (e) {}
+
+    const homepageUrl = window.location.origin + window.location.pathname.replace(/\/admin\/.*/, "") + "/";
+    alert("🔒 Tester Bypass Session cleared!\n\nRedirecting to homepage to test the Public Visitor Under Maintenance Screen...");
+    window.location.href = homepageUrl;
+}
+
 window.setQuickMaintDate = setQuickMaintDate;
 window.copyTesterBypassLink = copyTesterBypassLink;
+window.testPublicVisitorView = testPublicVisitorView;
 window.loadPageMaintData = loadPageMaintData;
