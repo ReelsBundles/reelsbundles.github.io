@@ -13,7 +13,9 @@ let currentMaintenanceState = {
     maintenance: false,
     message: "",
     expectedBack: null,
-    showTimer: true
+    showTimer: true,
+    testerPasscode: "5796",
+    bypassKey: "RB_TESTER_KEY_5796"
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -23,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
 async function initAdminMaintenanceUI() {
     injectTopbarMaintenanceControls();
     await fetchMaintenanceState();
+    if (document.getElementById("pageMaintForm")) {
+        loadPageMaintData();
+    }
 }
 
 function injectTopbarMaintenanceControls() {
@@ -60,9 +65,12 @@ async function fetchMaintenanceState() {
                 maintenance: Boolean(data.maintenance),
                 message: data.message || "",
                 expectedBack: data.expectedBack || null,
-                showTimer: data.showTimer !== false
+                showTimer: data.showTimer !== false,
+                testerPasscode: data.testerPasscode || "5796",
+                bypassKey: data.bypassKey || "RB_TESTER_KEY_5796"
             };
             updateAdminTopbarBadge();
+            updatePagePreviewUI();
         }
     } catch (e) {
         console.warn("Failed to fetch maintenance telemetry:", e);
@@ -86,82 +94,126 @@ function updateAdminTopbarBadge() {
     }
 }
 
-function openMaintenanceConfigModal() {
-    let modal = document.getElementById("adminMaintModal");
-    if (!modal) {
-        modal = document.createElement("div");
-        modal.id = "adminMaintModal";
-        modal.style.cssText = "position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(10px); z-index:99999; display:flex; align-items:center; justify-content:center; padding:20px;";
-        
-        // Format ISO date for datetime-local input
-        let dateVal = "";
+function loadPageMaintData() {
+    const statusSelect = document.getElementById("pageMaintStatus");
+    const msgInput = document.getElementById("pageMaintMsg");
+    const dateInput = document.getElementById("pageMaintDate");
+    const passcodeInput = document.getElementById("pageTesterPasscode");
+
+    if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
+    if (msgInput) msgInput.value = currentMaintenanceState.message;
+    if (passcodeInput) passcodeInput.value = currentMaintenanceState.testerPasscode || "5796";
+
+    if (dateInput && currentMaintenanceState.expectedBack) {
+        const d = new Date(currentMaintenanceState.expectedBack);
+        if (!isNaN(d.getTime())) {
+            dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        }
+    }
+
+    const form = document.getElementById("pageMaintForm");
+    if (form) {
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById("pageMaintSubmitBtn");
+            if (btn) btn.disabled = true;
+
+            const maintenanceVal = document.getElementById("pageMaintStatus").value === "true";
+            const messageVal = document.getElementById("pageMaintMsg").value.trim();
+            const dateVal = document.getElementById("pageMaintDate").value;
+            const passcodeVal = document.getElementById("pageTesterPasscode")?.value.trim() || "5796";
+
+            let parsedDate = null;
+            if (dateVal) {
+                const d = new Date(dateVal);
+                if (!isNaN(d.getTime())) {
+                    parsedDate = d.toISOString();
+                }
+            }
+
+            const payload = {
+                maintenance: maintenanceVal,
+                message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
+                expectedBack: parsedDate,
+                showTimer: true,
+                testerPasscode: passcodeVal
+            };
+
+            try {
+                const res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) throw new Error("Failed to update maintenance settings");
+
+                const data = await res.json();
+                currentMaintenanceState = {
+                    maintenance: Boolean(data.settings.maintenance),
+                    message: data.settings.message,
+                    expectedBack: data.settings.expectedBack,
+                    showTimer: data.settings.showTimer !== false,
+                    testerPasscode: data.settings.testerPasscode || "5796",
+                    bypassKey: data.settings.bypassKey || "RB_TESTER_KEY_5796"
+                };
+
+                updateAdminTopbarBadge();
+                updatePagePreviewUI();
+                alert(data.message || "Maintenance settings saved successfully!");
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        };
+    }
+
+    updatePagePreviewUI();
+}
+
+function updatePagePreviewUI() {
+    const statusEl = document.getElementById("prevMaintStatus");
+    const msgEl = document.getElementById("prevMaintMsg");
+    const dateEl = document.getElementById("prevMaintDate");
+
+    if (statusEl) {
+        if (currentMaintenanceState.maintenance) {
+            statusEl.textContent = "🛠️ MAINTENANCE MODE IS ACTIVE (ON)";
+            statusEl.style.color = "#f87171";
+        } else {
+            statusEl.textContent = "🟢 SYSTEM IS LIVE (OFF)";
+            statusEl.style.color = "#4ade80";
+        }
+    }
+
+    if (msgEl) {
+        msgEl.textContent = currentMaintenanceState.message || "Standard maintenance notice.";
+    }
+
+    if (dateEl) {
         if (currentMaintenanceState.expectedBack) {
             const d = new Date(currentMaintenanceState.expectedBack);
-            dateVal = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            dateEl.textContent = d.toLocaleString();
+        } else {
+            dateEl.textContent = "No Date Set (Fallback Countdown Active)";
         }
+    }
+}
 
-        modal.innerHTML = `
-            <div style="background:#1e293b; border:1px solid rgba(124,58,237,0.4); border-radius:20px; padding:28px; width:100%; max-width:480px; color:#fff; box-shadow:0 20px 50px rgba(0,0,0,0.8);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h3 style="margin:0; font-size:18px; font-weight:800; color:#fff;">⚙️ Maintenance Mode Settings</h3>
-                    <button type="button" onclick="document.getElementById('adminMaintModal').style.display='none'" style="background:none; border:none; color:#94a3b8; font-size:24px; cursor:pointer;">&times;</button>
-                </div>
-                <form id="maintConfigForm">
-                    <div style="margin-bottom:16px;">
-                        <label style="display:block; font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">Maintenance Status</label>
-                        <select id="maintStatusSelect" style="width:100%; padding:10px 14px; background:#0f172a; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:14px; outline:none;">
-                            <option value="false" ${!currentMaintenanceState.maintenance ? 'selected' : ''}>🟢 Normal Operations (OFF)</option>
-                            <option value="true" ${currentMaintenanceState.maintenance ? 'selected' : ''}>🔴 Under Maintenance (ON)</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom:16px;">
-                        <label style="display:block; font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">Maintenance Reason Preset</label>
-                        <select id="modalMaintPreset" style="width:100%; padding:10px 14px; background:#0f172a; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:14px; outline:none;">
-                            <option value="upgrades">🛠️ Scheduled System Upgrades</option>
-                            <option value="servers">🚀 Server Performance Enhancement</option>
-                            <option value="bundles">📦 Uploading New Reels & Bundle Packs</option>
-                            <option value="security">🔒 Platform Security Updates</option>
-                            <option value="other" selected>✏️ Other (Custom Message)</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom:16px;">
-                        <label style="display:block; font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">User Announcement Message</label>
-                        <textarea id="maintMessageInput" rows="3" style="width:100%; padding:10px 14px; background:#0f172a; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:14px; outline:none;" placeholder="Enter message to display to users...">${escapeHtml(currentMaintenanceState.message)}</textarea>
-                    </div>
-                    <div style="margin-bottom:20px;">
-                        <label style="display:block; font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:6px;">Estimated Completion Date & Time (Optional for Countdown Timer)</label>
-                        <input type="datetime-local" id="maintDateInput" value="${dateVal}" style="width:100%; padding:10px 14px; background:#0f172a; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:14px; outline:none;">
-                        <small style="color:#94a3b8; font-size:11px; margin-top:4px; display:block;">Sets live ⏳ Days : Hours : Mins : Secs countdown timer for users.</small>
-                    </div>
-                    <div style="display:flex; gap:12px; justify-content:flex-end;">
-                        <button type="button" onclick="document.getElementById('adminMaintModal').style.display='none'" style="padding:10px 18px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#cbd5e1; font-weight:600; cursor:pointer;">Cancel</button>
-                        <button type="submit" id="saveMaintBtn" style="padding:10px 20px; background:linear-gradient(135deg, #7c3aed, #6366f1); border:none; border-radius:10px; color:#fff; font-weight:700; cursor:pointer;">💾 Save Settings</button>
-                    </div>
-                </form>
-            </div>
-        `;
-        document.body.appendChild(modal);
+function copyTesterBypassLink() {
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/admin\/.*/, "");
+    const testerKey = currentMaintenanceState.bypassKey || "RB_TESTER_KEY_5796";
+    const bypassUrl = `${baseUrl}/?tester_key=${encodeURIComponent(testerKey)}`;
 
-        const modalPreset = document.getElementById("modalMaintPreset");
-        const modalMsg = document.getElementById("maintMessageInput");
-        if (modalPreset && modalMsg) {
-            const PRESET_MESSAGES = {
-                upgrades: "🛠️ ReelsBundles is currently undergoing scheduled system upgrades. We will be back online shortly!",
-                servers: "🚀 We are upgrading our cloud servers for faster downloads and better performance. Back shortly!",
-                bundles: "📦 Uploading new viral reels and HD bundle packs to the library! Stay tuned.",
-                security: "🔒 Performing routine platform security maintenance & updates."
-            };
-            modalPreset.addEventListener("change", () => {
-                const val = modalPreset.value;
-                if (val !== "other" && PRESET_MESSAGES[val]) {
-                    modalMsg.value = PRESET_MESSAGES[val];
-                }
-            });
-        }
-
-        document.getElementById("maintConfigForm").addEventListener("submit", saveMaintenanceConfig);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(bypassUrl).then(() => {
+            alert("📋 Secret Tester Bypass Link copied to clipboard!\n\nOpen this link on any phone or laptop to bypass Maintenance Mode for testing:\n\n" + bypassUrl);
+        }).catch(() => {
+            prompt("Copy Secret Tester Link below:", bypassUrl);
+        });
     } else {
-        modal.style.display = "flex";
+        prompt("Copy Secret Tester Link below:", bypassUrl);
     }
 }
 
@@ -171,63 +223,7 @@ function setQuickMaintDate(inputId, hours) {
     const input = document.getElementById(inputId);
     if (input) input.value = formatted;
 }
+
 window.setQuickMaintDate = setQuickMaintDate;
-
-async function saveMaintenanceConfig(e) {
-    e.preventDefault();
-    const btn = document.getElementById("saveMaintBtn");
-    if (btn) btn.disabled = true;
-
-    const maintenanceVal = document.getElementById("maintStatusSelect").value === "true";
-    const messageVal = document.getElementById("maintMessageInput").value.trim();
-    const dateVal = document.getElementById("maintDateInput").value;
-
-        let parsedDate = null;
-        if (dateVal) {
-            const d = new Date(dateVal);
-            if (!isNaN(d.getTime())) {
-                parsedDate = d.toISOString();
-            }
-        }
-
-        const payload = {
-            maintenance: maintenanceVal,
-            message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
-            expectedBack: parsedDate,
-            showTimer: true
-        };
-
-    try {
-        const res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) throw new Error("Failed to update maintenance settings");
-
-        const data = await res.json();
-        currentMaintenanceState = {
-            maintenance: Boolean(data.settings.maintenance),
-            message: data.settings.message,
-            expectedBack: data.settings.expectedBack,
-            showTimer: data.settings.showTimer !== false
-        };
-
-        updateAdminTopbarBadge();
-        document.getElementById("adminMaintModal").style.display = "none";
-        alert(data.message || "Maintenance settings saved successfully!");
-    } catch (err) {
-        alert("Error: " + err.message);
-    } finally {
-        if (btn) btn.disabled = false;
-    }
-}
-
-function escapeHtml(str) {
-    return String(str || "").replace(/[&<>"']/g, match => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[match]));
-}
-
-window.openMaintenanceConfigModal = openMaintenanceConfigModal;
+window.copyTesterBypassLink = copyTesterBypassLink;
+window.loadPageMaintData = loadPageMaintData;

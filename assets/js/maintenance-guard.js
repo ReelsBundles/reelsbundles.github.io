@@ -1,5 +1,5 @@
 /* ==========================================================
-   REELSBUNDLES — INSTANT ZERO-FLASH MAINTENANCE GUARD & TIMER
+   REELSBUNDLES — INSTANT ZERO-FLASH MAINTENANCE GUARD & TESTER BYPASS
 ========================================================== */
 
 (function () {
@@ -15,14 +15,33 @@
             : "https://reelsbundles-backend.onrender.com"
     ) + "/api";
 
-    // 1. FAST SYNC PRE-BLOCK: Prevent 2-3s flash of index page on refresh
+    // 1. CHECK TESTER UNLOCK VIA URL KEY OR LOCAL STORAGE
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const testerKey = urlParams.get("tester_key") || urlParams.get("bypass_token") || urlParams.get("tester");
+
+        if (testerKey && (testerKey.startsWith("RB_TESTER_") || testerKey === "5796" || testerKey === "admin5796")) {
+            localStorage.setItem("rb_maint_tester_unlocked", "true");
+            // Clean URL query param without refreshing
+            const cleanUrl = window.location.pathname + window.location.hash;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+
+        const isTesterUnlocked = localStorage.getItem("rb_maint_tester_unlocked") === "true";
+        if (isTesterUnlocked) {
+            console.log("[MAINTENANCE GUARD] 🔓 Tester Bypass Active. Showing Live Site.");
+            return;
+        }
+    } catch (e) {}
+
+    // 2. FAST SYNC PRE-BLOCK: Prevent 2-3s flash of index page on refresh
     try {
         const isCachedActive = localStorage.getItem("rb_maint_active") === "true";
         if (isCachedActive) {
             const preStyle = document.createElement("style");
             preStyle.id = "maintPreBlockStyle";
             preStyle.textContent = `
-                body > *:not(#maintOverlay) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+                body > *:not(#maintOverlay):not(#testerPassModal) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
                 html { background: #030712 !important; }
             `;
             (document.head || document.documentElement).appendChild(preStyle);
@@ -48,12 +67,20 @@
                         localStorage.setItem("rb_maint_active", "true");
                         localStorage.setItem("rb_maint_data", JSON.stringify(data));
                     } catch (e) {}
+
+                    // Re-check tester unlocked status after fetching live telemetry
+                    if (localStorage.getItem("rb_maint_tester_unlocked") === "true") {
+                        removeMaintenanceOverlay();
+                        return;
+                    }
+
                     renderMaintenanceOverlay(data);
                 } else {
                     // Maintenance is OFF -> Clear cache & unblock instantly
                     try {
                         localStorage.setItem("rb_maint_active", "false");
                         localStorage.removeItem("rb_maint_data");
+                        localStorage.removeItem("rb_maint_tester_unlocked");
                     } catch (e) {}
                     removeMaintenanceOverlay();
                 }
@@ -133,6 +160,11 @@
                         🔄 Refresh Page
                     </button>
                 </div>
+                <div>
+                    <button type="button" id="openTesterModalBtn" class="maint-tester-link">
+                        🔐 Admin / Tester Access
+                    </button>
+                </div>
             </div>
         `;
 
@@ -153,7 +185,67 @@
             overlay.innerHTML = innerContent;
         }
 
+        // Attach listener for Tester Passcode Modal
+        setTimeout(() => {
+            const btn = document.getElementById("openTesterModalBtn");
+            if (btn) {
+                btn.onclick = () => openTesterPasscodeModal(data);
+            }
+        }, 100);
+
         startCountdownTimer(targetDate);
+    }
+
+    function openTesterPasscodeModal(data) {
+        let modal = document.getElementById("testerPassModal");
+        if (!modal) {
+            modal = document.createElement("div");
+            modal.id = "testerPassModal";
+            modal.style.cssText = "position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(16px); z-index:9999999; display:flex; align-items:center; justify-content:center; padding:20px; font-family:'Inter',sans-serif;";
+            
+            modal.innerHTML = `
+                <div style="background:#1e293b; border:1px solid rgba(124,58,237,0.5); border-radius:24px; padding:32px; width:100%; max-width:420px; color:#fff; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.9);">
+                    <div style="font-size:42px; margin-bottom:12px;">🔐</div>
+                    <h3 style="margin:0 0 8px; font-size:20px; font-weight:800; color:#fff;">Tester Live Access</h3>
+                    <p style="font-size:13px; color:#cbd5e1; margin-bottom:20px;">Enter your Admin / Tester PIN Passcode to unlock live site testing on this device.</p>
+                    
+                    <form id="testerPassForm">
+                        <input type="password" id="testerPinInput" placeholder="Enter Tester Passcode (e.g. 5796)" style="width:100%; padding:12px 16px; background:#0f172a; border:1px solid rgba(167,139,250,0.4); border-radius:12px; color:#fff; font-size:16px; text-align:center; letter-spacing:2px; outline:none; margin-bottom:16px;" required autofocus>
+                        <div id="testerPinError" style="color:#f87171; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></div>
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" id="closeTesterModalBtn" style="flex:1; padding:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:#cbd5e1; font-weight:600; cursor:pointer;">Cancel</button>
+                            <button type="submit" style="flex:1; padding:12px; background:linear-gradient(135deg, #7c3aed, #6366f1); border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer;">🔓 Unlock Site</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById("closeTesterModalBtn").onclick = () => {
+                modal.style.display = "none";
+            };
+
+            document.getElementById("testerPassForm").onsubmit = (e) => {
+                e.preventDefault();
+                const pin = document.getElementById("testerPinInput").value.trim();
+                const validPin = data.testerPasscode || "5796";
+
+                if (pin === validPin || pin === "5796" || pin === "admin5796") {
+                    localStorage.setItem("rb_maint_tester_unlocked", "true");
+                    modal.style.display = "none";
+                    removeMaintenanceOverlay();
+                    alert("✨ Live site unlocked for testing on this device!");
+                } else {
+                    const errEl = document.getElementById("testerPinError");
+                    if (errEl) {
+                        errEl.textContent = "❌ Incorrect Passcode. Please try again.";
+                        errEl.style.display = "block";
+                    }
+                }
+            };
+        } else {
+            modal.style.display = "flex";
+        }
     }
 
     function startCountdownTimer(targetDate) {

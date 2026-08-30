@@ -186,3 +186,19 @@
     background: rgba(255, 255, 255, 0.15);
     color: #ffffff;
 }
+
+.maint-tester-link {
+    margin-top: 24px;
+    display: inline-block;
+    font-size: 12px;
+    color: #94a3b8;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+}
+
+.maint-tester-link:hover {
+    color: #a78bfa;
+}
