@@ -41,12 +41,27 @@
                 const data = await res.json();
                 if (data.success && Array.isArray(data.notifications)) {
                     activeNotifications = data.notifications;
+                    try {
+                        localStorage.setItem("rb_cached_notifications", JSON.stringify(data.notifications));
+                    } catch (e) {}
                     updateBadgeCount();
                     renderNotificationList();
+                    updateTopTickerBar(data.notifications);
+                    updateDashboardAlerts(data.notifications);
                 }
             }
         } catch (err) {
             console.warn("[NOTIFICATIONS] Fetch warning:", err);
+            // Fallback cached notifications
+            try {
+                const cached = localStorage.getItem("rb_cached_notifications");
+                if (cached) {
+                    activeNotifications = JSON.parse(cached);
+                    updateBadgeCount();
+                    renderNotificationList();
+                    updateTopTickerBar(activeNotifications);
+                }
+            } catch (e) {}
         }
     }
 
@@ -54,11 +69,13 @@
         const badgeEl = document.getElementById("notifBadge");
         if (!badgeEl) return;
 
+        // FILTER: Bell Badge & Drawer displays ALERTS ONLY
+        const alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
         const readIds = getReadNotificationIds();
-        const unread = activeNotifications.filter(n => !readIds.includes(n.id));
+        const unreadAlerts = alertNotifs.filter(n => !readIds.includes(n.id));
 
-        if (unread.length > 0) {
-            badgeEl.textContent = unread.length > 9 ? "9+" : unread.length;
+        if (unreadAlerts.length > 0) {
+            badgeEl.textContent = unreadAlerts.length > 9 ? "9+" : unreadAlerts.length;
             badgeEl.classList.remove("hidden");
         } else {
             badgeEl.classList.add("hidden");
@@ -92,54 +109,82 @@
         const bodyEl = document.getElementById("notifDrawerBody");
         if (!bodyEl) return;
 
-        if (activeNotifications.length === 0) {
+        // ROUTING RULE: Bell Drawer displays ALERTS ONLY
+        const alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
+
+        if (alertNotifs.length === 0) {
             bodyEl.innerHTML = `
                 <div class="notif-empty">
                     <div class="notif-empty-icon">🔔</div>
-                    <p>No new notifications right now.</p>
+                    <p>No active system alerts right now.</p>
                 </div>
             `;
             return;
         }
 
-        const html = activeNotifications.map(n => {
-            const typeClass = n.type || "announcement";
-            const typeLabel = n.type === "coupon" ? "🎁 COUPON" : (n.type === "alert" ? "⚠️ ALERT" : "📢 INFO");
-
-            let couponHtml = "";
-            if (n.couponCode) {
-                couponHtml = `
-                    <div class="notif-coupon-box">
-                        <span class="notif-code-text">${escapeHtml(n.couponCode)}</span>
-                        <button type="button" class="notif-copy-btn" data-code="${escapeHtml(n.couponCode)}">
-                            📋 COPY CODE
-                        </button>
-                    </div>
-                `;
-            }
-
+        const html = alertNotifs.map(n => {
             return `
-                <div class="notif-item" data-id="${escapeHtml(n.id)}">
+                <div class="notif-item alert" data-id="${escapeHtml(n.id)}">
                     <div class="notif-item-header">
                         <h5 class="notif-item-title">${escapeHtml(n.title)}</h5>
-                        <span class="notif-type-tag ${typeClass}">${typeLabel}</span>
+                        <span class="notif-type-tag alert">⚠️ ALERT</span>
                     </div>
                     <p class="notif-item-msg">${escapeHtml(n.message)}</p>
-                    ${couponHtml}
                 </div>
             `;
         }).join("");
 
         bodyEl.innerHTML = html;
+    }
 
-        // Attach copy button click listeners
-        bodyEl.querySelectorAll(".notif-copy-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const code = btn.getAttribute("data-code");
-                copyToClipboard(code, btn);
-            });
-        });
+    function updateTopTickerBar(notifications) {
+        const tickerContentEl = document.querySelector(".top-ticker-bar .marquee-content");
+        if (!tickerContentEl) return;
+
+        // ROUTING RULE: Top Ticker Bar displays ANNOUNCEMENTS & COUPONS
+        const tickerNotifs = notifications.filter(n => (n.type === "announcement" || n.type === "coupon") && n.active !== false);
+
+        if (tickerNotifs.length === 0) {
+            // Default fallback marquee if no custom announcements exist
+            tickerContentEl.innerHTML = `
+                🎉 Special Launch Offer: Use coupon <strong>WELCOME10</strong> for 10% OFF your order! &nbsp;•&nbsp; 🚀 200,000+ Ready-To-Post Instagram Reels Library &nbsp;•&nbsp; ⚡ Instant High-Speed Google Drive Downloads
+            `;
+            return;
+        }
+
+        const itemsHtml = tickerNotifs.map(n => {
+            if (n.type === "coupon") {
+                const codePart = n.couponCode ? ` (Use Code: <strong>${escapeHtml(n.couponCode)}</strong>)` : "";
+                return `🎁 <strong>${escapeHtml(n.title)}</strong>: ${escapeHtml(n.message)}${codePart}`;
+            } else {
+                return `📢 <strong>${escapeHtml(n.title)}</strong>: ${escapeHtml(n.message)}`;
+            }
+        }).join(" &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; ");
+
+        tickerContentEl.innerHTML = itemsHtml;
+    }
+
+    function updateDashboardAlerts(notifications) {
+        const container = document.getElementById("dashboardAlertContainer") || document.getElementById("dashboardAlerts");
+        if (!container) return;
+
+        // ROUTING RULE: User Dashboard displays ALERTS ONLY
+        const alertNotifs = notifications.filter(n => n.type === "alert" && n.active !== false);
+        if (alertNotifs.length === 0) {
+            container.style.display = "none";
+            return;
+        }
+
+        container.style.display = "block";
+        container.innerHTML = alertNotifs.map(n => `
+            <div class="dashboard-alert-card" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.35); border-radius:14px; padding:14px 18px; margin-bottom:16px; color:#f87171; display:flex; align-items:center; gap:12px;">
+                <span style="font-size:20px;">⚠️</span>
+                <div>
+                    <strong style="color:#fff; font-size:14px; display:block;">${escapeHtml(n.title)}</strong>
+                    <span style="font-size:13px; color:#fca5a5;">${escapeHtml(n.message)}</span>
+                </div>
+            </div>
+        `).join("");
     }
 
     function toggleDrawer() {
