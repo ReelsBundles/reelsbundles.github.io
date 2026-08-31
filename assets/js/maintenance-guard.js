@@ -144,32 +144,36 @@
             }
         }
 
-        // If no date or date passed, set fallback target to 2 hours from now so timer boxes ALWAYS display
-        if (!targetDate) {
-            targetDate = new Date(Date.now() + 2 * 3600 * 1000);
+        let middleSectionHtml = "";
+        if (targetDate) {
+            middleSectionHtml = `
+                <div class="maint-timer-title">⌛ Estimated Completion In</div>
+                <div class="maint-timer-grid">
+                    <div class="maint-timer-card">
+                        <div class="maint-timer-num" id="maintDays">00</div>
+                        <div class="maint-timer-lbl">Days</div>
+                    </div>
+                    <div class="maint-timer-card">
+                        <div class="maint-timer-num" id="maintHours">00</div>
+                        <div class="maint-timer-lbl">Hours</div>
+                    </div>
+                    <div class="maint-timer-card">
+                        <div class="maint-timer-num" id="maintMins">00</div>
+                        <div class="maint-timer-lbl">Mins</div>
+                    </div>
+                    <div class="maint-timer-card">
+                        <div class="maint-timer-num" id="maintSecs">00</div>
+                        <div class="maint-timer-lbl">Secs</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            middleSectionHtml = `
+                <div style="margin:20px 0; padding:16px 20px; background:rgba(124, 58, 237, 0.12); border:1px solid rgba(167, 139, 250, 0.3); border-radius:16px; color:#c4b5fd; font-size:13.5px; font-weight:600; text-align:center; line-height:1.6;">
+                    ✨ System upgrade in progress — Services will resume automatically as soon as maintenance is complete.
+                </div>
+            `;
         }
-
-        const timerGridHtml = `
-            <div class="maint-timer-title">⌛ Estimated Completion In</div>
-            <div class="maint-timer-grid">
-                <div class="maint-timer-card">
-                    <div class="maint-timer-num" id="maintDays">00</div>
-                    <div class="maint-timer-lbl">Days</div>
-                </div>
-                <div class="maint-timer-card">
-                    <div class="maint-timer-num" id="maintHours">00</div>
-                    <div class="maint-timer-lbl">Hours</div>
-                </div>
-                <div class="maint-timer-card">
-                    <div class="maint-timer-num" id="maintMins">00</div>
-                    <div class="maint-timer-lbl">Mins</div>
-                </div>
-                <div class="maint-timer-card">
-                    <div class="maint-timer-num" id="maintSecs">00</div>
-                    <div class="maint-timer-lbl">Secs</div>
-                </div>
-            </div>
-        `;
 
         const innerContent = `
             <div class="maint-card">
@@ -183,7 +187,7 @@
                 </div>
                 <h1 class="maint-title">We'll Be Back Soon!</h1>
                 <div class="maint-message">${escapeHtml(message)}</div>
-                ${timerGridHtml}
+                ${middleSectionHtml}
                 <div class="maint-actions">
                     <a href="https://t.me/reelsbundles" target="_blank" class="maint-btn maint-btn-primary">
                         💬 Telegram Support
@@ -225,7 +229,11 @@
             }
         }, 100);
 
-        startCountdownTimer(targetDate);
+        if (targetDate) {
+            startCountdownTimer(targetDate);
+        } else if (countdownInterval) {
+            clearInterval(countdownInterval);
+        }
     }
 
     function openTesterPasscodeModal(data) {

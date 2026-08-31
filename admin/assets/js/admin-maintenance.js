@@ -217,9 +217,9 @@ function updatePagePreviewUI() {
     if (dateEl) {
         if (currentMaintenanceState.expectedBack) {
             const d = new Date(currentMaintenanceState.expectedBack);
-            dateEl.textContent = d.toLocaleString();
+            dateEl.textContent = d.toLocaleString() + " (Live Countdown Active)";
         } else {
-            dateEl.textContent = "No Date Set (Fallback Countdown Active)";
+            dateEl.textContent = "No Completion Date Set (Notice Only Mode Active)";
         }
     }
 }

@@ -105,9 +105,11 @@
                         <label for="pageMaintReasonPreset">Maintenance Reason Preset *</label>
                         <select id="pageMaintReasonPreset" class="form-control">
                             <option value="upgrades">🛠️ Scheduled System Upgrades</option>
-                            <option value="servers">🚀 Server Performance Enhancement</option>
-                            <option value="bundles">📦 Uploading New Reels & Bundle Packs</option>
-                            <option value="security">🔒 Platform Security Updates</option>
+                            <option value="servers">🚀 Server & Infrastructure Enhancement</option>
+                            <option value="bundles">📦 Adding New HD Viral Reel Bundles</option>
+                            <option value="security">🔒 Security & Platform Optimization</option>
+                            <option value="database">⚡ Payment & Database Upgrade</option>
+                            <option value="features">✨ New Features & UI Enhancements</option>
                             <option value="other" selected>✏️ Other (Custom Message)</option>
                         </select>
                     </div>
@@ -176,9 +178,11 @@
 <script>
     const PRESET_MESSAGES = {
         upgrades: "🛠️ ReelsBundles is currently undergoing scheduled system upgrades. We will be back online shortly!",
-        servers: "🚀 We are upgrading our cloud servers for faster downloads and better performance. Back shortly!",
+        servers: "🚀 We are upgrading our cloud servers for faster downloads and better performance. Back online shortly!",
         bundles: "📦 Uploading new viral reels and HD bundle packs to the library! Stay tuned.",
-        security: "🔒 Performing routine platform security maintenance & updates."
+        security: "🔒 Performing routine platform security maintenance & database updates.",
+        database: "⚡ Upgrading database nodes & payment infrastructure for instant delivery.",
+        features: "✨ Rolling out new exciting features & UI enhancements. Back online soon!"
     };
 
     document.addEventListener("DOMContentLoaded", () => {
