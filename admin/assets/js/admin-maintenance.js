@@ -228,8 +228,16 @@ function updatePagePreviewUI() {
     const msgEl = document.getElementById("prevMaintMsg");
     const dateEl = document.getElementById("prevMaintDate");
 
+    const formStatus = document.getElementById("pageMaintStatus");
+    const formMsg = document.getElementById("pageMaintMessage") || document.getElementById("pageMaintMsg");
+    const formDate = document.getElementById("pageMaintDate");
+
+    const isMaintOn = formStatus ? formStatus.value === "true" : currentMaintenanceState.maintenance;
+    const currentMsg = formMsg ? formMsg.value.trim() : currentMaintenanceState.message;
+    const currentDateVal = formDate ? formDate.value : "";
+
     if (statusEl) {
-        if (currentMaintenanceState.maintenance) {
+        if (isMaintOn) {
             statusEl.textContent = "🛠️ MAINTENANCE MODE IS ACTIVE (ON)";
             statusEl.style.color = "#f87171";
         } else {
@@ -239,11 +247,18 @@ function updatePagePreviewUI() {
     }
 
     if (msgEl) {
-        msgEl.textContent = currentMaintenanceState.message || "Standard maintenance notice.";
+        msgEl.textContent = currentMsg || "Standard maintenance notice.";
     }
 
     if (dateEl) {
-        if (currentMaintenanceState.expectedBack) {
+        if (currentDateVal) {
+            const d = new Date(currentDateVal);
+            if (!isNaN(d.getTime())) {
+                dateEl.textContent = d.toLocaleString() + " (Live Countdown Active)";
+            } else {
+                dateEl.textContent = "No Completion Date Set (Notice Only Mode Active)";
+            }
+        } else if (currentMaintenanceState.expectedBack) {
             const d = new Date(currentMaintenanceState.expectedBack);
             dateEl.textContent = d.toLocaleString() + " (Live Countdown Active)";
         } else {
@@ -274,6 +289,13 @@ function setQuickMaintDate(inputId, hours) {
     const formatted = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
     const input = document.getElementById(inputId);
     if (input) input.value = formatted;
+    updatePagePreviewUI();
+}
+
+function clearMaintDate(inputId) {
+    const input = document.getElementById(inputId);
+    if (input) input.value = "";
+    updatePagePreviewUI();
 }
 
 function testPublicVisitorView() {
@@ -289,6 +311,8 @@ function testPublicVisitorView() {
 }
 
 window.setQuickMaintDate = setQuickMaintDate;
+window.clearMaintDate = clearMaintDate;
 window.copyTesterBypassLink = copyTesterBypassLink;
 window.testPublicVisitorView = testPublicVisitorView;
 window.loadPageMaintData = loadPageMaintData;
+window.updatePagePreviewUI = updatePagePreviewUI;
