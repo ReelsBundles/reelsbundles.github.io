@@ -101,19 +101,22 @@ function updateAdminTopbarBadge() {
 
 function loadPageMaintData() {
     const statusSelect = document.getElementById("pageMaintStatus");
-    const msgInput = document.getElementById("pageMaintMsg");
+    const msgInput = document.getElementById("pageMaintMessage") || document.getElementById("pageMaintMsg");
+    const dateModeSelect = document.getElementById("pageMaintDateMode");
     const dateInput = document.getElementById("pageMaintDate");
+    const dateGroup = document.getElementById("datePickerGroup");
     const passcodeInput = document.getElementById("pageTesterPasscode");
 
     if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
-    if (msgInput) msgInput.value = currentMaintenanceState.message;
+    if (msgInput) msgInput.value = currentMaintenanceState.message || "";
+    
     if (passcodeInput) {
         const savedPin = localStorage.getItem("rb_maint_pin");
         if (savedPin) {
             currentMaintenanceState.testerPasscode = savedPin;
             currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${savedPin}`;
         }
-        passcodeInput.value = savedPin || currentMaintenanceState.testerPasscode || "5796";
+        passcodeInput.value = savedPin || currentMaintenanceState.testerPasscode || "4050";
         passcodeInput.addEventListener("input", () => {
             const val = passcodeInput.value.trim();
             if (val) {
@@ -124,29 +127,82 @@ function loadPageMaintData() {
         });
     }
 
-    if (dateInput && currentMaintenanceState.expectedBack) {
-        const d = new Date(currentMaintenanceState.expectedBack);
-        if (!isNaN(d.getTime())) {
-            dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+    // Handle Completion Date Mode Toggle
+    function syncDateModeUI() {
+        const mode = dateModeSelect ? dateModeSelect.value : "none";
+        if (mode === "set") {
+            if (dateGroup) dateGroup.style.display = "block";
+            if (dateInput) dateInput.required = true;
+        } else {
+            if (dateGroup) dateGroup.style.display = "none";
+            if (dateInput) {
+                dateInput.required = false;
+                dateInput.value = "";
+            }
         }
+    }
+
+    if (dateModeSelect) {
+        if (currentMaintenanceState.expectedBack) {
+            const d = new Date(currentMaintenanceState.expectedBack);
+            if (!isNaN(d.getTime())) {
+                dateModeSelect.value = "set";
+                if (dateInput) {
+                    dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                }
+            } else {
+                dateModeSelect.value = "none";
+            }
+        } else {
+            dateModeSelect.value = "none";
+        }
+
+        syncDateModeUI();
+        dateModeSelect.addEventListener("change", syncDateModeUI);
     }
 
     const form = document.getElementById("pageMaintForm");
     if (form) {
         form.onsubmit = async (e) => {
             e.preventDefault();
+
+            // Clear previous error styles
+            const allInputs = [statusSelect, msgInput, dateModeSelect, dateInput, passcodeInput].filter(Boolean);
+            allInputs.forEach(el => el.style.border = "");
+
+            const maintenanceVal = statusSelect?.value === "true";
+            const messageVal = msgInput?.value.trim() || "";
+            const dateModeVal = dateModeSelect?.value || "none";
+            const dateVal = dateInput?.value || "";
+            const passcodeVal = passcodeInput?.value.trim() || "";
+
+            // STRICT MANDATORY FORM VALIDATION
+            let errors = [];
+            if (!messageVal) {
+                errors.push("User Announcement Message is mandatory.");
+                if (msgInput) msgInput.style.border = "2px solid #ef4444";
+            }
+            if (!passcodeVal) {
+                errors.push("Tester Access Passcode (PIN) is mandatory.");
+                if (passcodeInput) passcodeInput.style.border = "2px solid #ef4444";
+            }
+            if (dateModeVal === "set" && !dateVal) {
+                errors.push("Completion Date & Time is mandatory when Live Countdown Mode is selected.");
+                if (dateInput) dateInput.style.border = "2px solid #ef4444";
+            }
+
+            if (errors.length > 0) {
+                alert("⚠️ All fields are mandatory!\n\n" + errors.join("\n"));
+                return;
+            }
+
             const btn = document.getElementById("pageMaintSubmitBtn");
             if (btn) btn.disabled = true;
-
-            const maintenanceVal = document.getElementById("pageMaintStatus").value === "true";
-            const messageVal = document.getElementById("pageMaintMsg").value.trim();
-            const dateVal = document.getElementById("pageMaintDate").value;
-            const passcodeVal = document.getElementById("pageTesterPasscode")?.value.trim() || "5796";
 
             try { localStorage.setItem("rb_maint_pin", passcodeVal); } catch (e) {}
 
             let parsedDate = null;
-            if (dateVal) {
+            if (dateModeVal === "set" && dateVal) {
                 const d = new Date(dateVal);
                 if (!isNaN(d.getTime())) {
                     parsedDate = d.toISOString();
@@ -155,9 +211,9 @@ function loadPageMaintData() {
 
             const payload = {
                 maintenance: maintenanceVal,
-                message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
+                message: messageVal,
                 expectedBack: parsedDate,
-                showTimer: true,
+                showTimer: dateModeVal === "set" && Boolean(parsedDate),
                 testerPasscode: passcodeVal,
                 bypassKey: `RB_TESTER_KEY_${passcodeVal}`
             };
@@ -177,15 +233,15 @@ function loadPageMaintData() {
                     message: data.settings.message,
                     expectedBack: data.settings.expectedBack,
                     showTimer: data.settings.showTimer !== false,
-                    testerPasscode: data.settings.testerPasscode || "5796",
-                    bypassKey: data.settings.bypassKey || `RB_TESTER_KEY_${data.settings.testerPasscode || "5796"}`
+                    testerPasscode: data.settings.testerPasscode || passcodeVal,
+                    bypassKey: data.settings.bypassKey || `RB_TESTER_KEY_${passcodeVal}`
                 };
 
                 updateAdminTopbarBadge();
                 updatePagePreviewUI();
-                alert(data.message || "Maintenance settings saved successfully!");
+                alert(data.message || "✅ Maintenance Mode settings updated successfully!");
             } catch (err) {
-                alert("Error: " + err.message);
+                alert("❌ Error: " + err.message);
             } finally {
                 if (btn) btn.disabled = false;
             }

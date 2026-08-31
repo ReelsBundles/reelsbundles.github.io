@@ -120,7 +120,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="pageMaintDate">Completion Date & Time (Optional for Countdown Timer)</label>
+                        <label for="pageMaintDateMode">Completion Date Option *</label>
+                        <select id="pageMaintDateMode" class="form-control" required>
+                            <option value="none" selected>🚫 No Completion Date (Notice Only Mode)</option>
+                            <option value="set">🗓️ Set Specific Target Date & Time (Live Countdown Mode)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="datePickerGroup" style="display:none;">
+                        <label for="pageMaintDate">Completion Target Date & Time *</label>
                         <input type="datetime-local" id="pageMaintDate" class="form-control">
                         <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
                             <button type="button" onclick="setQuickMaintDate('pageMaintDate', 1)" style="padding:4px 10px; background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); border-radius:6px; color:#c4b5fd; font-size:11px; font-weight:600; cursor:pointer;">+1 Hr</button>
@@ -136,8 +144,8 @@
                     </div>
 
                     <div class="form-group" style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
-                        <label for="pageTesterPasscode">🔑 Tester Access Passcode (PIN)</label>
-                        <input type="text" id="pageTesterPasscode" class="form-control" placeholder="Enter Tester PIN Passcode">
+                        <label for="pageTesterPasscode">🔑 Tester Access Passcode (PIN) *</label>
+                        <input type="text" id="pageTesterPasscode" class="form-control" placeholder="Enter Tester PIN Passcode (e.g. 4050)" required>
                         <small style="color:#94a3b8; font-size:11px; margin-top:4px; display:block;">Admin/Testers can enter this PIN on the public Maintenance overlay to unlock live testing.</small>
                     </div>
 
