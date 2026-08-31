@@ -102,7 +102,9 @@ function updateAdminTopbarBadge() {
 function loadPageMaintData() {
     const statusSelect = document.getElementById("pageMaintStatus");
     const msgInput = document.getElementById("pageMaintMessage") || document.getElementById("pageMaintMsg");
+    const dateModeSelect = document.getElementById("pageMaintDateMode");
     const dateInput = document.getElementById("pageMaintDate");
+    const dateGroup = document.getElementById("datePickerGroup");
     const passcodeInput = document.getElementById("pageTesterPasscode");
 
     if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
@@ -122,20 +124,39 @@ function loadPageMaintData() {
                 currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${val}`;
                 try { localStorage.setItem("rb_maint_pin", val); } catch (e) {}
             }
+            updatePagePreviewUI();
         });
     }
 
-    if (dateInput) {
+    // Handle Completion Date Mode Toggle
+    function syncDateModeUI() {
+        const mode = dateModeSelect ? dateModeSelect.value : "none";
+        if (mode === "set") {
+            if (dateGroup) dateGroup.style.display = "block";
+        } else {
+            if (dateGroup) dateGroup.style.display = "none";
+            if (dateInput) dateInput.value = "";
+        }
+        updatePagePreviewUI();
+    }
+
+    if (dateModeSelect) {
         if (currentMaintenanceState.expectedBack) {
             const d = new Date(currentMaintenanceState.expectedBack);
             if (!isNaN(d.getTime())) {
-                dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                dateModeSelect.value = "set";
+                if (dateInput) {
+                    dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                }
             } else {
-                dateInput.value = "";
+                dateModeSelect.value = "none";
             }
         } else {
-            dateInput.value = "";
+            dateModeSelect.value = "none";
         }
+
+        syncDateModeUI();
+        dateModeSelect.addEventListener("change", syncDateModeUI);
     }
 
     const form = document.getElementById("pageMaintForm");
@@ -144,11 +165,12 @@ function loadPageMaintData() {
             e.preventDefault();
 
             // Clear previous error styles
-            const allInputs = [statusSelect, msgInput, dateInput, passcodeInput].filter(Boolean);
+            const allInputs = [statusSelect, msgInput, dateModeSelect, dateInput, passcodeInput].filter(Boolean);
             allInputs.forEach(el => el.style.border = "");
 
             const maintenanceVal = statusSelect?.value === "true";
             const messageVal = msgInput?.value.trim() || "";
+            const dateModeVal = dateModeSelect?.value || "none";
             const dateVal = dateInput?.value || "";
             const passcodeVal = passcodeInput?.value.trim() || "";
 
@@ -162,6 +184,10 @@ function loadPageMaintData() {
                 errors.push("Tester Access Passcode (PIN) is mandatory.");
                 if (passcodeInput) passcodeInput.style.border = "2px solid #ef4444";
             }
+            if (dateModeVal === "set" && !dateVal) {
+                errors.push("Completion Date & Time is mandatory when Live Countdown Mode is selected.");
+                if (dateInput) dateInput.style.border = "2px solid #ef4444";
+            }
 
             if (errors.length > 0) {
                 alert("⚠️ All fields marked with * are mandatory!\n\n" + errors.join("\n"));
@@ -174,7 +200,7 @@ function loadPageMaintData() {
             try { localStorage.setItem("rb_maint_pin", passcodeVal); } catch (e) {}
 
             let parsedDate = null;
-            if (dateVal) {
+            if (dateModeVal === "set" && dateVal) {
                 const d = new Date(dateVal);
                 if (!isNaN(d.getTime())) {
                     parsedDate = d.toISOString();
@@ -185,7 +211,7 @@ function loadPageMaintData() {
                 maintenance: maintenanceVal,
                 message: messageVal,
                 expectedBack: parsedDate,
-                showTimer: Boolean(parsedDate),
+                showTimer: dateModeVal === "set" && Boolean(parsedDate),
                 testerPasscode: passcodeVal,
                 bypassKey: `RB_TESTER_KEY_${passcodeVal}`
             };
@@ -227,14 +253,20 @@ function updatePagePreviewUI() {
     const statusEl = document.getElementById("prevMaintStatus");
     const msgEl = document.getElementById("prevMaintMsg");
     const dateEl = document.getElementById("prevMaintDate");
+    const pinEl = document.getElementById("prevMaintPin");
+    const activePinTextEl = document.getElementById("activePinText");
 
     const formStatus = document.getElementById("pageMaintStatus");
     const formMsg = document.getElementById("pageMaintMessage") || document.getElementById("pageMaintMsg");
+    const formDateMode = document.getElementById("pageMaintDateMode");
     const formDate = document.getElementById("pageMaintDate");
+    const formPin = document.getElementById("pageTesterPasscode");
 
     const isMaintOn = formStatus ? formStatus.value === "true" : currentMaintenanceState.maintenance;
     const currentMsg = formMsg ? formMsg.value.trim() : currentMaintenanceState.message;
+    const isDateSetMode = formDateMode ? formDateMode.value === "set" : Boolean(currentMaintenanceState.expectedBack);
     const currentDateVal = formDate ? formDate.value : "";
+    const currentPin = (formPin ? formPin.value.trim() : "") || currentMaintenanceState.testerPasscode || "4050";
 
     if (statusEl) {
         if (isMaintOn) {
@@ -251,19 +283,24 @@ function updatePagePreviewUI() {
     }
 
     if (dateEl) {
-        if (currentDateVal) {
+        if (isDateSetMode && currentDateVal) {
             const d = new Date(currentDateVal);
             if (!isNaN(d.getTime())) {
                 dateEl.textContent = d.toLocaleString() + " (Live Countdown Active)";
             } else {
                 dateEl.textContent = "No Completion Date Set (Notice Only Mode Active)";
             }
-        } else if (currentMaintenanceState.expectedBack) {
-            const d = new Date(currentMaintenanceState.expectedBack);
-            dateEl.textContent = d.toLocaleString() + " (Live Countdown Active)";
         } else {
             dateEl.textContent = "No Completion Date Set (Notice Only Mode Active)";
         }
+    }
+
+    if (pinEl) {
+        pinEl.textContent = `🔑 ${currentPin} (Live Synced)`;
+    }
+
+    if (activePinTextEl) {
+        activePinTextEl.textContent = currentPin;
     }
 }
 
