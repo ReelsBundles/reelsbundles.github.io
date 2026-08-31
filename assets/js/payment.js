@@ -1,4 +1,7 @@
 "use strict";
+import { auth } from "./firebase-client.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
 /* ==========================================================
    REELSBUNDLES PAYMENT
    PAYMENT PAGE JAVASCRIPT
@@ -874,6 +877,22 @@ function saveCheckoutSession(
 
 
 /* ==========================================================
+   FIREBASE TOKEN
+========================================================== */
+
+async function getFirebaseIdToken() {
+    if (!auth) return null;
+    const currentUser = auth.currentUser;
+    if (!currentUser) return null;
+    try {
+        return await currentUser.getIdToken(true);
+    } catch (e) {
+        console.warn("[PAYMENT AUTH] Failed to get ID token:", e);
+        return null;
+    }
+}
+
+/* ==========================================================
    CREATE ORDER
 ========================================================== */
 
@@ -1577,21 +1596,25 @@ checkoutButton?.addEventListener("click", async () => {
 ========================================================== */
 
 function initializePaymentPage() {
-    if (window.auth && typeof window.onAuthStateChanged === "function") {
-        window.onAuthStateChanged(window.auth, (user) => {
-            if (!user) {
-                const currentUrl = window.location.pathname + window.location.search;
-                window.location.replace(`login.html?redirect=${encodeURIComponent(currentUrl)}`);
-            } else {
-                if (fullNameInput && !fullNameInput.value) {
-                    fullNameInput.value = user.displayName || "";
-                }
-                if (emailInput && !emailInput.value) {
-                    emailInput.value = user.email || "";
-                }
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            console.warn("[PAYMENT AUTH] User not logged in, redirecting to login page...");
+            const currentUrl = window.location.pathname + window.location.search;
+            window.location.replace(`login.html?redirect=${encodeURIComponent(currentUrl)}`);
+        } else {
+            console.log("[PAYMENT AUTH] Authenticated User:", user.email, user.uid);
+            if (fullNameInput && !fullNameInput.value) {
+                fullNameInput.value = user.displayName || "";
             }
-        });
-    }
+            if (emailInput) {
+                emailInput.value = user.email || "";
+                emailInput.readOnly = true;
+                emailInput.style.opacity = "0.85";
+                emailInput.style.cursor = "not-allowed";
+                emailInput.title = "Purchases are locked to your logged-in email account.";
+            }
+        }
+    });
 
     /*
      * URL:
