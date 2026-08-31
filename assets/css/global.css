@@ -274,3 +274,133 @@ textarea {
         width: 95% !important;
     }
 }
+
+/* ==========================================================
+   TOP TICKER BAR — RIGHT TO LEFT SLIDING ANNOUNCEMENT (REFERENCE UI)
+========================================================== */
+
+.top-ticker-bar {
+    background: #090d16;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #e2e8f0;
+    position: relative;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.ticker-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 2;
+    background: #090d16;
+    padding-right: 12px;
+}
+
+.ticker-date {
+    color: #94a3b8;
+    font-weight: 500;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.ticker-badge {
+    background: linear-gradient(135deg, #ef4444, #f43f5e);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.ticker-center {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.ticker-track {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: marqueeRightToLeft 25s linear infinite;
+}
+
+.ticker-track:hover {
+    animation-play-state: paused;
+}
+
+.ticker-track span {
+    font-weight: 500;
+    color: #f1f5f9;
+}
+
+.ticker-track strong {
+    color: #a78bfa;
+    font-weight: 800;
+}
+
+@keyframes marqueeRightToLeft {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.ticker-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    z-index: 2;
+    background: #090d16;
+    padding-left: 12px;
+}
+
+.ticker-nav-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ticker-nav-btn:hover {
+    background: rgba(167, 139, 250, 0.2);
+    color: #ffffff;
+    border-color: rgba(167, 139, 250, 0.5);
+}
+
+@media screen and (max-width: 640px) {
+    .ticker-date {
+        display: none;
+    }
+    .top-ticker-bar {
+        padding: 0 10px;
+    }
+}

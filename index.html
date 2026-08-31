@@ -172,6 +172,25 @@
     </div>
 
     <!-- ==============================
+         TOP ANNOUNCEMENT TICKER (REFERENCE UI)
+    =============================== -->
+    <div class="top-ticker-bar">
+        <div class="ticker-left">
+            <span class="ticker-date" id="tickerLiveDate"></span>
+            <span class="ticker-badge">📢 SPECIAL OFFER</span>
+        </div>
+        <div class="ticker-center">
+            <div class="ticker-track">
+                <span>🎉 Special Launch Offer: Use coupon <strong>WELCOME10</strong> for 10% OFF your order! &nbsp;•&nbsp; 🚀 200,000+ Ready-To-Post Instagram Reels Library &nbsp;•&nbsp; ⚡ Instant High-Speed Google Drive Downloads</span>
+            </div>
+        </div>
+        <div class="ticker-controls">
+            <button type="button" class="ticker-nav-btn" title="Previous">&lt;</button>
+            <button type="button" class="ticker-nav-btn" title="Next">&gt;</button>
+        </div>
+    </div>
+
+    <!-- ==============================
          NAVBAR
     =============================== -->
     <header class="navbar">
@@ -1295,6 +1314,16 @@ FOOTER
         src="assets/js/app.js"></script>
     <script type="module" src="assets/js/buy-auth-guard.js"></script>
     <script src="assets/js/notifications.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const el = document.getElementById("tickerLiveDate");
+            if (el) {
+                const now = new Date();
+                const options = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
+                el.textContent = now.toLocaleDateString('en-US', options);
+            }
+        });
+    </script>
     
     </body>
 
