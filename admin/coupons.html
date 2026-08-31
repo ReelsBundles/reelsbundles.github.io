@@ -119,6 +119,15 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="eligibleUserType">Eligible User Group (Target Users) *</label>
+                        <select id="eligibleUserType" class="form-control">
+                            <option value="all">🌐 All Users (New & Returning)</option>
+                            <option value="new_users">✨ New Users Only (First Purchase)</option>
+                            <option value="existing_users">🔥 Returning Users Only (Repeat Orders)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="maxUses">Max Uses (Limit)</label>
                         <input type="number" id="maxUses" class="form-control" placeholder="Leave empty for unlimited" min="1">
                     </div>
@@ -150,6 +159,7 @@
                             <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-size:12px; text-transform:uppercase;">
                                 <th style="padding:12px;">Code</th>
                                 <th style="padding:12px;">Discount</th>
+                                <th style="padding:12px;">Eligible For</th>
                                 <th style="padding:12px;">Uses</th>
                                 <th style="padding:12px;">Expiry</th>
                                 <th style="padding:12px;">Status</th>
@@ -157,7 +167,7 @@
                             </tr>
                         </thead>
                         <tbody id="couponsTableBody">
-                            <tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8;">Loading...</td></tr>
+                            <tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>

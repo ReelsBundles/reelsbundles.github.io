@@ -21,36 +21,47 @@ async function fetchCoupons() {
 
         const coupons = data.coupons || [];
         if (coupons.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8;">No coupon codes created yet.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">No coupon codes created yet.</td></tr>`;
             return;
         }
 
-        tableBody.innerHTML = coupons.map(c => `
-            <tr>
-                <td><strong style="color:#a78bfa; font-size:15px;">${c.code}</strong></td>
-                <td>
-                    <span class="badge ${c.discountType === 'percentage' ? 'badge-purple' : 'badge-green'}">
-                        ${c.discountType === 'percentage' ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT OFF`}
-                    </span>
-                </td>
-                <td>${c.usageCount || 0} / ${c.maxUses ? c.maxUses : '∞'}</td>
-                <td>
-                    ${c.expiryDate ? `<span style="color:#38bdf8; font-weight:500;">📅 ${new Date(c.expiryDate).toLocaleDateString()}</span>` : '<span style="color:#4ade80; font-weight:600;">♾️ No Expiry</span>'}
-                </td>
-                <td>
-                    <span class="badge ${c.active ? 'badge-active' : 'badge-inactive'}">
-                        ${c.active ? 'Active' : 'Inactive'}
-                    </span>
-                </td>
-                <td style="display:flex; gap:8px;">
-                    <button class="btn-action" onclick="copyCode('${c.code}')">📋 Copy</button>
-                    <button class="btn-action" onclick="toggleCouponStatus('${c.id}')">${c.active ? '⏸️ Disable' : '▶️ Enable'}</button>
-                    <button class="btn-action btn-danger" onclick="deleteCouponItem('${c.id}')">🗑️ Delete</button>
-                </td>
-            </tr>
-        `).join('');
+        tableBody.innerHTML = coupons.map(c => {
+            const targetType = (c.eligibleUserType || 'all').toLowerCase();
+            let targetTag = '<span style="color:#94a3b8; font-size:12px; font-weight:600;">🌐 All Users</span>';
+            if (targetType === 'new_users') {
+                targetTag = '<span style="color:#fbbf24; font-size:12px; font-weight:700;">✨ New Users Only</span>';
+            } else if (targetType === 'existing_users' || targetType === 'premium') {
+                targetTag = '<span style="color:#f43f5e; font-size:12px; font-weight:700;">🔥 Returning Users</span>';
+            }
+
+            return `
+                <tr>
+                    <td><strong style="color:#a78bfa; font-size:15px;">${c.code}</strong></td>
+                    <td>
+                        <span class="badge ${c.discountType === 'percentage' ? 'badge-purple' : 'badge-green'}">
+                            ${c.discountType === 'percentage' ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT OFF`}
+                        </span>
+                    </td>
+                    <td>${targetTag}</td>
+                    <td>${c.usageCount || 0} / ${c.maxUses ? c.maxUses : '∞'}</td>
+                    <td>
+                        ${c.expiryDate ? `<span style="color:#38bdf8; font-weight:500;">📅 ${new Date(c.expiryDate).toLocaleDateString()}</span>` : '<span style="color:#4ade80; font-weight:600;">♾️ No Expiry</span>'}
+                    </td>
+                    <td>
+                        <span class="badge ${c.active ? 'badge-active' : 'badge-inactive'}">
+                            ${c.active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td style="display:flex; gap:8px;">
+                        <button class="btn-action" onclick="copyCode('${c.code}')">📋 Copy</button>
+                        <button class="btn-action" onclick="toggleCouponStatus('${c.id}')">${c.active ? '⏸️ Disable' : '▶️ Enable'}</button>
+                        <button class="btn-action btn-danger" onclick="deleteCouponItem('${c.id}')">🗑️ Delete</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
     } catch (err) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#ef4444;">Error: ${err.message}</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#ef4444;">Error: ${err.message}</td></tr>`;
     }
 }
 
@@ -65,6 +76,7 @@ async function handleCreateCoupon(e) {
     const code = document.getElementById("couponCode").value.trim();
     const discountType = document.getElementById("discountType").value;
     const discountValue = parseFloat(document.getElementById("discountValue").value);
+    const eligibleUserType = document.getElementById("eligibleUserType")?.value || "all";
     const maxUses = document.getElementById("maxUses").value ? parseInt(document.getElementById("maxUses").value) : null;
     
     const expiryType = document.getElementById("expiryType")?.value || "none";
@@ -76,7 +88,7 @@ async function handleCreateCoupon(e) {
         const res = await robustFetch(`${API_BASE}/admin/coupons`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code, discountType, discountValue, maxUses, expiryDate })
+            body: JSON.stringify({ code, discountType, discountValue, eligibleUserType, maxUses, expiryDate })
         });
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
