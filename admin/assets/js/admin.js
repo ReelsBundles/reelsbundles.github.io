@@ -5,6 +5,17 @@ import {
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
+const API_BASE = window.REELS_BUNDLES_API_BASE || (
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000"
+        : "https://reelsbundles-backend.onrender.com"
+);
+
+// Background warm-up ping to wake up backend server on page load
+try {
+    fetch(`${API_BASE}/api/system/maintenance`, { cache: "no-store" }).catch(() => {});
+} catch (e) {}
+
 const form = document.getElementById("loginForm");
 const loginBtn = document.getElementById("loginBtn");
 const error = document.getElementById("error");

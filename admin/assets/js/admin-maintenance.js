@@ -30,6 +30,11 @@ async function initAdminMaintenanceUI() {
     }
 }
 
+function openMaintenanceConfigModal() {
+    window.location.href = "maintenance.html";
+}
+window.openMaintenanceConfigModal = openMaintenanceConfigModal;
+
 function injectTopbarMaintenanceControls() {
     const topbar = document.querySelector(".admin-topbar");
     if (!topbar) return;
