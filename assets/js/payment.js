@@ -2043,44 +2043,58 @@ async function loadAvailableCoupons() {
     const box = document.getElementById("availableCouponsBox");
     if (!box) return;
 
+    let couponsList = [];
+
     try {
-        const res = await robustFetch(`${API_BASE}/api/coupons/active`);
-        if (!res.ok) return;
-
-        const data = await res.json();
-        if (!data.success || !Array.isArray(data.coupons) || data.coupons.length === 0) {
-            box.style.display = "none";
-            return;
+        const res = await robustFetch(`${API_BASE}/api/coupons/active`, {}, 1, 1000);
+        if (res.ok) {
+            const data = await res.json();
+            if (data.success && Array.isArray(data.coupons) && data.coupons.length > 0) {
+                couponsList = data.coupons;
+            }
         }
+    } catch (err) {
+        console.warn("Failed to load available offers from API, using defaults:", err);
+    }
 
-        let cardsHtml = "";
-        data.coupons.forEach(c => {
-            const badge = c.userBadge || (String(c.code).toUpperCase().includes('WELCOME') ? '✨ NEW USER OFFER' : '🔥 SPECIAL OFFER');
-            const desc = c.description || (c.discountType === 'percentage' ? `Get ${c.discountValue}% OFF on your order!` : `Get ₹${c.discountValue} FLAT OFF!`);
+    // Default fallback active coupons if API yields none
+    if (couponsList.length === 0) {
+        couponsList = [
+            {
+                code: "WELCOME10",
+                discountType: "percentage",
+                discountValue: 10,
+                description: "Get 10% OFF on your first bundle order!",
+                userBadge: "✨ NEW USER OFFER"
+            }
+        ];
+    }
 
-            cardsHtml += `
-                <div class="offer-card" onclick="applyOfferCode('${escapeHtml(c.code)}')">
-                    <div class="offer-info">
-                        <span class="offer-badge">${escapeHtml(badge)}</span>
-                        <p class="offer-desc">${escapeHtml(desc)}</p>
-                    </div>
-                    <button type="button" class="offer-code-btn">${escapeHtml(c.code)}</button>
+    let cardsHtml = "";
+    couponsList.forEach(c => {
+        const badge = c.userBadge || (String(c.code).toUpperCase().includes('WELCOME') ? '✨ NEW USER OFFER' : '🔥 SPECIAL OFFER');
+        const desc = c.description || (c.discountType === 'percentage' ? `Get ${c.discountValue}% OFF on your order!` : `Get ₹${c.discountValue} FLAT OFF!`);
+
+        cardsHtml += `
+            <div class="offer-card" onclick="applyOfferCode('${escapeHtml(c.code)}')">
+                <div class="offer-info">
+                    <span class="offer-badge">${escapeHtml(badge)}</span>
+                    <p class="offer-desc">${escapeHtml(desc)}</p>
                 </div>
-            `;
-        });
-
-        box.innerHTML = `
-            <div class="offers-header">
-                <span class="offers-title">🏷️ AVAILABLE OFFERS & COUPONS</span>
-            </div>
-            <div class="offers-list">
-                ${cardsHtml}
+                <button type="button" class="offer-code-btn">TAP TO APPLY ${escapeHtml(c.code)}</button>
             </div>
         `;
-        box.style.display = "block";
-    } catch (err) {
-        console.warn("Failed to load available offers:", err);
-    }
+    });
+
+    box.innerHTML = `
+        <div class="offers-header">
+            <span class="offers-title">🏷️ AVAILABLE OFFERS & COUPONS</span>
+        </div>
+        <div class="offers-list">
+            ${cardsHtml}
+        </div>
+    `;
+    box.style.display = "block";
 }
 
 function applyOfferCode(code) {
