@@ -1645,6 +1645,7 @@ function initializePaymentPage() {
     } catch (e) {}
 
     loadAvailableCoupons();
+    setInterval(loadAvailableCoupons, 3000);
 }
 
 /* ==========================================================

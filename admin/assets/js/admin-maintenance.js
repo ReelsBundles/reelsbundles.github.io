@@ -129,24 +129,22 @@ function loadPageMaintData() {
     const dateInput = document.getElementById("pageMaintDate");
     const dateGroup = document.getElementById("datePickerGroup");
     const passcodeInput = document.getElementById("pageTesterPasscode");
+    const activePinText = document.getElementById("activePinText");
 
     if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
     if (msgInput) msgInput.value = currentMaintenanceState.message || "";
     
     if (passcodeInput) {
-        const savedPin = localStorage.getItem("rb_maint_pin");
-        if (savedPin) {
-            currentMaintenanceState.testerPasscode = savedPin;
-            currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${savedPin}`;
-        }
-        passcodeInput.value = savedPin || currentMaintenanceState.testerPasscode || "4050";
+        const livePin = currentMaintenanceState.testerPasscode || "5045";
+        passcodeInput.value = livePin;
+        if (activePinText) activePinText.textContent = livePin;
+
         passcodeInput.addEventListener("input", () => {
             const val = passcodeInput.value.trim();
-            if (val) {
-                currentMaintenanceState.testerPasscode = val;
-                currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${val}`;
-                try { localStorage.setItem("rb_maint_pin", val); } catch (e) {}
-            }
+            currentMaintenanceState.testerPasscode = val || livePin;
+            currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${val || livePin}`;
+            if (activePinText) activePinText.textContent = val || livePin;
+            try { localStorage.setItem("rb_maint_pin", val || livePin); } catch (e) {}
             updatePagePreviewUI();
         });
     }
@@ -273,7 +271,7 @@ function updatePagePreviewUI() {
     const currentMsg = formMsg ? formMsg.value.trim() : currentMaintenanceState.message;
     const isDateSetMode = formDateMode ? formDateMode.value === "set" : Boolean(currentMaintenanceState.expectedBack);
     const currentDateVal = formDate ? formDate.value : "";
-    const currentPin = (formPin ? formPin.value.trim() : "") || currentMaintenanceState.testerPasscode || "4050";
+    const currentPin = (formPin ? formPin.value.trim() : "") || currentMaintenanceState.testerPasscode || "5045";
 
     if (statusEl) {
         if (isMaintOn) {

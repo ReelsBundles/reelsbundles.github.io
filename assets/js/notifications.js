@@ -263,7 +263,7 @@
         }
 
         fetchPublicNotifications();
-        setInterval(fetchPublicNotifications, 10000);
+        setInterval(fetchPublicNotifications, 3000);
     }
 
     // Global Click Delegation for Bell Button
