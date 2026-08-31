@@ -130,12 +130,21 @@ function loadPageMaintData() {
 
     // Handle Completion Date Mode Toggle
     function syncDateModeUI() {
-        const mode = dateModeSelect ? dateModeSelect.value : "none";
+        const modeSelect = document.getElementById("pageMaintDateMode");
+        const groupEl = document.getElementById("datePickerGroup");
+        const inputEl = document.getElementById("pageMaintDate");
+
+        const mode = modeSelect ? modeSelect.value : "none";
         if (mode === "set") {
-            if (dateGroup) dateGroup.style.display = "block";
+            if (groupEl) groupEl.style.display = "block";
+            if (inputEl && !inputEl.value) {
+                // Auto-suggest +2 hours if empty when opening set mode
+                const target = new Date(Date.now() + 2 * 3600 * 1000);
+                inputEl.value = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            }
         } else {
-            if (dateGroup) dateGroup.style.display = "none";
-            if (dateInput) dateInput.value = "";
+            if (groupEl) groupEl.style.display = "none";
+            if (inputEl) inputEl.value = "";
         }
         updatePagePreviewUI();
     }
@@ -353,3 +362,4 @@ window.copyTesterBypassLink = copyTesterBypassLink;
 window.testPublicVisitorView = testPublicVisitorView;
 window.loadPageMaintData = loadPageMaintData;
 window.updatePagePreviewUI = updatePagePreviewUI;
+window.syncDateModeUI = syncDateModeUI;

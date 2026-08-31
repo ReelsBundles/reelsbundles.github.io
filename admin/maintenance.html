@@ -121,7 +121,7 @@
 
                     <div class="form-group">
                         <label for="pageMaintDateMode">Completion Date Option *</label>
-                        <select id="pageMaintDateMode" class="form-control" required>
+                        <select id="pageMaintDateMode" class="form-control" onchange="syncDateModeUI()" required>
                             <option value="none" selected>🚫 No Completion Date (Notice Only Mode)</option>
                             <option value="set">🗓️ Set Specific Target Date & Time (Live Countdown Mode)</option>
                         </select>
