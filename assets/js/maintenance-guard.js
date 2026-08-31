@@ -242,11 +242,14 @@
                     <p style="font-size:13px; color:#cbd5e1; margin-bottom:20px;">Enter Admin / Tester PIN Passcode to unlock live site testing for this browser session.</p>
                     
                     <form id="testerPassForm">
-                        <input type="password" id="testerPinInput" placeholder="Enter Tester PIN Passcode" style="width:100%; padding:12px 16px; background:#0f172a; border:1px solid rgba(167,139,250,0.4); border-radius:12px; color:#fff; font-size:16px; text-align:center; letter-spacing:2px; outline:none; margin-bottom:16px;" required autofocus>
+                        <div style="position:relative; width:100%; margin-bottom:16px;">
+                            <input type="password" id="testerPinInput" placeholder="Enter Tester PIN Passcode" style="width:100%; padding:12px 44px 12px 16px; background:#0f172a; border:1px solid rgba(167,139,250,0.4); border-radius:12px; color:#fff; font-size:16px; text-align:center; letter-spacing:2px; outline:none;" required autofocus>
+                            <button type="button" id="togglePinVisBtn" title="Toggle PIN Visibility" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:#a78bfa; font-size:18px; cursor:pointer; padding:4px;">👁️</button>
+                        </div>
                         <div id="testerPinError" style="color:#f87171; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></div>
                         <div style="display:flex; gap:10px;">
                             <button type="button" id="closeTesterModalBtn" style="flex:1; padding:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:#cbd5e1; font-weight:600; cursor:pointer;">Cancel</button>
-                            <button type="submit" style="flex:1; padding:12px; background:linear-gradient(135deg, #7c3aed, #6366f1); border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer;">🔓 Unlock Session</button>
+                            <button type="submit" id="unlockSessionBtn" style="flex:1; padding:12px; background:linear-gradient(135deg, #7c3aed, #6366f1); border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer;">🔓 Unlock Session</button>
                         </div>
                     </form>
                 </div>
@@ -257,13 +260,44 @@
                 modal.style.display = "none";
             };
 
+            const pinInput = document.getElementById("testerPinInput");
+            const toggleBtn = document.getElementById("togglePinVisBtn");
+            if (toggleBtn && pinInput) {
+                toggleBtn.onclick = () => {
+                    if (pinInput.type === "password") {
+                        pinInput.type = "text";
+                        toggleBtn.textContent = "🙈";
+                    } else {
+                        pinInput.type = "password";
+                        toggleBtn.textContent = "👁️";
+                    }
+                };
+            }
+
             document.getElementById("testerPassForm").onsubmit = async (e) => {
                 e.preventDefault();
                 const pin = document.getElementById("testerPinInput").value.trim();
                 const errEl = document.getElementById("testerPinError");
+                const submitBtn = document.getElementById("unlockSessionBtn");
+
                 if (errEl) errEl.style.display = "none";
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = "⌛ Verifying...";
+                }
 
                 let validPin = data ? data.testerPasscode : null;
+
+                // Check localStorage cached telemetry fallback
+                try {
+                    const cachedRaw = localStorage.getItem("rb_maint_data");
+                    if (cachedRaw) {
+                        const cachedObj = JSON.parse(cachedRaw);
+                        if (cachedObj && cachedObj.testerPasscode) {
+                            validPin = cachedObj.testerPasscode;
+                        }
+                    }
+                } catch (err) {}
 
                 // Fetch fresh live telemetry from backend to ensure 100% real-time PIN sync
                 try {
@@ -272,18 +306,26 @@
                         const telemetry = await res.json();
                         if (telemetry.success && telemetry.testerPasscode) {
                             validPin = telemetry.testerPasscode;
+                            try {
+                                localStorage.setItem("rb_maint_data", JSON.stringify(telemetry));
+                            } catch (e) {}
                         }
                     }
-                } catch (err) {}
+                } catch (err) {} finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = "🔓 Unlock Session";
+                    }
+                }
 
-                if (pin && validPin && pin === String(validPin).trim()) {
+                if (pin && validPin && String(pin).trim() === String(validPin).trim()) {
                     sessionStorage.setItem("rb_maint_tester_session", "true");
                     modal.style.display = "none";
                     removeMaintenanceOverlay();
                     alert("✨ Live site unlocked for testing in this browser session!\n\nNote: Closing this tab or browser will automatically expire the tester session.");
                 } else {
                     if (errEl) {
-                        errEl.textContent = "❌ Incorrect Passcode. Please try again.";
+                        errEl.textContent = `❌ Incorrect Passcode (${pin}). Please try again.`;
                         errEl.style.display = "block";
                     }
                 }
