@@ -2104,16 +2104,19 @@ function applyOfferCode(code) {
 }
 window.applyOfferCode = applyOfferCode;
 
-/* ==========================================================
-   PAGE LOAD & POPSTATE LISTENERS
-========================================================== */
-
 window.addEventListener("load", () => {
     initializePaymentPage();
+    loadAvailableCoupons();
     if (window.innerWidth > 600) {
         fullNameInput?.focus();
     }
 });
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadAvailableCoupons);
+} else {
+    loadAvailableCoupons();
+}
 
 window.addEventListener("popstate", () => {
     const params = new URLSearchParams(window.location.search);
