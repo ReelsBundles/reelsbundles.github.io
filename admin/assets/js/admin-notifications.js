@@ -9,6 +9,9 @@ const API_BASE = (
         : "https://reelsbundles-backend.onrender.com"
 ) + "/api";
 
+let editingNotificationId = null;
+let cachedNotificationsList = [];
+
 document.addEventListener("DOMContentLoaded", () => {
     loadNotifications();
 
@@ -28,6 +31,7 @@ async function loadNotifications() {
         if (!res.ok) throw new Error("Failed to load notifications");
         const data = await res.json();
         const list = data.notifications || [];
+        cachedNotificationsList = list;
 
         if (countEl) countEl.textContent = `${list.length} total`;
 
@@ -62,6 +66,9 @@ async function loadNotifications() {
                     <td style="color:#cbd5e1; font-size:12px;">${escapeHtml(n.targetAudience || "all")}</td>
                     <td>${statusBadge}</td>
                     <td>
+                        <button class="btn-action" style="background:rgba(59,130,246,0.2); border-color:rgba(59,130,246,0.4); color:#93c5fd; margin-right:4px;" onclick="editNotificationItem('${n.id}')">
+                            ✏️ Edit
+                        </button>
                         <button class="btn-action" onclick="toggleNotificationStatus('${n.id}', ${!n.active})">
                             ${n.active ? "Deactivate" : "Activate"}
                         </button>
@@ -83,6 +90,45 @@ async function loadNotifications() {
     }
 }
 
+function editNotificationItem(id) {
+    const item = cachedNotificationsList.find(n => n.id === id);
+    if (!item) return;
+
+    editingNotificationId = id;
+
+    const titleInput = document.getElementById("notifTitle");
+    const msgInput = document.getElementById("notifMessage");
+    const typeSelect = document.getElementById("notifType");
+    const couponInput = document.getElementById("couponCode");
+    const audienceSelect = document.getElementById("targetAudience");
+
+    if (titleInput) titleInput.value = item.title || "";
+    if (msgInput) msgInput.value = item.message || "";
+    if (typeSelect) typeSelect.value = item.type || "announcement";
+    if (couponInput) couponInput.value = item.couponCode || "";
+    if (audienceSelect) audienceSelect.value = item.targetAudience || "all";
+
+    const submitBtn = document.getElementById("submitBtn");
+    const cancelBtn = document.getElementById("cancelEditBtn");
+
+    if (submitBtn) submitBtn.textContent = "💾 Save Notification Changes";
+    if (cancelBtn) cancelBtn.style.display = "inline-block";
+
+    if (titleInput) titleInput.focus();
+}
+
+function cancelEditNotification() {
+    editingNotificationId = null;
+    const form = document.getElementById("createNotifForm");
+    if (form) form.reset();
+
+    const submitBtn = document.getElementById("submitBtn");
+    const cancelBtn = document.getElementById("cancelEditBtn");
+
+    if (submitBtn) submitBtn.textContent = "➕ Publish Notification";
+    if (cancelBtn) cancelBtn.style.display = "none";
+}
+
 async function handleCreateNotification(e) {
     e.preventDefault();
     const btn = document.getElementById("submitBtn");
@@ -98,18 +144,24 @@ async function handleCreateNotification(e) {
     };
 
     try {
-        const res = await fetch(`${API_BASE}/admin/notifications`, {
-            method: "POST",
+        const isEditing = Boolean(editingNotificationId);
+        const url = isEditing
+            ? `${API_BASE}/admin/notifications/${editingNotificationId}`
+            : `${API_BASE}/admin/notifications`;
+        const method = isEditing ? "PUT" : "POST";
+
+        const res = await fetch(url, {
+            method: method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
         if (!res.ok) {
             const errData = await res.json();
-            throw new Error(errData.message || "Failed to create notification");
+            throw new Error(errData.message || "Failed to save notification");
         }
 
-        document.getElementById("createNotifForm").reset();
+        cancelEditNotification();
         loadNotifications();
     } catch (err) {
         alert("Error: " + err.message);
@@ -158,3 +210,5 @@ function escapeHtml(str) {
 
 window.toggleNotificationStatus = toggleNotificationStatus;
 window.deleteNotificationItem = deleteNotificationItem;
+window.editNotificationItem = editNotificationItem;
+window.cancelEditNotification = cancelEditNotification;

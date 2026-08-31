@@ -129,7 +129,10 @@
                             <option value="premium">👑 Premium Users</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-submit" id="submitBtn">➕ Publish Notification</button>
+                    <div style="display:flex; gap:10px;">
+                        <button type="button" id="cancelEditBtn" onclick="cancelEditNotification()" style="display:none; flex:1; padding:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:#cbd5e1; font-weight:600; cursor:pointer;">❌ Cancel Edit</button>
+                        <button type="submit" class="btn-submit" id="submitBtn" style="flex:2;">➕ Publish Notification</button>
+                    </div>
                 </form>
             </div>
 

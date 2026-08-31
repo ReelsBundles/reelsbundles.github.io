@@ -148,7 +148,7 @@
 
         if (tickerNotifs.length === 0) {
             // Standard clean default marquee when no custom announcements exist
-            tickerContentEl.innerHTML = `📢 Welcome to ReelsBundles — Instant Access to 200,000+ HD Instagram Reels Packs`;
+            tickerContentEl.innerHTML = `📢 No any kind of announcements and offers`;
             return;
         }
 
