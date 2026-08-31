@@ -1,572 +1,207 @@
 "use strict";
 
-import {
-    auth
-} from "./firebase-client.js";
-
+import { auth } from "./firebase-client.js";
 import {
     createUserWithEmailAndPassword,
     updateProfile,
     GoogleAuthProvider,
     signInWithPopup,
     signInWithRedirect,
-    getRedirectResult
+    getRedirectResult,
+    onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
 import {
-    createUserSession
+    createUserSession,
+    syncUserToBackend,
+    logoutUser
 } from "./auth-common.js";
 
-getRedirectResult(auth).then(async (result) => {
-    if (result && result.user) {
-        await createUserSession();
-        showSignupSuccess();
-    }
-}).catch((err) => {
-    console.warn("Google redirect signup result info:", err);
-});
-
-
-/* ==========================================================
-   ELEMENTS
-========================================================== */
-
-const form =
-    document.getElementById("signupForm");
-
-const signupBtn =
-    document.getElementById("signupBtn");
-
-const googleSignupBtn =
-    document.getElementById("googleSignupBtn");
-
-const message =
-    document.getElementById("authMessage");
-
-const password =
-    document.getElementById("password");
-
-const togglePassword =
-    document.getElementById("togglePassword");
-
-
-/* ==========================================================
-   GET REDIRECT DESTINATION
-========================================================== */
-
+// Helper function to extract redirect target URL cleanly
 function getSignupRedirect() {
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    const redirect =
-        params.get("redirect");
-
-
-    /*
-     * Normal signup:
-     * No redirect = Dashboard
-     */
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
 
     if (!redirect) {
-
         return "dashboard.html";
-
     }
-
 
     try {
-
-        const decoded =
-            decodeURIComponent(
-                redirect
-            );
-
-
-        /*
-         * Only allow internal pages.
-         */
-
+        const decoded = decodeURIComponent(redirect).trim();
         if (
-            decoded.startsWith(
-                "payment.html"
-            ) ||
-            decoded ===
-                "dashboard.html"
+            decoded.includes("payment") ||
+            decoded.includes("download") ||
+            decoded.includes("dashboard") ||
+            decoded.startsWith("user/") ||
+            decoded.startsWith("/") ||
+            decoded.startsWith(".")
         ) {
-
             return decoded;
-
         }
-
+    } catch (error) {
+        console.warn("[SIGNUP] Invalid redirect target:", error);
     }
-    catch (error) {
-
-        console.warn(
-            "Invalid signup redirect:",
-            error
-        );
-
-    }
-
-
-    /*
-     * Safety fallback
-     */
 
     return "dashboard.html";
-
 }
 
+// Preserve redirect query parameters on login links
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const redirectParam = params.get("redirect");
+    const planParam = params.get("plan");
 
-/* ==========================================================
-   GET SELECTED PLAN
-========================================================== */
-
-function getSelectedPlan() {
-
-    const redirect =
-        getSignupRedirect();
-
-
-    try {
-
-        const url =
-            new URL(
-                redirect,
-                window.location.origin
-            );
-
-
-        const plan =
-            url.searchParams.get(
-                "plan"
-            );
-
-
-        if (
-            plan === "basic" ||
-            plan === "premium"
-        ) {
-
-            return plan;
-
+    if (redirectParam) {
+        const loginLink = document.getElementById("loginLink") || document.querySelector("a[href*='login']");
+        if (loginLink) {
+            let target = `login.html?redirect=${encodeURIComponent(redirectParam)}`;
+            if (planParam) target += `&plan=${encodeURIComponent(planParam)}`;
+            loginLink.setAttribute("href", target);
         }
-
     }
-    catch (error) {
+});
 
-        console.warn(
-            "Unable to read selected plan:",
-            error
-        );
-
-    }
-
-
-    return null;
-
-}
-
-
-/* ==========================================================
-   ACCOUNT CREATED POPUP
-========================================================== */
-
-function showSignupSuccess() {
-
-    const redirect =
-        getSignupRedirect();
-
-    const selectedPlan =
-        getSelectedPlan();
-
-
-    /*
-     * NORMAL SIGNUP
-     */
-
-    if (!selectedPlan) {
-
-        const shouldContinue =
-            window.confirm(
-                "✅ Account Created\n\n" +
-                "Your account has been created successfully.\n\n" +
-                "Click OK to continue to your Dashboard."
-            );
-
-
-        if (shouldContinue) {
-
-            window.location.replace(
-                "dashboard.html"
-            );
-
+// Handle Google Redirect Result fallback
+getRedirectResult(auth).then(async (result) => {
+    if (result && result.user) {
+        const syncRes = await syncUserToBackend(result.user);
+        if (syncRes && syncRes.disabled) {
+            await logoutUser();
+            return;
         }
-
-        return;
-
+        await createUserSession();
+        showSignupSuccessAndRedirect();
     }
+}).catch((err) => {
+    console.warn("[SIGNUP] Google redirect signup result info:", err);
+});
 
-
-    /*
-     * PURCHASE SIGNUP
-     */
-
-    const planName =
-        selectedPlan === "basic"
-            ? "Basic Bundle — ₹49"
-            : "Premium Bundle — ₹69";
-
-
-    const shouldContinue =
-        window.confirm(
-            "✅ Account Created\n\n" +
-            "Your account has been created successfully.\n\n" +
-            `${planName} is ready for payment.\n\n` +
-            "Click OK to continue."
-        );
-
-
-    if (shouldContinue) {
-
-        window.location.replace(
-            redirect
-        );
-
+// Auto-redirect logged in users unless disabled
+onAuthStateChanged(auth, async (user) => {
+    const params = new URLSearchParams(window.location.search);
+    if (user && params.get("disabled") !== "1" && params.get("disabled") !== "true") {
+        const syncRes = await syncUserToBackend(user);
+        if (syncRes && syncRes.disabled) {
+            await logoutUser();
+            const msgEl = document.getElementById("authMessage");
+            if (msgEl) {
+                msgEl.style.display = "block";
+                msgEl.style.color = "#ef4444";
+                msgEl.textContent = "⛔ Your account has been disabled by the admin. Please contact support.";
+            }
+            return;
+        }
+        showSignupSuccessAndRedirect();
     }
+});
 
+const form = document.getElementById("signupForm");
+const signupBtn = document.getElementById("signupBtn");
+const googleSignupBtn = document.getElementById("googleSignupBtn");
+const message = document.getElementById("authMessage");
+const passwordInput = document.getElementById("password");
+const togglePassword = document.getElementById("togglePassword");
+
+function showSignupSuccessAndRedirect() {
+    const redirect = getSignupRedirect();
+    showMessage("✅ Account Created! Redirecting you now...", "success");
+    setTimeout(() => {
+        window.location.replace(redirect);
+    }, 600);
 }
 
-
-/* ==========================================================
-   MESSAGE
-========================================================== */
-
-const showMessage = (
-    text,
-    type = "error"
-) => {
-
-    if (!message) {
-
-        return;
-
+const showMessage = (text, type = "error") => {
+    if (!message) return;
+    message.textContent = text;
+    message.style.display = text ? "block" : "none";
+    message.className = `auth-message ${type}`;
+    if (type === "success") {
+        message.style.color = "#4ade80";
+        message.style.backgroundColor = "rgba(34, 197, 94, 0.15)";
+        message.style.border = "1px solid rgba(34, 197, 94, 0.3)";
+        message.style.padding = "10px 14px";
+        message.style.borderRadius = "8px";
     }
-
-
-    message.textContent =
-        text;
-
-
-    message.className =
-        `auth-message ${type}`;
-
 };
 
-
-/* ==========================================================
-   LOADING
-========================================================== */
-
-const setLoading = (
-    loading
-) => {
-
-    if (!signupBtn) {
-
-        return;
-
-    }
-
-
-    signupBtn.disabled =
-        loading;
-
-
-    signupBtn.textContent =
-        loading
-            ? "Creating account..."
-            : "Create Account";
-
+const setLoading = (loading) => {
+    if (!signupBtn) return;
+    signupBtn.disabled = loading;
+    signupBtn.textContent = loading ? "Creating account..." : "Create Account";
 };
 
-
-/* ==========================================================
-   EMAIL SIGNUP
-========================================================== */
-
-form?.addEventListener(
-    "submit",
-    async (event) => {
-
+if (form) {
+    form.addEventListener("submit", async (event) => {
         event.preventDefault();
-
-
-        showMessage(
-            ""
-        );
-
-
-        setLoading(
-            true
-        );
-
+        showMessage("");
+        setLoading(true);
 
         try {
+            const name = document.getElementById("name")?.value.trim();
+            const email = document.getElementById("email")?.value.trim();
+            const passwordValue = passwordInput?.value;
+            const confirmPassword = document.getElementById("confirmPassword")?.value;
 
-            const name =
-                document
-                    .getElementById("name")
-                    .value
-                    .trim();
+            if (!name) throw new Error("Please enter your name.");
+            if (!email) throw new Error("Please enter your email.");
+            if (!passwordValue || passwordValue.length < 6) throw new Error("Password must be at least 6 characters.");
+            if (passwordValue !== confirmPassword) throw new Error("Passwords do not match.");
 
+            const userCredential = await createUserWithEmailAndPassword(auth, email, passwordValue);
+            const user = userCredential.user;
 
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
-
-
-            const passwordValue =
-                password.value;
-
-
-            const confirmPassword =
-                document
-                    .getElementById(
-                        "confirmPassword"
-                    )
-                    .value;
-
-
-            /* ==============================================
-               VALIDATION
-            ============================================== */
-
-            if (!name) {
-
-                throw new Error(
-                    "Please enter your name."
-                );
-
+            await updateProfile(user, { displayName: name });
+            const syncRes = await syncUserToBackend(user);
+            if (syncRes && syncRes.disabled) {
+                await logoutUser();
+                throw new Error("⛔ Your account has been disabled by the admin. Please contact support.");
             }
-
-
-            if (!email) {
-
-                throw new Error(
-                    "Please enter your email."
-                );
-
-            }
-
-
-            if (
-                passwordValue.length < 6
-            ) {
-
-                throw new Error(
-                    "Password must be at least 6 characters."
-                );
-
-            }
-
-
-            if (
-                passwordValue !==
-                confirmPassword
-            ) {
-
-                throw new Error(
-                    "Passwords do not match."
-                );
-
-            }
-
-
-            /* ==============================================
-               FIREBASE ACCOUNT CREATION
-               DO NOT CHANGE
-            ============================================== */
-
-            const userCredential =
-                await createUserWithEmailAndPassword(
-                    auth,
-                    email,
-                    passwordValue
-                );
-
-
-            const user =
-                userCredential.user;
-
-
-            /* ==============================================
-               FIREBASE PROFILE
-               DO NOT CHANGE
-            ============================================== */
-
-            await updateProfile(
-                user,
-                {
-                    displayName:
-                        name
-                }
-            );
-
-
-            /* ==============================================
-               FIREBASE TOKEN
-               DO NOT CHANGE
-            ============================================== */
-
-            await user.getIdToken(
-                true
-            );
-
-
-            /* ==============================================
-               BACKEND SESSION
-               DO NOT CHANGE
-            ============================================== */
 
             await createUserSession();
+            showSignupSuccessAndRedirect();
+        } catch (error) {
+            console.error("Signup error:", error);
+            let errorMessage = "Unable to create account.";
 
+            if (error.code === "auth/email-already-in-use") {
+                errorMessage = "An account with this email already exists. Please sign in instead.";
+            } else if (error.code === "auth/invalid-email") {
+                errorMessage = "Please enter a valid email address.";
+            } else if (error.code === "auth/weak-password") {
+                errorMessage = "Password must be at least 6 characters.";
+            } else if (error.message) {
+                errorMessage = error.message;
+            }
 
-            /* ==============================================
-               REDIRECT / SUCCESS
-            ============================================== */
-
-            showSignupSuccess();
-
+            showMessage(errorMessage, "error");
+        } finally {
+            setLoading(false);
         }
-        catch (error) {
+    });
+}
 
-            console.error(
-                "Signup error:",
-                error
-            );
-
-
-            let errorMessage =
-                "Unable to create account.";
-
-
-            if (
-                error.code ===
-                "auth/email-already-in-use"
-            ) {
-
-                errorMessage =
-                    "An account already exists with this email.";
-
-            }
-
-            else if (
-                error.code ===
-                "auth/weak-password"
-            ) {
-
-                errorMessage =
-                    "Please choose a stronger password.";
-
-            }
-
-            else if (
-                error.code ===
-                "auth/invalid-email"
-            ) {
-
-                errorMessage =
-                    "Please enter a valid email address.";
-
-            }
-
-            else if (
-                error.message &&
-                (error.message.toLowerCase().includes("fetch") || error.message.toLowerCase().includes("network"))
-            ) {
-
-                errorMessage =
-                    "Network connection error. Please check your connection and try again.";
-
-            }
-
-            else if (
-                error.message
-            ) {
-
-                errorMessage =
-                    error.message;
-
-            }
-
-
-            showMessage(
-                errorMessage,
-                "error"
-            );
-
-        }
-        finally {
-
-            setLoading(
-                false
-            );
-
-        }
-
-    }
-);
-
-
-/* ==========================================================
-   GOOGLE SIGNUP
-========================================================== */
-
-googleSignupBtn?.addEventListener(
-    "click",
-    async () => {
-
-        showMessage(
-            ""
-        );
-
-
-        googleSignupBtn.disabled =
-            true;
-
-
-        googleSignupBtn.textContent =
-            "Creating account...";
-
+if (googleSignupBtn) {
+    googleSignupBtn.addEventListener("click", async () => {
+        showMessage("");
+        googleSignupBtn.disabled = true;
+        googleSignupBtn.textContent = "Signing up with Google...";
 
         try {
-
-            const provider =
-                new GoogleAuthProvider();
-
-            provider.setCustomParameters({
-                prompt:
-                    "select_account"
-            });
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: "select_account" });
 
             try {
-                await signInWithPopup(
-                    auth,
-                    provider
-                );
+                const userCredential = await signInWithPopup(auth, provider);
+                const syncRes = await syncUserToBackend(userCredential.user);
+                if (syncRes && syncRes.disabled) {
+                    await logoutUser();
+                    throw new Error("⛔ Your account has been disabled by the admin. Please contact support.");
+                }
 
                 await createUserSession();
-
-                showSignupSuccess();
+                showSignupSuccessAndRedirect();
                 return;
             } catch (popupErr) {
-                console.warn("[AUTH] Popup blocked or failed, falling back to signInWithRedirect:", popupErr);
+                console.warn("[SIGNUP] Popup blocked or failed, trying redirect fallback:", popupErr);
                 if (
                     popupErr.code === "auth/popup-blocked" ||
                     popupErr.code === "auth/popup-closed-by-user" ||
@@ -578,102 +213,34 @@ googleSignupBtn?.addEventListener(
                 }
                 throw popupErr;
             }
+        } catch (error) {
+            console.error("Google signup error:", error);
+            let errorMessage = "Google sign up failed.";
 
-        }
-        catch (error) {
-
-            console.error(
-                "Google signup error:",
-                error
-            );
-
-
-            let errorMessage =
-                "Google signup failed.";
-
-
-            if (
-                error.code ===
-                "auth/popup-closed-by-user"
-            ) {
-
-                errorMessage =
-                    "Google signup was cancelled.";
-
+            if (error.code === "auth/popup-closed-by-user") {
+                errorMessage = "Google sign up was cancelled.";
+            } else if (error.code === "auth/popup-blocked") {
+                errorMessage = "Popup was blocked by your browser.";
+            } else if (error.message) {
+                errorMessage = error.message;
             }
 
-            else if (
-                error.code ===
-                "auth/popup-blocked"
-            ) {
-
-                errorMessage =
-                    "Popup was blocked by your browser.";
-
-            }
-
-            else if (
-                error.message
-            ) {
-
-                errorMessage =
-                    error.message;
-
-            }
-
-
-            showMessage(
-                errorMessage,
-                "error"
-            );
-
+            showMessage(errorMessage, "error");
+        } finally {
+            googleSignupBtn.disabled = false;
+            googleSignupBtn.innerHTML = '<span class="google-icon">G</span> Continue with Google';
         }
-        finally {
+    });
+}
 
-            googleSignupBtn.disabled =
-                false;
-
-
-            googleSignupBtn.innerHTML =
-                '<span class="google-icon">G</span> Continue with Google';
-
+if (togglePassword && passwordInput) {
+    togglePassword.addEventListener("click", () => {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            togglePassword.textContent = "Hide";
+        } else {
+            passwordInput.type = "password";
+            togglePassword.textContent = "Show";
         }
-
-    }
-);
-
-
-/* ==========================================================
-   PASSWORD TOGGLE
-========================================================== */
-
-togglePassword?.addEventListener(
-    "click",
-    () => {
-
-        if (
-            password.type ===
-            "password"
-        ) {
-
-            password.type =
-                "text";
-
-
-            togglePassword.textContent =
-                "Hide";
-
-        }
-        else {
-
-            password.type =
-                "password";
-
-
-            togglePassword.textContent =
-                "Show";
-
-        }
-
-    }
-);
+    });
+}
