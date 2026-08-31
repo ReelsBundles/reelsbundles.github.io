@@ -128,27 +128,6 @@ function loadPageMaintData() {
         });
     }
 
-    // Handle Completion Date Mode Toggle
-    function syncDateModeUI() {
-        const modeSelect = document.getElementById("pageMaintDateMode");
-        const groupEl = document.getElementById("datePickerGroup");
-        const inputEl = document.getElementById("pageMaintDate");
-
-        const mode = modeSelect ? modeSelect.value : "none";
-        if (mode === "set") {
-            if (groupEl) groupEl.style.display = "block";
-            if (inputEl && !inputEl.value) {
-                // Auto-suggest +2 hours if empty when opening set mode
-                const target = new Date(Date.now() + 2 * 3600 * 1000);
-                inputEl.value = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-            }
-        } else {
-            if (groupEl) groupEl.style.display = "none";
-            if (inputEl) inputEl.value = "";
-        }
-        updatePagePreviewUI();
-    }
-
     if (dateModeSelect) {
         if (currentMaintenanceState.expectedBack) {
             const d = new Date(currentMaintenanceState.expectedBack);
@@ -354,6 +333,28 @@ function testPublicVisitorView() {
     const homepageUrl = window.location.origin + window.location.pathname.replace(/\/admin\/.*/, "") + "/";
     alert("🔒 Tester Bypass Session cleared!\n\nRedirecting to homepage to test the Public Visitor Under Maintenance Screen...");
     window.location.href = homepageUrl;
+}
+
+function syncDateModeUI() {
+    const modeSelect = document.getElementById("pageMaintDateMode");
+    const groupEl = document.getElementById("datePickerGroup");
+    const inputEl = document.getElementById("pageMaintDate");
+
+    const mode = modeSelect ? modeSelect.value : "none";
+    if (mode === "set") {
+        if (groupEl) groupEl.style.display = "block";
+        if (inputEl && !inputEl.value) {
+            // Auto-suggest +2 hours if empty when opening set mode
+            const target = new Date(Date.now() + 2 * 3600 * 1000);
+            inputEl.value = new Date(target.getTime() - (target.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        }
+    } else {
+        if (groupEl) groupEl.style.display = "none";
+        if (inputEl) inputEl.value = "";
+    }
+    if (typeof updatePagePreviewUI === "function") {
+        updatePagePreviewUI();
+    }
 }
 
 window.setQuickMaintDate = setQuickMaintDate;
