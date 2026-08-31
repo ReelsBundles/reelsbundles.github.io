@@ -138,17 +138,17 @@
     }
 
     function updateTopTickerBar(notifications) {
-        const tickerContentEl = document.querySelector(".top-ticker-bar .marquee-content");
+        const tickerContentEl = document.querySelector(".top-ticker-bar .ticker-track span") || 
+                                document.querySelector(".top-ticker-bar .ticker-track") || 
+                                document.querySelector(".top-ticker-bar .marquee-content");
         if (!tickerContentEl) return;
 
         // ROUTING RULE: Top Ticker Bar displays ANNOUNCEMENTS & COUPONS
-        const tickerNotifs = notifications.filter(n => (n.type === "announcement" || n.type === "coupon") && n.active !== false);
+        const tickerNotifs = (notifications || []).filter(n => (n.type === "announcement" || n.type === "coupon") && n.active !== false);
 
         if (tickerNotifs.length === 0) {
-            // Default fallback marquee if no custom announcements exist
-            tickerContentEl.innerHTML = `
-                🎉 Special Launch Offer: Use coupon <strong>WELCOME10</strong> for 10% OFF your order! &nbsp;•&nbsp; 🚀 200,000+ Ready-To-Post Instagram Reels Library &nbsp;•&nbsp; ⚡ Instant High-Speed Google Drive Downloads
-            `;
+            // Standard clean default marquee when no custom announcements exist
+            tickerContentEl.innerHTML = `📢 Welcome to ReelsBundles — Instant Access to 200,000+ HD Instagram Reels Packs`;
             return;
         }
 
