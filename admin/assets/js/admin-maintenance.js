@@ -107,7 +107,16 @@ function loadPageMaintData() {
 
     if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
     if (msgInput) msgInput.value = currentMaintenanceState.message;
-    if (passcodeInput) passcodeInput.value = currentMaintenanceState.testerPasscode || "5796";
+    if (passcodeInput) {
+        passcodeInput.value = currentMaintenanceState.testerPasscode || "5796";
+        passcodeInput.addEventListener("input", () => {
+            const val = passcodeInput.value.trim();
+            if (val) {
+                currentMaintenanceState.testerPasscode = val;
+                currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${val}`;
+            }
+        });
+    }
 
     if (dateInput && currentMaintenanceState.expectedBack) {
         const d = new Date(currentMaintenanceState.expectedBack);
