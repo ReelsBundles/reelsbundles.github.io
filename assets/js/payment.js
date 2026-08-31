@@ -12,10 +12,12 @@
 const API_BASE =
     window.REELS_BUNDLES_API_BASE ||
     (
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-            ? "http://localhost:3000"
-            : "https://reelsbundles-backend.onrender.com"
+        (
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1"
+                ? "http://localhost:3000"
+                : "https://reelsbundles-backend.onrender.com"
+        ) + "/api"
     );
 
 function escapeHtml(str) {
@@ -890,7 +892,7 @@ async function createPaymentOrder(customer) {
 
     const response =
         await robustFetch(
-            `${API_BASE}/api/payment/create-order`,
+            `${API_BASE}/payment/create-order`,
             {
                 method: "POST",
 
