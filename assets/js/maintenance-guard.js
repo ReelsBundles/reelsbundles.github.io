@@ -26,7 +26,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const testerKey = urlParams.get("tester_key") || urlParams.get("bypass_token") || urlParams.get("tester");
 
-        if (testerKey && (testerKey.startsWith("RB_TESTER_") || testerKey === "5796" || testerKey === "admin5796")) {
+        if (testerKey && testerKey.startsWith("RB_TESTER_")) {
             sessionStorage.setItem("rb_maint_tester_session", "true");
             // Clean URL query param without refreshing
             const cleanUrl = window.location.pathname + window.location.hash;
@@ -257,18 +257,31 @@
                 modal.style.display = "none";
             };
 
-            document.getElementById("testerPassForm").onsubmit = (e) => {
+            document.getElementById("testerPassForm").onsubmit = async (e) => {
                 e.preventDefault();
                 const pin = document.getElementById("testerPinInput").value.trim();
-                const validPin = data.testerPasscode || "5796";
+                const errEl = document.getElementById("testerPinError");
+                if (errEl) errEl.style.display = "none";
 
-                if (pin === validPin || pin === "5796" || pin === "admin5796") {
+                let validPin = data ? data.testerPasscode : null;
+
+                // Fetch fresh live telemetry from backend to ensure 100% real-time PIN sync
+                try {
+                    const res = await fetch(`${API_BASE}/system/maintenance`, { cache: "no-store" });
+                    if (res.ok) {
+                        const telemetry = await res.json();
+                        if (telemetry.success && telemetry.testerPasscode) {
+                            validPin = telemetry.testerPasscode;
+                        }
+                    }
+                } catch (err) {}
+
+                if (pin && validPin && pin === String(validPin).trim()) {
                     sessionStorage.setItem("rb_maint_tester_session", "true");
                     modal.style.display = "none";
                     removeMaintenanceOverlay();
                     alert("✨ Live site unlocked for testing in this browser session!\n\nNote: Closing this tab or browser will automatically expire the tester session.");
                 } else {
-                    const errEl = document.getElementById("testerPinError");
                     if (errEl) {
                         errEl.textContent = "❌ Incorrect Passcode. Please try again.";
                         errEl.style.display = "block";
