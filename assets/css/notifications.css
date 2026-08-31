@@ -29,6 +29,34 @@
     box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
 }
 
+/* Card Notification Button with Label */
+.notif-card-btn {
+    position: relative;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    outline: none;
+    user-select: none;
+    text-decoration: none;
+}
+
+.notif-card-btn:hover {
+    background: rgba(124, 58, 237, 0.25);
+    border-color: rgba(167, 139, 250, 0.5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+}
+
 /* Floating Bell Fallback for pages without static header bell */
 .notif-bell-btn.floating {
     position: fixed;

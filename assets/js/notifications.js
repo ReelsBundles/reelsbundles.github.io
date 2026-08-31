@@ -202,16 +202,19 @@
             document.getElementById("notifCloseBtn")?.addEventListener("click", closeDrawer);
         }
 
-        // Auto-inject Bell Button if missing on current page
+        // Format or auto-inject Notification Card Button if missing
         let bellBtn = document.getElementById("notifBellBtn");
         if (!bellBtn) {
             bellBtn = document.createElement("button");
             bellBtn.type = "button";
             bellBtn.id = "notifBellBtn";
-            bellBtn.className = "notif-bell-btn floating";
-            bellBtn.title = "Notifications & Coupons";
-            bellBtn.innerHTML = `🔔<span class="notif-badge hidden" id="notifBadge">0</span>`;
+            bellBtn.className = "notif-card-btn floating";
+            bellBtn.title = "Notifications";
+            bellBtn.innerHTML = `<span>🔔</span> Notifications <span class="notif-badge hidden" id="notifBadge">0</span>`;
             document.body.appendChild(bellBtn);
+        } else if (!bellBtn.innerHTML.includes("Notifications")) {
+            bellBtn.className = "notif-card-btn";
+            bellBtn.innerHTML = `<span>🔔</span> Notifications <span class="notif-badge hidden" id="notifBadge">0</span>`;
         }
 
         fetchPublicNotifications();
@@ -220,7 +223,7 @@
 
     // Global Click Delegation for Bell Button
     document.addEventListener("click", (e) => {
-        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn");
+        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn, .notif-card-btn");
         if (bell) {
             e.stopPropagation();
             toggleDrawer();
