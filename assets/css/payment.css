@@ -3168,3 +3168,98 @@ img {
     }
 
 }
+
+
+/* ==========================================================
+   DYNAMIC AVAILABLE OFFERS WIDGET
+========================================================== */
+
+.available-offers-wrapper {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.offers-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.offers-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.offers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.offer-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.offer-card:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: rgba(167, 139, 250, 0.6);
+    transform: translateY(-1px);
+}
+
+.offer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.offer-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    padding: 2px 8px;
+    border-radius: 999px;
+    width: fit-content;
+}
+
+.offer-desc {
+    font-size: 12px;
+    color: #cbd5e1;
+    font-weight: 500;
+    margin: 0;
+}
+
+.offer-code-btn {
+    background: linear-gradient(135deg, #7c3aed, #6366f1);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: monospace;
+    white-space: nowrap;
+    transition: transform 0.2s ease;
+}
+
+.offer-card:hover .offer-code-btn {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}

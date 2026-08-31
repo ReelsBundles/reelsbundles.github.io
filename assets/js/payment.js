@@ -1824,100 +1824,291 @@ function initializePaymentPage() {
 
 
     /*
+                checkoutButton.textContent = `🔒 Pay ₹${data.finalPrice} Securely`;
+            }
+
+            if (couponMessage) {
+                couponMessage.textContent = `✓ ${data.message}`;
+                couponMessage.style.color = "#4ade80";
+            }
+        } catch (err) {
+            if (couponMessage) {
+                couponMessage.textContent = "Unable to validate coupon at this time.";
+                couponMessage.style.color = "#ef4444";
+            }
+        }
+
+    }
+
+);
+
+
+/* ==========================================================
+   PHONE INPUT
+========================================================== */
+
+phoneInput?.addEventListener(
+
+    "input",
+
+    () => {
+
+        /*
+         * Keep only numbers and +.
+         */
+
+        let value =
+            phoneInput.value
+                .replace(/[^\d+]/g, "");
+
+
+        /*
+         * Allow + only at the beginning.
+         */
+
+        if (
+            value.includes("+")
+        ) {
+
+            value =
+                "+" +
+                value
+                    .replace(/\+/g, "")
+                    .slice(0, 14);
+
+        }
+        else {
+
+            value =
+                value.slice(0, 15);
+
+        }
+
+
+        phoneInput.value =
+            value;
+
+    }
+
+);
+
+
+/* ==========================================================
+   EMAIL ENTER
+========================================================== */
+
+emailInput?.addEventListener(
+
+    "keydown",
+
+    (event) => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            checkoutButton?.click();
+
+        }
+
+    }
+
+);
+
+
+/* ==========================================================
+   FORM ENTER SUPPORT
+========================================================== */
+
+[
+    fullNameInput,
+    emailInput,
+    phoneInput
+].forEach(
+
+    (input) => {
+
+        input?.addEventListener(
+
+            "keydown",
+
+            (event) => {
+
+                if (
+                    event.key !==
+                    "Enter"
+                ) {
+
+                    return;
+
+                }
+
+
+                event.preventDefault();
+
+
+                if (
+                    input ===
+                    fullNameInput
+                ) {
+
+                    emailInput?.focus();
+
+                    return;
+
+                }
+
+
+                if (
+                    input ===
+                    emailInput
+                ) {
+
+                    phoneInput?.focus();
+
+                    return;
+
+                }
+
+
+                checkoutButton?.click();
+
+            }
+
+        );
+
+    }
+
+);
+
+
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+function initializePaymentPage() {
+
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            const currentUrl = window.location.pathname + window.location.search;
+            window.location.replace(`login.html?redirect=${encodeURIComponent(currentUrl)}`);
+        } else {
+            if (fullNameInput && !fullNameInput.value) {
+                fullNameInput.value = user.displayName || "";
+            }
+            if (emailInput && !emailInput.value) {
+                emailInput.value = user.email || "";
+            }
+        }
+    });
+
+    /*
+     * URL:
+     *
+     * payment.html?plan=basic
+     *
+     * or
+     *
+     * payment.html?plan=premium
+     */
+
+
+    updateSummary();
+
+
+    /*
      * Show the current plan in URL.
      *
      * This does not reload the page.
      */
 
     try {
-
-        const expectedPlan =
-            urlParams.get("plan");
-
-
-        if (
-            expectedPlan !==
-            currentPlan
-        ) {
-
-            const newUrl =
-                `${window.location.pathname}?plan=${encodeURIComponent(currentPlan)}`;
-
-
-            window.history.replaceState(
-                {},
-                "",
-                newUrl
-            );
-
+        const expectedPlan = urlParams.get("plan");
+        if (expectedPlan !== currentPlan) {
+            const newUrl = `${window.location.pathname}?plan=${encodeURIComponent(currentPlan)}`;
+            window.history.replaceState({}, "", newUrl);
         }
+    } catch (e) {}
 
-    }
-    catch {
-
-        /*
-         * URL synchronization is non-critical.
-         */
-
-    }
-
+    loadAvailableCoupons();
 }
 
-
 /* ==========================================================
-   PAGE LOAD
+   DYNAMIC AVAILABLE COUPONS & OFFERS WIDGET
 ========================================================== */
 
-window.addEventListener(
-    "load",
-    () => {
+async function loadAvailableCoupons() {
+    const box = document.getElementById("availableCouponsBox");
+    if (!box) return;
 
-        initializePaymentPage();
+    try {
+        const res = await robustFetch(`${API_BASE}/api/coupons/active`);
+        if (!res.ok) return;
 
-        if (window.innerWidth > 600) {
-            fullNameInput?.focus();
+        const data = await res.json();
+        if (!data.success || !Array.isArray(data.coupons) || data.coupons.length === 0) {
+            box.style.display = "none";
+            return;
         }
 
+        let cardsHtml = "";
+        data.coupons.forEach(c => {
+            const badge = c.userBadge || (String(c.code).toUpperCase().includes('WELCOME') ? '✨ NEW USER OFFER' : '🔥 SPECIAL OFFER');
+            const desc = c.description || (c.discountType === 'percentage' ? `Get ${c.discountValue}% OFF on your order!` : `Get ₹${c.discountValue} FLAT OFF!`);
+
+            cardsHtml += `
+                <div class="offer-card" onclick="applyOfferCode('${escapeHtml(c.code)}')">
+                    <div class="offer-info">
+                        <span class="offer-badge">${escapeHtml(badge)}</span>
+                        <p class="offer-desc">${escapeHtml(desc)}</p>
+                    </div>
+                    <button type="button" class="offer-code-btn">${escapeHtml(c.code)}</button>
+                </div>
+            `;
+        });
+
+        box.innerHTML = `
+            <div class="offers-header">
+                <span class="offers-title">🏷️ AVAILABLE OFFERS & COUPONS</span>
+            </div>
+            <div class="offers-list">
+                ${cardsHtml}
+            </div>
+        `;
+        box.style.display = "block";
+    } catch (err) {
+        console.warn("Failed to load available offers:", err);
     }
-);
+}
+
+function applyOfferCode(code) {
+    if (!couponInput) return;
+    couponInput.value = code;
+    applyCoupon();
+}
+window.applyOfferCode = applyOfferCode;
+
 /* ==========================================================
-   BACK/FORWARD URL SUPPORT
+   PAGE LOAD & POPSTATE LISTENERS
 ========================================================== */
 
-window.addEventListener(
-
-    "popstate",
-
-    () => {
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-
-        const plan =
-            (
-                params.get("plan") ||
-                "premium"
-            ).toLowerCase();
-
-
-        if (
-            PLANS[plan]
-        ) {
-
-            currentPlan =
-                plan;
-
-        }
-
-
-        updateSummary();
-
+window.addEventListener("load", () => {
+    initializePaymentPage();
+    if (window.innerWidth > 600) {
+        fullNameInput?.focus();
     }
+});
 
-);
+window.addEventListener("popstate", () => {
+    const params = new URLSearchParams(window.location.search);
+    const plan = (params.get("plan") || "premium").toLowerCase();
+    if (PLANS[plan]) {
+        currentPlan = plan;
+    }
+    updateSummary();
+});
         
 
 
