@@ -226,6 +226,7 @@ function setQuickMaintDate(inputId, hours) {
 
 function testPublicVisitorView() {
     try {
+        sessionStorage.removeItem("rb_maint_tester_session");
         localStorage.removeItem("rb_maint_tester_unlocked");
         localStorage.setItem("rb_maint_active", "true");
     } catch (e) {}

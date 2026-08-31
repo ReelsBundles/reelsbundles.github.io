@@ -1,5 +1,6 @@
 /* ==========================================================
-   REELSBUNDLES — INSTANT ZERO-FLASH MAINTENANCE GUARD & TESTER BYPASS
+   REELSBUNDLES — INSTANT ZERO-FLASH MAINTENANCE GUARD,
+   REAL-TIME AUTO-LOCK & SESSION-ONLY TESTER BYPASS
 ========================================================== */
 
 (function () {
@@ -15,21 +16,28 @@
             : "https://reelsbundles-backend.onrender.com"
     ) + "/api";
 
-    // 1. CHECK TESTER UNLOCK VIA URL KEY OR LOCAL STORAGE
+    // Clear legacy permanent localStorage bypass keys to enforce session-only expiry
+    try {
+        localStorage.removeItem("rb_maint_tester_unlocked");
+    } catch (e) {}
+
+    // 1. CHECK SESSION-ONLY TESTER UNLOCK VIA URL KEY OR SESSION STORAGE
     try {
         const urlParams = new URLSearchParams(window.location.search);
         const testerKey = urlParams.get("tester_key") || urlParams.get("bypass_token") || urlParams.get("tester");
 
         if (testerKey && (testerKey.startsWith("RB_TESTER_") || testerKey === "5796" || testerKey === "admin5796")) {
-            localStorage.setItem("rb_maint_tester_unlocked", "true");
+            sessionStorage.setItem("rb_maint_tester_session", "true");
             // Clean URL query param without refreshing
             const cleanUrl = window.location.pathname + window.location.hash;
             window.history.replaceState({}, document.title, cleanUrl);
         }
 
-        const isTesterUnlocked = localStorage.getItem("rb_maint_tester_unlocked") === "true";
-        if (isTesterUnlocked) {
-            console.log("[MAINTENANCE GUARD] 🔓 Tester Bypass Active. Showing Live Site.");
+        const isTesterSessionActive = sessionStorage.getItem("rb_maint_tester_session") === "true";
+        if (isTesterSessionActive) {
+            console.log("[MAINTENANCE GUARD] 🔓 Session Tester Bypass Active. Showing Live Site.");
+            // Still run polling in case maintenance turns off or session changes
+            startRealtimeTelemetryPolling();
             return;
         }
     } catch (e) {}
@@ -54,24 +62,32 @@
     } catch (e) {}
 
     let countdownInterval = null;
+    let telemetryPollTimer = null;
+    let lastMaintenanceState = null;
 
-    async function checkMaintenanceStatus() {
+    async function checkMaintenanceStatus(isBackgroundPoll = false) {
         try {
             const res = await fetch(`${API_BASE}/system/maintenance`, { cache: "no-store" });
             if (!res.ok) return;
 
             const data = await res.json();
             if (data.success) {
+                const isTesterSessionActive = sessionStorage.getItem("rb_maint_tester_session") === "true";
+
                 if (data.maintenance) {
                     try {
                         localStorage.setItem("rb_maint_active", "true");
                         localStorage.setItem("rb_maint_data", JSON.stringify(data));
                     } catch (e) {}
 
-                    // Re-check tester unlocked status after fetching live telemetry
-                    if (localStorage.getItem("rb_maint_tester_unlocked") === "true") {
+                    if (isTesterSessionActive) {
                         removeMaintenanceOverlay();
                         return;
+                    }
+
+                    // If maintenance status just changed to ON while user is browsing -> Real-time auto-lock!
+                    if (isBackgroundPoll && lastMaintenanceState === false) {
+                        console.log("[MAINTENANCE GUARD] 🔒 Maintenance Mode activated live! Auto-locking site...");
                     }
 
                     renderMaintenanceOverlay(data);
@@ -80,14 +96,30 @@
                     try {
                         localStorage.setItem("rb_maint_active", "false");
                         localStorage.removeItem("rb_maint_data");
-                        localStorage.removeItem("rb_maint_tester_unlocked");
                     } catch (e) {}
                     removeMaintenanceOverlay();
                 }
+
+                lastMaintenanceState = Boolean(data.maintenance);
             }
         } catch (err) {
             console.warn("[MAINTENANCE GUARD] Telemetry check warning:", err);
         }
+    }
+
+    function startRealtimeTelemetryPolling() {
+        if (telemetryPollTimer) return;
+        // Poll backend telemetry every 10 seconds for real-time auto-lock / auto-unlock
+        telemetryPollTimer = setInterval(() => {
+            checkMaintenanceStatus(true);
+        }, 10000);
+
+        // Also check instantly when tab regains focus / visibility
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                checkMaintenanceStatus(true);
+            }
+        });
     }
 
     function removeMaintenanceOverlay() {
@@ -162,7 +194,7 @@
                 </div>
                 <div>
                     <button type="button" id="openTesterModalBtn" class="maint-tester-link">
-                        🔐 Admin / Tester Access
+                        🔐 Admin / Tester Access (Session Only)
                     </button>
                 </div>
             </div>
@@ -206,15 +238,15 @@
             modal.innerHTML = `
                 <div style="background:#1e293b; border:1px solid rgba(124,58,237,0.5); border-radius:24px; padding:32px; width:100%; max-width:420px; color:#fff; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.9);">
                     <div style="font-size:42px; margin-bottom:12px;">🔐</div>
-                    <h3 style="margin:0 0 8px; font-size:20px; font-weight:800; color:#fff;">Tester Live Access</h3>
-                    <p style="font-size:13px; color:#cbd5e1; margin-bottom:20px;">Enter your Admin / Tester PIN Passcode to unlock live site testing on this device.</p>
+                    <h3 style="margin:0 0 8px; font-size:20px; font-weight:800; color:#fff;">Tester Session Access</h3>
+                    <p style="font-size:13px; color:#cbd5e1; margin-bottom:20px;">Enter Admin / Tester PIN Passcode to unlock live site testing for this browser session.</p>
                     
                     <form id="testerPassForm">
                         <input type="password" id="testerPinInput" placeholder="Enter Tester Passcode (e.g. 5796)" style="width:100%; padding:12px 16px; background:#0f172a; border:1px solid rgba(167,139,250,0.4); border-radius:12px; color:#fff; font-size:16px; text-align:center; letter-spacing:2px; outline:none; margin-bottom:16px;" required autofocus>
                         <div id="testerPinError" style="color:#f87171; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></div>
                         <div style="display:flex; gap:10px;">
                             <button type="button" id="closeTesterModalBtn" style="flex:1; padding:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:#cbd5e1; font-weight:600; cursor:pointer;">Cancel</button>
-                            <button type="submit" style="flex:1; padding:12px; background:linear-gradient(135deg, #7c3aed, #6366f1); border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer;">🔓 Unlock Site</button>
+                            <button type="submit" style="flex:1; padding:12px; background:linear-gradient(135deg, #7c3aed, #6366f1); border:none; border-radius:12px; color:#fff; font-weight:700; cursor:pointer;">🔓 Unlock Session</button>
                         </div>
                     </form>
                 </div>
@@ -231,10 +263,10 @@
                 const validPin = data.testerPasscode || "5796";
 
                 if (pin === validPin || pin === "5796" || pin === "admin5796") {
-                    localStorage.setItem("rb_maint_tester_unlocked", "true");
+                    sessionStorage.setItem("rb_maint_tester_session", "true");
                     modal.style.display = "none";
                     removeMaintenanceOverlay();
-                    alert("✨ Live site unlocked for testing on this device!");
+                    alert("✨ Live site unlocked for testing in this browser session!\n\nNote: Closing this tab or browser will automatically expire the tester session.");
                 } else {
                     const errEl = document.getElementById("testerPinError");
                     if (errEl) {
@@ -288,9 +320,11 @@
         }[match]));
     }
 
-    // Execute telemetry check
+    // Execute telemetry check & start real-time background polling
+    startRealtimeTelemetryPolling();
+
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", checkMaintenanceStatus);
+        document.addEventListener("DOMContentLoaded", () => checkMaintenanceStatus());
     } else {
         checkMaintenanceStatus();
     }
