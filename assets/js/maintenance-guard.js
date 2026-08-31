@@ -242,7 +242,7 @@
                     <p style="font-size:13px; color:#cbd5e1; margin-bottom:20px;">Enter Admin / Tester PIN Passcode to unlock live site testing for this browser session.</p>
                     
                     <form id="testerPassForm">
-                        <input type="password" id="testerPinInput" placeholder="Enter Tester Passcode (e.g. 5796)" style="width:100%; padding:12px 16px; background:#0f172a; border:1px solid rgba(167,139,250,0.4); border-radius:12px; color:#fff; font-size:16px; text-align:center; letter-spacing:2px; outline:none; margin-bottom:16px;" required autofocus>
+                        <input type="password" id="testerPinInput" placeholder="Enter Tester PIN Passcode" style="width:100%; padding:12px 16px; background:#0f172a; border:1px solid rgba(167,139,250,0.4); border-radius:12px; color:#fff; font-size:16px; text-align:center; letter-spacing:2px; outline:none; margin-bottom:16px;" required autofocus>
                         <div id="testerPinError" style="color:#f87171; font-size:12px; font-weight:600; margin-bottom:12px; display:none;"></div>
                         <div style="display:flex; gap:10px;">
                             <button type="button" id="closeTesterModalBtn" style="flex:1; padding:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:#cbd5e1; font-weight:600; cursor:pointer;">Cancel</button>
