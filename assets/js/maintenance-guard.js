@@ -85,19 +85,21 @@
                         return;
                     }
 
-                    // If maintenance status just changed to ON while user is browsing -> Real-time auto-lock!
-                    if (isBackgroundPoll && lastMaintenanceState === false) {
-                        console.log("[MAINTENANCE GUARD] 🔒 Maintenance Mode activated live! Auto-locking site...");
-                    }
-
                     renderMaintenanceOverlay(data);
                 } else {
                     // Maintenance is OFF -> Clear cache & unblock instantly
+                    const hadOverlay = Boolean(document.getElementById("maintOverlay"));
                     try {
                         localStorage.setItem("rb_maint_active", "false");
                         localStorage.removeItem("rb_maint_data");
                     } catch (e) {}
                     removeMaintenanceOverlay();
+
+                    // Auto-reload live site if overlay was active previously or maintenance ended live
+                    if (hadOverlay || lastMaintenanceState === true) {
+                        console.log("[MAINTENANCE GUARD] 🔓 Maintenance Mode ended live! Auto-reloading site...");
+                        location.reload();
+                    }
                 }
 
                 lastMaintenanceState = Boolean(data.maintenance);
@@ -109,10 +111,10 @@
 
     function startRealtimeTelemetryPolling() {
         if (telemetryPollTimer) return;
-        // Poll backend telemetry every 10 seconds for real-time auto-lock / auto-unlock
+        // Poll backend telemetry every 5 seconds for real-time auto-lock / auto-unlock / message sync
         telemetryPollTimer = setInterval(() => {
             checkMaintenanceStatus(true);
-        }, 10000);
+        }, 5000);
 
         // Also check instantly when tab regains focus / visibility
         document.addEventListener("visibilitychange", () => {
@@ -169,8 +171,8 @@
             `;
         } else {
             middleSectionHtml = `
-                <div style="margin:20px 0; padding:16px 20px; background:rgba(124, 58, 237, 0.12); border:1px solid rgba(167, 139, 250, 0.3); border-radius:16px; color:#c4b5fd; font-size:13.5px; font-weight:600; text-align:center; line-height:1.6;">
-                    ✨ System upgrade in progress — Services will resume automatically as soon as maintenance is complete.
+                <div style="margin:22px 0; padding:18px 22px; background:rgba(124, 58, 237, 0.14); border:1px solid rgba(167, 139, 250, 0.35); border-radius:18px; color:#c4b5fd; font-size:14px; font-weight:600; text-align:center; line-height:1.6; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+                    ✨ ${escapeHtml(message)}
                 </div>
             `;
         }
