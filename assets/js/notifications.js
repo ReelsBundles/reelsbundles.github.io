@@ -232,7 +232,7 @@
             drawer.className = "notif-drawer";
             drawer.innerHTML = `
                 <div class="notif-header">
-                    <h4>🔔 Announcements & Coupons</h4>
+                    <h4>🔔 System Alerts</h4>
                     <button type="button" class="notif-close-btn" id="notifCloseBtn">&times;</button>
                 </div>
                 <div class="notif-body" id="notifDrawerBody">
