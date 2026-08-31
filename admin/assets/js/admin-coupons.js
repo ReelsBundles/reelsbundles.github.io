@@ -9,23 +9,25 @@ const API_BASE = (
         : "https://reelsbundles-backend.onrender.com"
 ) + "/api";
 
+let fetchedCouponsList = [];
+
 async function fetchCoupons() {
     const tableBody = document.getElementById("couponsTableBody");
     if (!tableBody) return;
-    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#94a3b8;">Loading coupon codes...</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">Loading coupon codes...</td></tr>`;
 
     try {
         const res = await robustFetch(`${API_BASE}/admin/coupons`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message);
 
-        const coupons = data.coupons || [];
-        if (coupons.length === 0) {
+        fetchedCouponsList = data.coupons || [];
+        if (fetchedCouponsList.length === 0) {
             tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">No coupon codes created yet.</td></tr>`;
             return;
         }
 
-        tableBody.innerHTML = coupons.map(c => {
+        tableBody.innerHTML = fetchedCouponsList.map(c => {
             const targetType = (c.eligibleUserType || 'all').toLowerCase();
             let targetTag = '<span style="color:#94a3b8; font-size:12px; font-weight:600;">🌐 All Users</span>';
             if (targetType === 'new_users') {
@@ -52,8 +54,9 @@ async function fetchCoupons() {
                             ${c.active ? 'Active' : 'Inactive'}
                         </span>
                     </td>
-                    <td style="display:flex; gap:8px;">
+                    <td style="display:flex; gap:6px;">
                         <button class="btn-action" onclick="copyCode('${c.code}')">📋 Copy</button>
+                        <button class="btn-action" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa;" onclick="editCouponItem('${c.id}')">✏️ Edit</button>
                         <button class="btn-action" onclick="toggleCouponStatus('${c.id}')">${c.active ? '⏸️ Disable' : '▶️ Enable'}</button>
                         <button class="btn-action btn-danger" onclick="deleteCouponItem('${c.id}')">🗑️ Delete</button>
                     </td>
@@ -108,6 +111,84 @@ async function handleCreateCoupon(e) {
     }
 }
 
+window.editCouponItem = function(id) {
+    const coupon = fetchedCouponsList.find(c => c.id === id);
+    if (!coupon) return;
+
+    document.getElementById("editCouponId").value = coupon.id;
+    document.getElementById("editCouponCode").value = coupon.code;
+    document.getElementById("editDiscountType").value = coupon.discountType || "percentage";
+    document.getElementById("editDiscountValue").value = coupon.discountValue || "";
+    document.getElementById("editEligibleUserType").value = coupon.eligibleUserType || "all";
+    document.getElementById("editMaxUses").value = coupon.maxUses !== null ? coupon.maxUses : "";
+
+    const editExpiryType = document.getElementById("editExpiryType");
+    const editExpiryDateContainer = document.getElementById("editExpiryDateContainer");
+    const editExpiryDateInput = document.getElementById("editExpiryDate");
+
+    if (coupon.expiryDate) {
+        editExpiryType.value = "custom";
+        editExpiryDateContainer.style.display = "block";
+        const dateObj = new Date(coupon.expiryDate);
+        editExpiryDateInput.value = dateObj.toISOString().split("T")[0];
+    } else {
+        editExpiryType.value = "none";
+        editExpiryDateContainer.style.display = "none";
+        editExpiryDateInput.value = "";
+    }
+
+    document.getElementById("editFormMessage").innerHTML = "";
+    const modal = document.getElementById("editCouponModal");
+    if (modal) modal.style.display = "flex";
+};
+
+function closeEditModal() {
+    const modal = document.getElementById("editCouponModal");
+    if (modal) modal.style.display = "none";
+}
+
+async function handleUpdateCoupon(e) {
+    e.preventDefault();
+    const btn = document.getElementById("saveEditCouponBtn");
+    const msg = document.getElementById("editFormMessage");
+    const id = document.getElementById("editCouponId").value;
+    msg.innerHTML = "";
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    const code = document.getElementById("editCouponCode").value.trim();
+    const discountType = document.getElementById("editDiscountType").value;
+    const discountValue = parseFloat(document.getElementById("editDiscountValue").value);
+    const eligibleUserType = document.getElementById("editEligibleUserType").value;
+    const maxUses = document.getElementById("editMaxUses").value ? parseInt(document.getElementById("editMaxUses").value) : null;
+
+    const expiryType = document.getElementById("editExpiryType").value;
+    const expiryDate = (expiryType === "custom" && document.getElementById("editExpiryDate").value)
+        ? document.getElementById("editExpiryDate").value
+        : null;
+
+    try {
+        const res = await robustFetch(`${API_BASE}/admin/coupons/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code, discountType, discountValue, eligibleUserType, maxUses, expiryDate })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+
+        msg.innerHTML = `<span style="color:#4ade80;">✓ ${data.message}</span>`;
+        setTimeout(() => {
+            closeEditModal();
+            fetchCoupons();
+        }, 500);
+    } catch (err) {
+        msg.innerHTML = `<span style="color:#ef4444;">✕ ${err.message}</span>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "Save Changes";
+    }
+}
+
 window.copyCode = function(code) {
     navigator.clipboard.writeText(code);
     alert(`Coupon code '${code}' copied to clipboard!`);
@@ -158,11 +239,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const editExpiryType = document.getElementById("editExpiryType");
+    const editExpiryDateContainer = document.getElementById("editExpiryDateContainer");
+    const editExpiryDateInput = document.getElementById("editExpiryDate");
+    if (editExpiryType && editExpiryDateContainer) {
+        editExpiryType.addEventListener("change", () => {
+            if (editExpiryType.value === "custom") {
+                editExpiryDateContainer.style.display = "block";
+                if (editExpiryDateInput) editExpiryDateInput.required = true;
+            } else {
+                editExpiryDateContainer.style.display = "none";
+                if (editExpiryDateInput) {
+                    editExpiryDateInput.required = false;
+                    editExpiryDateInput.value = "";
+                }
+            }
+        });
+    }
+
+    const closeBtn = document.getElementById("closeEditModalBtn");
+    const cancelBtn = document.getElementById("cancelEditBtn");
+    if (closeBtn) closeBtn.addEventListener("click", closeEditModal);
+    if (cancelBtn) cancelBtn.addEventListener("click", closeEditModal);
+
+    const editForm = document.getElementById("editCouponForm");
+    if (editForm) editForm.addEventListener("submit", handleUpdateCoupon);
+
     const form = document.getElementById("createCouponForm");
     if (form) form.addEventListener("submit", handleCreateCoupon);
 });
-
-
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
