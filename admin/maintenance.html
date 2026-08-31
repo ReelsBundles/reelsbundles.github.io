@@ -120,16 +120,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="pageMaintDateMode">Completion Date Option *</label>
-                        <select id="pageMaintDateMode" class="form-control" required>
-                            <option value="none" selected>🚫 No Completion Date (Notice Only Mode)</option>
-                            <option value="set">🗓️ Set Specific Target Date & Time (Live Countdown Mode)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group" id="datePickerGroup" style="display:none;">
-                        <label for="pageMaintDate">Completion Target Date & Time *</label>
-                        <input type="datetime-local" id="pageMaintDate" class="form-control">
+                        <label for="pageMaintDate">🗓️ Completion Target Date & Time (Optional for Live Countdown Timer)</label>
+                        <input type="datetime-local" id="pageMaintDate" class="form-control" style="color-scheme: dark; color: #fff; background: rgba(15, 23, 42, 0.8);">
                         <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
                             <button type="button" onclick="setQuickMaintDate('pageMaintDate', 1)" style="padding:4px 10px; background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); border-radius:6px; color:#c4b5fd; font-size:11px; font-weight:600; cursor:pointer;">+1 Hr</button>
                             <button type="button" onclick="setQuickMaintDate('pageMaintDate', 3)" style="padding:4px 10px; background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); border-radius:6px; color:#c4b5fd; font-size:11px; font-weight:600; cursor:pointer;">+3 Hrs</button>
@@ -139,8 +131,9 @@
                             <button type="button" onclick="setQuickMaintDate('pageMaintDate', 48)" style="padding:4px 10px; background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); border-radius:6px; color:#c4b5fd; font-size:11px; font-weight:600; cursor:pointer;">+2 Days</button>
                             <button type="button" onclick="setQuickMaintDate('pageMaintDate', 72)" style="padding:4px 10px; background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); border-radius:6px; color:#c4b5fd; font-size:11px; font-weight:600; cursor:pointer;">+3 Days</button>
                             <button type="button" onclick="setQuickMaintDate('pageMaintDate', 168)" style="padding:4px 10px; background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); border-radius:6px; color:#c4b5fd; font-size:11px; font-weight:600; cursor:pointer;">+7 Days</button>
+                            <button type="button" onclick="document.getElementById('pageMaintDate').value='';" style="padding:4px 10px; background:rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.4); border-radius:6px; color:#f87171; font-size:11px; font-weight:600; cursor:pointer;">❌ Clear Date</button>
                         </div>
-                        <small style="color:#94a3b8; font-size:11px; margin-top:6px; display:block;">Click a quick preset above or pick custom date & time.</small>
+                        <small style="color:#94a3b8; font-size:11px; margin-top:6px; display:block;">Pick date & time to show live countdown on website, or leave empty (click Clear Date) for notice-only mode.</small>
                     </div>
 
                     <div class="form-group" style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">

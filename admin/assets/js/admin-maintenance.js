@@ -102,9 +102,7 @@ function updateAdminTopbarBadge() {
 function loadPageMaintData() {
     const statusSelect = document.getElementById("pageMaintStatus");
     const msgInput = document.getElementById("pageMaintMessage") || document.getElementById("pageMaintMsg");
-    const dateModeSelect = document.getElementById("pageMaintDateMode");
     const dateInput = document.getElementById("pageMaintDate");
-    const dateGroup = document.getElementById("datePickerGroup");
     const passcodeInput = document.getElementById("pageTesterPasscode");
 
     if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
@@ -127,38 +125,17 @@ function loadPageMaintData() {
         });
     }
 
-    // Handle Completion Date Mode Toggle
-    function syncDateModeUI() {
-        const mode = dateModeSelect ? dateModeSelect.value : "none";
-        if (mode === "set") {
-            if (dateGroup) dateGroup.style.display = "block";
-            if (dateInput) dateInput.required = true;
-        } else {
-            if (dateGroup) dateGroup.style.display = "none";
-            if (dateInput) {
-                dateInput.required = false;
-                dateInput.value = "";
-            }
-        }
-    }
-
-    if (dateModeSelect) {
+    if (dateInput) {
         if (currentMaintenanceState.expectedBack) {
             const d = new Date(currentMaintenanceState.expectedBack);
             if (!isNaN(d.getTime())) {
-                dateModeSelect.value = "set";
-                if (dateInput) {
-                    dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-                }
+                dateInput.value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
             } else {
-                dateModeSelect.value = "none";
+                dateInput.value = "";
             }
         } else {
-            dateModeSelect.value = "none";
+            dateInput.value = "";
         }
-
-        syncDateModeUI();
-        dateModeSelect.addEventListener("change", syncDateModeUI);
     }
 
     const form = document.getElementById("pageMaintForm");
@@ -167,16 +144,15 @@ function loadPageMaintData() {
             e.preventDefault();
 
             // Clear previous error styles
-            const allInputs = [statusSelect, msgInput, dateModeSelect, dateInput, passcodeInput].filter(Boolean);
+            const allInputs = [statusSelect, msgInput, dateInput, passcodeInput].filter(Boolean);
             allInputs.forEach(el => el.style.border = "");
 
             const maintenanceVal = statusSelect?.value === "true";
             const messageVal = msgInput?.value.trim() || "";
-            const dateModeVal = dateModeSelect?.value || "none";
             const dateVal = dateInput?.value || "";
             const passcodeVal = passcodeInput?.value.trim() || "";
 
-            // STRICT MANDATORY FORM VALIDATION
+            // MANDATORY FORM VALIDATION
             let errors = [];
             if (!messageVal) {
                 errors.push("User Announcement Message is mandatory.");
@@ -186,13 +162,9 @@ function loadPageMaintData() {
                 errors.push("Tester Access Passcode (PIN) is mandatory.");
                 if (passcodeInput) passcodeInput.style.border = "2px solid #ef4444";
             }
-            if (dateModeVal === "set" && !dateVal) {
-                errors.push("Completion Date & Time is mandatory when Live Countdown Mode is selected.");
-                if (dateInput) dateInput.style.border = "2px solid #ef4444";
-            }
 
             if (errors.length > 0) {
-                alert("⚠️ All fields are mandatory!\n\n" + errors.join("\n"));
+                alert("⚠️ All fields marked with * are mandatory!\n\n" + errors.join("\n"));
                 return;
             }
 
@@ -202,7 +174,7 @@ function loadPageMaintData() {
             try { localStorage.setItem("rb_maint_pin", passcodeVal); } catch (e) {}
 
             let parsedDate = null;
-            if (dateModeVal === "set" && dateVal) {
+            if (dateVal) {
                 const d = new Date(dateVal);
                 if (!isNaN(d.getTime())) {
                     parsedDate = d.toISOString();
@@ -213,7 +185,7 @@ function loadPageMaintData() {
                 maintenance: maintenanceVal,
                 message: messageVal,
                 expectedBack: parsedDate,
-                showTimer: dateModeVal === "set" && Boolean(parsedDate),
+                showTimer: Boolean(parsedDate),
                 testerPasscode: passcodeVal,
                 bypassKey: `RB_TESTER_KEY_${passcodeVal}`
             };
