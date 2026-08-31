@@ -141,7 +141,8 @@ function loadPageMaintData() {
                 message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
                 expectedBack: parsedDate,
                 showTimer: true,
-                testerPasscode: passcodeVal
+                testerPasscode: passcodeVal,
+                bypassKey: `RB_TESTER_KEY_${passcodeVal}`
             };
 
             try {
@@ -160,7 +161,7 @@ function loadPageMaintData() {
                     expectedBack: data.settings.expectedBack,
                     showTimer: data.settings.showTimer !== false,
                     testerPasscode: data.settings.testerPasscode || "5796",
-                    bypassKey: data.settings.bypassKey || "RB_TESTER_KEY_5796"
+                    bypassKey: data.settings.bypassKey || `RB_TESTER_KEY_${data.settings.testerPasscode || "5796"}`
                 };
 
                 updateAdminTopbarBadge();
@@ -207,8 +208,9 @@ function updatePagePreviewUI() {
 }
 
 function copyTesterBypassLink() {
+    const passcode = document.getElementById("pageTesterPasscode")?.value.trim() || currentMaintenanceState.testerPasscode || "5796";
+    const testerKey = `RB_TESTER_KEY_${passcode}`;
     const baseUrl = window.location.origin + window.location.pathname.replace(/\/admin\/.*/, "");
-    const testerKey = currentMaintenanceState.bypassKey || "RB_TESTER_KEY_5796";
     const bypassUrl = `${baseUrl}/?tester_key=${encodeURIComponent(testerKey)}`;
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
