@@ -172,59 +172,57 @@
     </div>
 
     <!-- ==============================
-         TOP ANNOUNCEMENT TICKER (REFERENCE UI)
+         UNIFIED FIXED HEADER & TICKER BAR
     =============================== -->
-    <div class="top-ticker-bar">
-        <div class="ticker-left">
-            <span class="ticker-date" id="tickerLiveDate"></span>
-            <span class="ticker-badge">📢 SPECIAL OFFER</span>
-        </div>
-        <div class="ticker-center">
-            <div class="ticker-track">
-                <span>🎉 Special Launch Offer: Use coupon <strong>WELCOME10</strong> for 10% OFF your order! &nbsp;•&nbsp; 🚀 200,000+ Ready-To-Post Instagram Reels Library &nbsp;•&nbsp; ⚡ Instant High-Speed Google Drive Downloads</span>
+    <div class="fixed-header-wrapper">
+        <header class="navbar">
+            <div class="container navbar__container">
+                <!-- Logo -->
+                <a href="index.html" class="navbar__logo">
+                    <span class="navbar__logo-icon">▶</span>
+                    <span>ReelsBundles</span>
+                </a>
+
+                <!-- Menu -->
+                <nav class="navbar__menu">
+                    <a href="#home">Home</a>
+                    <a href="#features">Features</a>
+                    <a href="demo.html">Demo</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#faq">FAQ</a>
+                    <div class="navbar__actions">
+                        <button type="button" class="notif-bell-btn" id="notifBellBtn" title="Notifications & Coupons">
+                            🔔<span class="notif-badge hidden" id="notifBadge">0</span>
+                        </button>
+                        <a href="login.html" class="btn btn--secondary">Sign In</a>
+                        <a href="signup.html" class="btn btn--primary">Get Started</a>
+                    </div>
+                </nav>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="navbar__toggle" type="button" aria-label="Toggle Navigation">
+                    ☰
+                </button>
+            </div>
+        </header>
+
+        <!-- TOP ANNOUNCEMENT TICKER (STACKED BELOW NAVBAR) -->
+        <div class="top-ticker-bar">
+            <div class="ticker-left">
+                <span class="ticker-date" id="tickerLiveDate"></span>
+                <span class="ticker-badge">📢 SPECIAL OFFER</span>
+            </div>
+            <div class="ticker-center">
+                <div class="ticker-track">
+                    <span>🎉 Special Launch Offer: Use coupon <strong>WELCOME10</strong> for 10% OFF your order! &nbsp;•&nbsp; 🚀 200,000+ Ready-To-Post Instagram Reels Library &nbsp;•&nbsp; ⚡ Instant High-Speed Google Drive Downloads</span>
+                </div>
+            </div>
+            <div class="ticker-controls">
+                <button type="button" class="ticker-nav-btn" title="Previous">&lt;</button>
+                <button type="button" class="ticker-nav-btn" title="Next">&gt;</button>
             </div>
         </div>
-        <div class="ticker-controls">
-            <button type="button" class="ticker-nav-btn" title="Previous">&lt;</button>
-            <button type="button" class="ticker-nav-btn" title="Next">&gt;</button>
-        </div>
     </div>
-
-    <!-- ==============================
-         NAVBAR
-    =============================== -->
-    <header class="navbar">
-        <div class="container navbar__container">
-            <!-- Logo -->
-            <a href="index.html" class="navbar__logo">
-                <span class="navbar__logo-icon">▶</span>
-                <span>ReelsBundles</span>
-            </a>
-
-            <!-- Menu -->
-            <nav class="navbar__menu">
-                <a href="#home">Home</a>
-                <a href="#features">Features</a>
-                <a href="demo.html">Demo</a>
-                <a href="#pricing">Pricing</a>
-                <a href="#faq">FAQ</a>
-
-                <!-- Action Buttons -->
-                <div class="navbar__buttons" id="landingAuthActions">
-                    <button type="button" class="notif-bell-btn" id="notifBellBtn" title="Notifications & Coupons">
-                        🔔<span class="notif-badge hidden" id="notifBadge">0</span>
-                    </button>
-                    <a href="login.html" class="btn btn--secondary">Sign In</a>
-                    <a href="signup.html" class="btn btn--primary">Get Started</a>
-                </div>
-            </nav>
-
-            <!-- Mobile Menu Toggle -->
-            <button class="navbar__toggle" type="button" aria-label="Toggle Navigation">
-                ☰
-            </button>
-        </div>
-    </header>
 
        <!-- ==========================================
                  HERO

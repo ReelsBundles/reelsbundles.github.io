@@ -2,20 +2,31 @@
    NAVBAR
 ========================================== */
 
-.navbar {
+/* Unified Fixed Header Wrapper */
+.fixed-header-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 99999;
+    background: rgba(3, 7, 18, 0.92);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.3s ease;
+}
+
+.navbar {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .navbar.scrolled {
-    background: rgba(3, 7, 18, 0.85);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: transparent;
 }
 
 .navbar__container {

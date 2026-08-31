@@ -279,8 +279,13 @@ textarea {
    TOP TICKER BAR — RIGHT TO LEFT SLIDING ANNOUNCEMENT (REFERENCE UI)
 ========================================================== */
 
+body {
+    padding-top: 130px !important;
+}
+
 .top-ticker-bar {
-    background: #090d16;
+    background: rgba(9, 13, 22, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     height: 38px;
     display: flex;
