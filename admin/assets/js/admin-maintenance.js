@@ -183,17 +183,13 @@ function loadPageMaintData() {
             const messageVal = msgInput?.value.trim() || "";
             const dateModeVal = dateModeSelect?.value || "none";
             const dateVal = dateInput?.value || "";
-            const passcodeVal = passcodeInput?.value.trim() || "";
+            const passcodeVal = passcodeInput?.value.trim() || currentMaintenanceState.testerPasscode || "5796";
 
             // MANDATORY FORM VALIDATION
             let errors = [];
             if (!messageVal) {
                 errors.push("User Announcement Message is mandatory.");
                 if (msgInput) msgInput.style.border = "2px solid #ef4444";
-            }
-            if (!passcodeVal) {
-                errors.push("Tester Access Passcode (PIN) is mandatory.");
-                if (passcodeInput) passcodeInput.style.border = "2px solid #ef4444";
             }
             if (dateModeVal === "set" && !dateVal) {
                 errors.push("Completion Date & Time is mandatory when Live Countdown Mode is selected.");
