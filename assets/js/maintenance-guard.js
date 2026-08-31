@@ -300,27 +300,49 @@
                     }
                 } catch (err) {}
 
-                // Fetch fresh live telemetry from backend to ensure 100% real-time PIN sync
+                let isPinValid = false;
+
+                // Direct API pin verification endpoint
                 try {
-                    const res = await fetch(`${API_BASE}/system/maintenance`, { cache: "no-store" });
-                    if (res.ok) {
-                        const telemetry = await res.json();
-                        if (telemetry.success && telemetry.testerPasscode) {
-                            validPins.add(String(telemetry.testerPasscode).trim());
-                            try {
-                                localStorage.setItem("rb_maint_data", JSON.stringify(telemetry));
-                                localStorage.setItem("rb_maint_pin", String(telemetry.testerPasscode).trim());
-                            } catch (e) {}
+                    const resVerify = await fetch(`${API_BASE}/system/verify-pin`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ pin })
+                    });
+                    if (resVerify.ok) {
+                        const verifyData = await resVerify.json();
+                        if (verifyData.success && verifyData.valid) {
+                            isPinValid = true;
+                            if (verifyData.passcode) {
+                                validPins.add(String(verifyData.passcode).trim());
+                            }
                         }
                     }
-                } catch (err) {} finally {
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = "🔓 Unlock Session";
-                    }
+                } catch (err) {}
+
+                // Fallback telemetry check
+                if (!isPinValid) {
+                    try {
+                        const res = await fetch(`${API_BASE}/system/maintenance`, { cache: "no-store" });
+                        if (res.ok) {
+                            const telemetry = await res.json();
+                            if (telemetry.success && telemetry.testerPasscode) {
+                                validPins.add(String(telemetry.testerPasscode).trim());
+                                try {
+                                    localStorage.setItem("rb_maint_data", JSON.stringify(telemetry));
+                                    localStorage.setItem("rb_maint_pin", String(telemetry.testerPasscode).trim());
+                                } catch (e) {}
+                            }
+                        }
+                    } catch (err) {}
                 }
 
-                if (pin && validPins.has(String(pin).trim())) {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "🔓 Unlock Session";
+                }
+
+                if (isPinValid || (pin && validPins.has(String(pin).trim()))) {
                     sessionStorage.setItem("rb_maint_tester_session", "true");
                     try { localStorage.setItem("rb_maint_pin", String(pin).trim()); } catch (e) {}
                     modal.style.display = "none";
