@@ -996,17 +996,12 @@ async function createPaymentOrder(customer) {
     }
 
 
-    if (
-        !data.payment ||
-        !data.payment.payment_session_id
-    ) {
-
+    const openUrl = data.openUrl || data.payment?.openUrl || data.payment?.payment_session_id;
+    if (!openUrl) {
         throw new Error(
-            "Cashfree payment session was not returned by the server."
+            "Payment checkout URL was not returned by the server."
         );
-
     }
-
 
     return data;
 }
@@ -1573,14 +1568,15 @@ checkoutButton?.addEventListener("click", async () => {
         updateOrderId(data.order.order_id);
         saveCheckoutSession({ order: data.order, customer });
 
-        if (checkoutButton) {
-            checkoutButton.textContent = "🔐 Opening Secure Payment...";
+        const targetUrl = data.openUrl || data.payment?.openUrl || data.payment?.payment_session_id;
+        if (targetUrl) {
+            if (checkoutButton) {
+                checkoutButton.textContent = "🔐 Redirecting to Secure Payment...";
+            }
+            window.location.href = targetUrl;
+        } else {
+            throw new Error("Payment checkout link is unavailable.");
         }
-
-        await openCashfreeCheckout(
-            data.payment.payment_session_id,
-            data.environment || data.payment?.environment
-        );
     } catch (error) {
         console.error("ReelsBundles Payment Error:", error);
         alert(error?.message || "Payment initialization failed. Please try again.");
