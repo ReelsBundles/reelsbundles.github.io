@@ -106,11 +106,12 @@
    Buttons
 ========================== */
 
-.navbar__buttons {
+.navbar__buttons,
+.navbar__actions {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-left: 10px;
+    margin-left: 24px;
 }
 
 /* ==========================
@@ -203,26 +204,37 @@
         color: white;
     }
 
-    .navbar__menu.active .navbar__buttons {
+    .navbar__menu.active .navbar__buttons,
+    .navbar__menu.active .navbar__actions {
         display: flex !important;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
         width: 100%;
-        margin-top: auto;
-        margin-left: 0;
+        max-width: 320px;
+        margin: 20px auto 0 auto;
         padding-top: 20px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        gap: 12px;
+        gap: 14px;
         position: static !important;
         transform: none !important;
     }
 
-    .navbar__menu.active .navbar__buttons .btn {
+    .navbar__menu.active .notif-card-btn,
+    .navbar__menu.active .notif-bell-btn {
         width: 100%;
         justify-content: center;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .navbar__menu.active .navbar__buttons .btn,
+    .navbar__menu.active .navbar__actions .btn {
+        width: 100%;
+        text-align: center;
         padding: 14px 20px;
         font-size: 15px;
         font-weight: 700;
-        text-align: center;
         border-radius: 12px;
     }
 
