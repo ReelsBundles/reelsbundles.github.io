@@ -449,6 +449,12 @@ async function verifyPayment() {
             data.success !== true
         ) {
 
+            if (data?.pending === true) {
+                console.log("[Success] Payment status is pending. Retrying verification in 3s...");
+                setTimeout(() => { verifyPayment(); }, 3000);
+                return;
+            }
+
             const failureMessage =
                 data?.message ||
                 data?.error ||
