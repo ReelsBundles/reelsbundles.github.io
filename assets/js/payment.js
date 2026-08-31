@@ -1271,66 +1271,7 @@ function waitForCashfree(
     check();
 }
 
-/* ==========================================================
-   WAIT FOR CASHFREE GLOBAL
-========================================================== */
 
-function waitForCashfree(
-    resolve,
-    reject
-) {
-
-    const startedAt =
-        Date.now();
-
-
-    const check =
-        () => {
-
-            if (
-                typeof window.Cashfree ===
-                "function"
-            ) {
-
-                resolve(
-                    window.Cashfree
-                );
-
-                return;
-
-            }
-
-
-            /*
-             * Wait maximum 5 seconds
-             */
-            if (
-                Date.now() -
-                startedAt >=
-                5000
-            ) {
-
-                reject(
-                    new Error(
-                        "Cashfree SDK loaded, but the Cashfree checkout function is unavailable."
-                    )
-                );
-
-                return;
-
-            }
-
-
-            setTimeout(
-                check,
-                100
-            );
-
-        };
-
-
-    check();
-}
 
 /* ==========================================================
    OPEN CASHFREE CHECKOUT
