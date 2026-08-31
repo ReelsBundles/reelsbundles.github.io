@@ -108,12 +108,18 @@ function loadPageMaintData() {
     if (statusSelect) statusSelect.value = String(currentMaintenanceState.maintenance);
     if (msgInput) msgInput.value = currentMaintenanceState.message;
     if (passcodeInput) {
-        passcodeInput.value = currentMaintenanceState.testerPasscode || "5796";
+        const savedPin = localStorage.getItem("rb_maint_pin");
+        if (savedPin) {
+            currentMaintenanceState.testerPasscode = savedPin;
+            currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${savedPin}`;
+        }
+        passcodeInput.value = savedPin || currentMaintenanceState.testerPasscode || "5796";
         passcodeInput.addEventListener("input", () => {
             const val = passcodeInput.value.trim();
             if (val) {
                 currentMaintenanceState.testerPasscode = val;
                 currentMaintenanceState.bypassKey = `RB_TESTER_KEY_${val}`;
+                try { localStorage.setItem("rb_maint_pin", val); } catch (e) {}
             }
         });
     }
@@ -136,6 +142,8 @@ function loadPageMaintData() {
             const messageVal = document.getElementById("pageMaintMsg").value.trim();
             const dateVal = document.getElementById("pageMaintDate").value;
             const passcodeVal = document.getElementById("pageTesterPasscode")?.value.trim() || "5796";
+
+            try { localStorage.setItem("rb_maint_pin", passcodeVal); } catch (e) {}
 
             let parsedDate = null;
             if (dateVal) {

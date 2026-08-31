@@ -286,15 +286,16 @@
                     submitBtn.textContent = "⌛ Verifying...";
                 }
 
-                let validPin = data ? data.testerPasscode : null;
-
-                // Check localStorage cached telemetry fallback
+                let validPins = new Set();
+                if (data && data.testerPasscode) validPins.add(String(data.testerPasscode).trim());
                 try {
+                    const savedPin = localStorage.getItem("rb_maint_pin");
+                    if (savedPin) validPins.add(String(savedPin).trim());
                     const cachedRaw = localStorage.getItem("rb_maint_data");
                     if (cachedRaw) {
                         const cachedObj = JSON.parse(cachedRaw);
                         if (cachedObj && cachedObj.testerPasscode) {
-                            validPin = cachedObj.testerPasscode;
+                            validPins.add(String(cachedObj.testerPasscode).trim());
                         }
                     }
                 } catch (err) {}
@@ -305,9 +306,10 @@
                     if (res.ok) {
                         const telemetry = await res.json();
                         if (telemetry.success && telemetry.testerPasscode) {
-                            validPin = telemetry.testerPasscode;
+                            validPins.add(String(telemetry.testerPasscode).trim());
                             try {
                                 localStorage.setItem("rb_maint_data", JSON.stringify(telemetry));
+                                localStorage.setItem("rb_maint_pin", String(telemetry.testerPasscode).trim());
                             } catch (e) {}
                         }
                     }
@@ -318,8 +320,9 @@
                     }
                 }
 
-                if (pin && validPin && String(pin).trim() === String(validPin).trim()) {
+                if (pin && validPins.has(String(pin).trim())) {
                     sessionStorage.setItem("rb_maint_tester_session", "true");
+                    try { localStorage.setItem("rb_maint_pin", String(pin).trim()); } catch (e) {}
                     modal.style.display = "none";
                     removeMaintenanceOverlay();
                     alert("✨ Live site unlocked for testing in this browser session!\n\nNote: Closing this tab or browser will automatically expire the tester session.");
