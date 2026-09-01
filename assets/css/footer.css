@@ -12,14 +12,11 @@ background:#020617;
 
 }
 
-.footer-grid{
-
-display:grid;
-
-grid-template-columns:2fr 1fr 1fr 1fr;
-
-gap:50px;
-
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr 1fr 1.2fr;
+    gap: 32px;
+    align-items: start;
 }
 
 .footer-logo{
