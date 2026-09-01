@@ -178,7 +178,11 @@
         }
 
         const innerContent = `
-            <div class="maint-card">
+            <div class="maint-card" style="position: relative;">
+                <button type="button" class="notification-bell-btn maint-bell-btn" id="maintBellBtn" title="View Live System Alerts" style="position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 20px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    🔔
+                    <span class="bell-badge" id="maintBellBadge" style="position: absolute; top: -2px; right: -2px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; border-radius: 10px; padding: 2px 6px; display: none;"></span>
+                </button>
                 <div class="maint-gear-box">
                     <span class="maint-gear-main">⚙️</span>
                     <span class="maint-gear-sub">🔧</span>

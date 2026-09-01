@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Manager | ReelsBundles Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-bundles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>▶</text></svg>">
+    <style>
+        .review-grid { display: grid; grid-template-columns: 360px 1fr; gap: 24px; margin-top: 24px; }
+        @media (max-width: 991px) { .review-grid { grid-template-columns: 1fr; } }
+        .form-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #cbd5e1; margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 10px 14px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; color: #fff; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #a78bfa; box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2); }
+        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .badge-active { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .badge-inactive { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px 10px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+        .btn-action { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-right: 4px; }
+        .btn-action:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-danger { color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    </style>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item"><span>📊</span> Dashboard</a>
+            <a href="users.html" class="admin-nav-item"><span>👥</span> Users</a>
+            <a href="bundles.html" class="admin-nav-item"><span>📦</span> Bundles</a>
+            <a href="orders.html" class="admin-nav-item"><span>🧾</span> Orders</a>
+            <a href="coupons.html" class="admin-nav-item"><span>🎟️</span> Coupons</a>
+            <a href="reviews.html" class="admin-nav-item active"><span>⭐</span> Feedback Manager</a>
+            <a href="notifications.html" class="admin-nav-item"><span>🔔</span> Notifications</a>
+            <a href="maintenance.html" class="admin-nav-item"><span>🛠️</span> Maintenance</a>
+            <a href="demo-videos.html" class="admin-nav-item"><span>🎬</span> Demo Videos</a>
+            <a href="download.html" class="admin-nav-item"><span>⬇️</span> Downloads</a>
+            <a href="storage.html" class="admin-nav-item"><span>☁️</span> Cloud Storage</a>
+        </nav>
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">admin5796</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" onclick="localStorage.clear(); sessionStorage.clear(); location.href='index.html';" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1 style="font-size:24px; font-weight:800; color:#fff; margin:0;">⭐ Customer Feedback & Review Manager</h1>
+                <p style="color:#94a3b8; font-size:13px; margin:4px 0 0 0;">Manage customer ratings, deactivate dummy reviews, or inject real-time buyer feedback.</p>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <span id="reviewCountBadge" class="badge-purple">0 Reviews</span>
+                <span id="avgRatingBadge" class="badge-green">4.9★ Average</span>
+            </div>
+        </header>
+
+        <div class="review-grid">
+            <div class="form-card">
+                <h3 id="formTitle" style="font-size:16px; font-weight:700; color:#fff; margin-bottom:16px;">➕ Add New Feedback</h3>
+                <form id="adminReviewForm">
+                    <input type="hidden" id="editReviewId" value="" />
+                    <div class="form-group">
+                        <label>Customer Name *</label>
+                        <input type="text" id="reviewCustomerName" class="form-control" placeholder="e.g. Aarav Sharma" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Purchased Bundle *</label>
+                        <select id="reviewBundlePlan" class="form-control" required>
+                            <option value="premium">Premium Bundle (₹69)</option>
+                            <option value="basic">Basic Bundle (₹49)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Star Rating (1-5★) *</label>
+                        <select id="reviewStarRating" class="form-control" required>
+                            <option value="5" selected>⭐⭐⭐⭐⭐ (5/5)</option>
+                            <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                            <option value="3">⭐⭐⭐ (3/5)</option>
+                            <option value="2">⭐⭐ (2/5)</option>
+                            <option value="1">⭐ (1/5)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Content Quality *</label>
+                        <input type="text" id="reviewQualityRating" class="form-control" value="5/5 Excellent Quality" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Support Experience *</label>
+                        <input type="text" id="reviewSupportRating" class="form-control" value="10/10 Excellent Experience" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Review Comment *</label>
+                        <textarea id="reviewComment" class="form-control" rows="3" placeholder="Customer review message..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select id="reviewApproved" class="form-control" required>
+                            <option value="true" selected>🟢 Active (Visible on Landing Page)</option>
+                            <option value="false">🔴 Deactivated (Hidden from Landing Page)</option>
+                        </select>
+                    </div>
+                    <div id="adminFormStatus" style="font-size:13px; margin-bottom:10px; font-weight:600;"></div>
+                    <button type="submit" id="saveReviewBtn" class="btn-submit">Save Feedback</button>
+                    <button type="button" id="cancelEditBtn" class="btn-action" style="width:100%; margin-top:8px; display:none;">Cancel Edit</button>
+                </form>
+            </div>
+
+            <div class="form-card" style="padding:0; overflow:hidden;">
+                <div style="padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="font-size:16px; font-weight:700; color:#fff; margin:0;">Real-Time Customer Feedback List</h3>
+                    <button type="button" id="refreshReviewsBtn" class="btn-action">🔄 Refresh</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px; color:#cbd5e1;">
+                        <thead>
+                            <tr style="background:rgba(15, 23, 42, 0.6); border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-size:12px; text-transform:uppercase;">
+                                <th style="padding:12px 16px;">Customer Name</th>
+                                <th style="padding:12px 16px;">Plan</th>
+                                <th style="padding:12px 16px;">Rating</th>
+                                <th style="padding:12px 16px;">Comment</th>
+                                <th style="padding:12px 16px;">Date Created</th>
+                                <th style="padding:12px 16px;">Status</th>
+                                <th style="padding:12px 16px; text-align:right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviewsTbody">
+                            <tr>
+                                <td colspan="7" style="padding:24px; text-align:center; color:#94a3b8;">Loading feedback data...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script type="module" src="assets/js/admin-reviews.js"></script>
+</body>
+</html>
