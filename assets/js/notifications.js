@@ -247,19 +247,10 @@
             document.getElementById("notifCloseBtn")?.addEventListener("click", closeDrawer);
         }
 
-        // Format or auto-inject Notification Card Button if missing
-        let bellBtn = document.getElementById("notifBellBtn");
-        if (!bellBtn) {
-            bellBtn = document.createElement("button");
-            bellBtn.type = "button";
-            bellBtn.id = "notifBellBtn";
-            bellBtn.className = "notif-card-btn floating";
-            bellBtn.title = "Notifications";
-            bellBtn.innerHTML = `<span>🔔</span> Notifications <span class="notif-badge hidden" id="notifBadge">0</span>`;
-            document.body.appendChild(bellBtn);
-        } else if (!bellBtn.innerHTML.includes("Notifications")) {
-            bellBtn.className = "notif-card-btn";
-            bellBtn.innerHTML = `<span>🔔</span> Notifications <span class="notif-badge hidden" id="notifBadge">0</span>`;
+        // Remove floating bell widget permanently if present
+        const floatingBtn = document.querySelector(".notif-card-btn.floating, #notifBellBtn.floating");
+        if (floatingBtn) {
+            floatingBtn.remove();
         }
 
         fetchPublicNotifications();

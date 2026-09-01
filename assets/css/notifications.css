@@ -57,23 +57,11 @@
     box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
 }
 
-/* Floating Bell Fallback for pages without static header bell */
-.notif-bell-btn.floating {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 99990;
-    width: 50px;
-    height: 50px;
-    font-size: 22px;
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
-}
-
-.notif-bell-btn.floating:hover {
-    transform: scale(1.08) translateY(-2px);
-    box-shadow: 0 14px 40px rgba(124, 58, 237, 0.7);
+/* Floating Bell permanently disabled per user request */
+.notif-bell-btn.floating,
+.notif-card-btn.floating,
+#notifBellBtn {
+    display: none !important;
 }
 
 /* Badge Count */
