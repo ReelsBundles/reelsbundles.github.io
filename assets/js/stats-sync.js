@@ -30,7 +30,7 @@ export async function fetchAndSyncStats() {
 
         const stats = data.stats;
 
-        // 1. Update elements with data-stat attributes or matching IDs
+        // 1. Update text elements with data-stat attributes
         document.querySelectorAll("[data-stat='happy-customers']").forEach(el => {
             el.textContent = stats.happyCustomers;
         });
@@ -47,11 +47,24 @@ export async function fetchAndSyncStats() {
             el.textContent = stats.support;
         });
 
-        // 2. Update data-counter elements (e.g. <h2 data-counter="10000">)
-        const counterEl = document.querySelector("h2[data-counter]");
-        if (counterEl && stats.happyCustomersCount) {
-            counterEl.setAttribute("data-counter", stats.happyCustomersCount);
-        }
+        // 2. Update data-counter & data-stat-counter elements
+        document.querySelectorAll("[data-stat-counter='happy-customers'], [data-counter='10000']").forEach(el => {
+            if (stats.happyCustomersCount) {
+                el.setAttribute("data-counter", stats.happyCustomersCount);
+                if (!el.getAttribute("data-animated")) {
+                    el.textContent = (stats.happyCustomersCount / 1000).toFixed(1) + "K+";
+                }
+            }
+        });
+
+        document.querySelectorAll("[data-stat-counter='satisfaction'], [data-counter='99']").forEach(el => {
+            if (stats.satisfaction) {
+                el.setAttribute("data-counter", stats.satisfactionPercentage || 99);
+                if (!el.getAttribute("data-animated")) {
+                    el.textContent = stats.satisfaction;
+                }
+            }
+        });
 
         console.log("[Stats Sync] Live system stats synchronized from backend:", stats);
     } catch (err) {
