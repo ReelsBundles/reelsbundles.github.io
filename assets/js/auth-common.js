@@ -287,8 +287,9 @@ export const checkUserLiveStatus = async (user) => {
         } catch (e) {}
 
         const queryStr = uid ? `uid=${uid}&email=${email}` : `email=${email}`;
-        const res = await fetch(`${API_BASE}/user/status?${queryStr}`, { headers });
-        const data = await res.json();
+        const res = await robustFetch(`${API_BASE}/user/status?${queryStr}`, { headers });
+        if (!res) return;
+        const data = await res.json().catch(() => ({}));
 
         if (res.status === 403 || data.disabled === true || data.status === "disabled" || data.status === "SUSPENDED") {
             handleAccountSuspendedAlert(data.message);
