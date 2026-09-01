@@ -213,6 +213,7 @@ let activeNotifications = [];
     }
 
     function toggleDrawer() {
+        initNotificationUI();
         const drawerEl = document.getElementById("notifDrawer");
         const backdropEl = document.getElementById("notifBackdrop");
         if (!drawerEl) return;
@@ -220,6 +221,7 @@ let activeNotifications = [];
         isDrawerOpen = !isDrawerOpen;
 
         if (isDrawerOpen) {
+            renderNotificationList();
             drawerEl.classList.add("open");
             if (backdropEl) backdropEl.classList.add("open");
 

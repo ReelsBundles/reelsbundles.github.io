@@ -130,9 +130,10 @@
 }
 
 .notif-drawer.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) scale(1) !important;
+    display: flex !important;
 }
 
 /* Drawer Header */
