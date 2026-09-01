@@ -7,13 +7,12 @@ import {
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-const API_BASE =
-    (
+const API_BASE = (
         window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1"
             ? "http://localhost:3000"
             : "https://reelsbundles-backend.onrender.com"
-    ) + "/api";
+    );
 
 (function sanitizeAllLinksAndAddressBar() {
     // Keep .html extensions intact on GitHub Pages to ensure query parameters and 200 OK static page routing work reliably

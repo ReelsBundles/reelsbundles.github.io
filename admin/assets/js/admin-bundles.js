@@ -9,11 +9,12 @@
    CONFIG
 ========================================================== */
 
-const API_BASE = window.REELS_BUNDLES_API_BASE || (
-    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
         ? "http://localhost:3000"
-        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+        : "https://reelsbundles-backend.onrender.com"
 );
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 const API = `${API_BASE}/api/admin/bundles`;
 function getAdminToken() {
     return localStorage.getItem("admin_token") ||

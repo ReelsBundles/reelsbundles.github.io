@@ -10,6 +10,8 @@
    - Failed payment redirects to failed.html
 ========================================================== */
 
+import { auth } from "./firebase-client.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import { getFirebaseIdToken, robustFetch } from "./auth-common.js";
 
 
@@ -17,7 +19,7 @@ import { getFirebaseIdToken, robustFetch } from "./auth-common.js";
    CONFIG
 ========================================================== */
 
-const API_BASE =
+const RAW_API_BASE =
     window.REELS_BUNDLES_API_BASE ||
     (
         window.location.hostname === "localhost" ||
@@ -25,6 +27,7 @@ const API_BASE =
             ? "http://localhost:3000"
             : "https://reelsbundles-backend.onrender.com"
     );
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 
 
 /* ==========================================================
@@ -170,8 +173,17 @@ document.addEventListener(
 ========================================================== */
 
 async function initializeSuccessPage() {
-
     try {
+        // Ensure Firebase auth state is initialized before verifying payment
+        if (!auth.currentUser) {
+            await new Promise((resolve) => {
+                const unsubscribe = onAuthStateChanged(auth, (u) => {
+                    unsubscribe();
+                    resolve(u);
+                });
+                setTimeout(resolve, 1500);
+            });
+        }
 
         /*
          * Read order ID from URL.

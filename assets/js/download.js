@@ -32,18 +32,12 @@ import { renderFeedbackWidget } from "./feedback.js";
    API CONFIG
 ========================================================== */
 
-const API_BASE =
-    window.REELS_BUNDLES_API_BASE ||
-    (
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-
-            ? "http://localhost:3000"
-
-            : "https://reelsbundles-backend.onrender.com"
-    );
-
-
+const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000"
+        : "https://reelsbundles-backend.onrender.com"
+);
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 /* ==========================================================
    STATE
 ========================================================== */

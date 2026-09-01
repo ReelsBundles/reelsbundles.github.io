@@ -14,7 +14,7 @@
         window.location.hostname === "127.0.0.1"
             ? "http://localhost:3000"
             : "https://reelsbundles-backend.onrender.com"
-    ) + "/api";
+    );
 
     // Clear legacy permanent localStorage bypass keys to enforce session-only expiry
     try {

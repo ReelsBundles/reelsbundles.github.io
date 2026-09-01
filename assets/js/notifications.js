@@ -9,7 +9,7 @@
         window.location.hostname === "127.0.0.1"
             ? "http://localhost:3000"
             : "https://reelsbundles-backend.onrender.com"
-    ) + "/api";
+    );
 
     let activeNotifications = [];
     let isDrawerOpen = false;

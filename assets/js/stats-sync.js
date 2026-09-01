@@ -7,15 +7,12 @@
 import { robustFetch } from "./auth-common.js";
 import { loadPublicCustomerReviews } from "./feedback.js";
 
-const API_BASE =
-    window.REELS_BUNDLES_API_BASE ||
-    (
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-            ? "http://localhost:3000/api"
-            : "https://reelsbundles-backend.onrender.com/api"
-    );
-
+const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000"
+        : "https://reelsbundles-backend.onrender.com"
+);
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 export async function fetchAndSyncStats() {
     try {
         const response = await robustFetch(`${API_BASE}/system/stats`, {

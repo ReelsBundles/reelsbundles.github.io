@@ -1,15 +1,12 @@
 import { auth } from "./firebase-client.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-const API_BASE =
-    window.REELS_BUNDLES_API_BASE ||
-    (
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-            ? "http://localhost:3000"
-            : "https://reelsbundles-backend.onrender.com"
-    );
-
+const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000"
+        : "https://reelsbundles-backend.onrender.com"
+);
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 const contactForm = document.getElementById("contactForm");
 const contactSubmit = document.querySelector(".contact-submit");
 const nameInput = document.getElementById("name");
