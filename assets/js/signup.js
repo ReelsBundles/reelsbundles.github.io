@@ -10,11 +10,7 @@ import {
     getRedirectResult,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {
-    createUserSession,
-    syncUserToBackend,
-    logoutUser
-} from "./auth-common.js";
+import { createUserSession, logoutUser, syncUserToBackend } from "./auth-common.js";
 
 // Helper function to extract redirect target URL cleanly
 function getSignupRedirect() {

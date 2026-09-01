@@ -1,11 +1,7 @@
 import {
     auth
 } from "./firebase-client.js";
-import {
-    protectUserPage,
-    syncUserToBackend,
-    startUserStatusSync
-} from "./auth-common.js";
+import { getFirebaseIdToken, protectUserPage, robustFetch, startUserStatusSync, syncUserToBackend } from "./auth-common.js";
 import { renderFeedbackWidget } from "./feedback.js";
 /* ==========================================================
    REELSBUNDLES

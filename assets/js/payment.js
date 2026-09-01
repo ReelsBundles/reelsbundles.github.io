@@ -1,6 +1,7 @@
 "use strict";
 import { auth } from "./firebase-client.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirebaseIdToken, robustFetch } from "./auth-common.js";
 
 /* ==========================================================
    MANDATORY AUTH GUARD & 3S SESSION AUTO-LOGOUT ON EXIT

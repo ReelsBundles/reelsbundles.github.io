@@ -4,14 +4,7 @@
    LIVE ADMIN BUNDLES + LOCK / UNLOCK
 ========================================================== */
 
-import {
-    protectUserPage,
-    getCurrentFirebaseUser,
-    getFirebaseIdToken,
-    getCurrentUserFromBackend,
-    getCurrentUserEntitlement,
-    logoutUser
-} from "./auth-common.js";
+import { getCurrentFirebaseUser, getCurrentUserEntitlement, getCurrentUserFromBackend, getFirebaseIdToken, logoutUser, protectUserPage, robustFetch, syncUserToBackend } from "./auth-common.js";
 import { renderFeedbackWidget } from "./feedback.js";
 
 

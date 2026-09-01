@@ -1,5 +1,6 @@
 import { auth } from "./firebase-client.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { robustFetch } from "./auth-common.js";
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
