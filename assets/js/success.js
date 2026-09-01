@@ -19,17 +19,12 @@ import { getFirebaseIdToken, robustFetch } from "./auth-common.js";
    CONFIG
 ========================================================== */
 
-const RAW_API_BASE =
-    window.REELS_BUNDLES_API_BASE ||
-    (
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-            ? "http://localhost:3000"
-            : "https://reelsbundles-backend.onrender.com"
-    );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
-
-
+const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
+);
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 /* ==========================================================
    STATE
 ========================================================== */
@@ -312,7 +307,7 @@ async function verifyPayment() {
          */
 
         const verifyUrl =
-            `${API_BASE}/api/payment/verify/${encodeURIComponent(orderId)}`;
+            `${API_BASE}/payment/verify/${encodeURIComponent(orderId)}`;
 
 
         console.log(

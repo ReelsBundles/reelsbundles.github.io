@@ -2,11 +2,10 @@ import { robustFetch, getFirebaseIdToken } from "../../../assets/js/auth-common.
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-        ? "http://localhost:3000"
-        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
-
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 let currentReviews = [];
 
 async function getAuthToken() {
@@ -65,7 +64,7 @@ async function loadAdminReviews(isSilent = false) {
 
     try {
         const token = await getAuthToken();
-        const response = await doFetch(`${API_BASE}/api/admin/reviews`, {
+        const response = await doFetch(`${API_BASE}/admin/reviews`, {
             headers: {
                 "Accept": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -202,8 +201,8 @@ async function handleSaveReview(e) {
     try {
         const token = await getAuthToken();
         const url = editId
-            ? `${API_BASE}/api/admin/reviews/${editId}`
-            : `${API_BASE}/api/admin/reviews`;
+            ? `${API_BASE}/admin/reviews/${editId}`
+            : `${API_BASE}/admin/reviews`;
         const method = editId ? "PUT" : "POST";
 
         const response = await doFetch(url, {
@@ -250,7 +249,7 @@ async function handleToggleClick(id, currentActive) {
 
     try {
         const token = await getAuthToken();
-        const response = await doFetch(`${API_BASE}/api/admin/reviews/${id}`, {
+        const response = await doFetch(`${API_BASE}/admin/reviews/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -275,7 +274,7 @@ async function handleDeleteClick(id) {
 
     try {
         const token = await getAuthToken();
-        const response = await doFetch(`${API_BASE}/api/admin/reviews/${id}`, {
+        const response = await doFetch(`${API_BASE}/admin/reviews/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`

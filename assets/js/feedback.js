@@ -8,11 +8,11 @@ import { robustFetch, getFirebaseIdToken } from "./auth-common.js";
 import { auth } from "./firebase-client.js";
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 let selectedStarRating = 5;
 
 export function renderFeedbackWidget(containerId = "feedbackWidgetContainer") {

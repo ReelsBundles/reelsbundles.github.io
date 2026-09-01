@@ -10,12 +10,12 @@
 ========================================================== */
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
-const API = `${API_BASE}/api/admin/bundles`;
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
+const API = `${API_BASE}/admin/bundles`;
 function getAdminToken() {
     return localStorage.getItem("admin_token") ||
            localStorage.getItem("rb_admin_token") ||
@@ -2012,7 +2012,7 @@ async function handleBulkSubmit() {
 
     showLoading();
     try {
-        const res = await robustFetch(`${API_BASE}/api/admin/bundles/bulk`, {
+        const res = await robustFetch(`${API_BASE}/admin/bundles/bulk`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -2046,7 +2046,7 @@ async function handleDeleteAllSubmit() {
 
     showLoading();
     try {
-        const res = await robustFetch(`${API_BASE}/api/admin/bundles/all`, {
+        const res = await robustFetch(`${API_BASE}/admin/bundles/all`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`

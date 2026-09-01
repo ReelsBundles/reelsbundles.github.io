@@ -33,11 +33,11 @@ import { renderFeedbackWidget } from "./feedback.js";
 ========================================================== */
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 /* ==========================================================
    STATE
 ========================================================== */
@@ -1917,7 +1917,7 @@ async function downloadDriveItem(
     }
 
     const cleanName = String(fileName || "download").replace(/[\\/:*?"<>|]/g, "_");
-    const downloadUrl = `${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/file/${encodeURIComponent(fileId)}?token=${encodeURIComponent(token)}`;
+    const downloadUrl = `${API_BASE}/user/bundles/${encodeURIComponent(bundleId)}/file/${encodeURIComponent(fileId)}?token=${encodeURIComponent(token)}`;
 
     const anchor = document.createElement("a");
     anchor.href = downloadUrl;

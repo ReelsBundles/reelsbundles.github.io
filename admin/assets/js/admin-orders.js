@@ -1,10 +1,10 @@
 const token = localStorage.getItem("admin_token");
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 let page = 1;
 
 loadOrders();
@@ -22,7 +22,7 @@ async function loadOrders() {
 
 
         const res = await robustFetch(
-            `${API_BASE}/api/admin/orders?page=${page}&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`,
+            `${API_BASE}/admin/orders?page=${page}&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -279,7 +279,7 @@ function attachDeleteButtons() {
 
                         const res =
                             await robustFetch(
-                                `${API_BASE}/api/admin/orders/${encodeURIComponent(orderId)}`,
+                                `${API_BASE}/admin/orders/${encodeURIComponent(orderId)}`,
                                 {
                                     method: "DELETE",
 
@@ -486,7 +486,7 @@ document
             try {
 
                 const res = await robustFetch(
-                    `${API_BASE}/api/admin/orders/all`,
+                    `${API_BASE}/admin/orders/all`,
                     {
                         method: "DELETE",
 

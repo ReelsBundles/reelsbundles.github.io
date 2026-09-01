@@ -6,14 +6,14 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 // Background warm-up ping to wake up backend server on page load
 try {
-    fetch(`${API_BASE}/api/system/maintenance`, { cache: "no-store" }).catch(() => {});
+    fetch(`${API_BASE}/system/maintenance`, { cache: "no-store" }).catch(() => {});
 } catch (e) {}
 
 const form = document.getElementById("loginForm");
@@ -61,14 +61,14 @@ form.addEventListener("submit", async (e) => {
             //console.log("Firebase ID Token:", idToken);
 
         const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 const response = await fetch(
 
-            `${API_BASE}/api/auth/login`,
+            `${API_BASE}/auth/login`,
 
             {
 

@@ -2,11 +2,11 @@ import { auth } from "./firebase-client.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:3000"
-        : "https://reelsbundles-backend.onrender.com"
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 const contactForm = document.getElementById("contactForm");
 const contactSubmit = document.querySelector(".contact-submit");
 const nameInput = document.getElementById("name");
@@ -112,7 +112,7 @@ if (contactForm) {
 
         let sentViaApi = false;
         try {
-            const response = await robustFetch(`${API_BASE}/api/contact`, {
+            const response = await robustFetch(`${API_BASE}/contact`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

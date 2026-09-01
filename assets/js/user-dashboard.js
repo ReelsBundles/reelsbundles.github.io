@@ -17,11 +17,10 @@ import { renderFeedbackWidget } from "./feedback.js";
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-        ? "http://localhost:3000"
-        : (window.REELSBUNDLES_CONFIG?.API_BASE_URL || "https://reelsbundles-backend.onrender.com")
+        ? "http://localhost:3000/api"
+        : "https://reelsbundles-backend.onrender.com/api"
 );
-const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
-
+const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 /* ==========================================================
    GLOBAL STATE
 ========================================================== */
@@ -757,7 +756,7 @@ async function loadLiveBundles(isSilent = false) {
         -------------------------------------------------- */
         const response =
             await robustFetch(
-                `${API_BASE}/api/user/bundles`,
+                `${API_BASE}/user/bundles`,
                 {
                     method: "GET",
 
@@ -2476,7 +2475,7 @@ async function handleBundleDownload(
 
         const response =
             await robustFetch(
-                `${API_BASE}/api/user/bundles/${encodeURIComponent(bundleId)}/download`,
+                `${API_BASE}/user/bundles/${encodeURIComponent(bundleId)}/download`,
                 {
                     method:
                         "GET",
