@@ -417,3 +417,8 @@ export async function robustFetch(url, options = {}, retries = 2, delayMs = 1500
         }
     }
 }
+
+if (typeof window !== "undefined") {
+    window.robustFetch = robustFetch;
+    window.getFirebaseIdToken = getFirebaseIdToken;
+}

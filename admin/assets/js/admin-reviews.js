@@ -1,4 +1,4 @@
-import { robustFetch, getFirebaseIdToken } from "../../assets/js/auth-common.js";
+import { robustFetch, getFirebaseIdToken } from "../../../assets/js/auth-common.js";
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
@@ -8,6 +8,27 @@ const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
 const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "");
 
 let currentReviews = [];
+
+async function getAuthToken() {
+    try {
+        if (typeof getFirebaseIdToken === "function") {
+            return await getFirebaseIdToken();
+        } else if (typeof window.getFirebaseIdToken === "function") {
+            return await window.getFirebaseIdToken();
+        }
+    } catch (e) {}
+    return "";
+}
+
+async function doFetch(url, options = {}) {
+    if (typeof robustFetch === "function") {
+        return await robustFetch(url, options);
+    } else if (typeof window.robustFetch === "function") {
+        return await window.robustFetch(url, options);
+    } else {
+        return await fetch(url, options);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     loadAdminReviews();
@@ -35,8 +56,8 @@ async function loadAdminReviews() {
     }
 
     try {
-        const token = await getFirebaseIdToken();
-        const response = await robustFetch(`${API_BASE}/api/admin/reviews`, {
+        const token = await getAuthToken();
+        const response = await doFetch(`${API_BASE}/api/admin/reviews`, {
             headers: {
                 "Accept": "application/json",
                 "Authorization": `Bearer ${token}`
@@ -102,7 +123,6 @@ function renderReviewsTable(reviews) {
 
     tbody.innerHTML = html;
 
-    // Attach row button event listeners
     tbody.querySelectorAll(".edit-rev-btn").forEach(btn => {
         btn.addEventListener("click", () => handleEditClick(btn.getAttribute("data-id")));
     });
@@ -172,13 +192,13 @@ async function handleSaveReview(e) {
     saveBtn.disabled = true;
 
     try {
-        const token = await getFirebaseIdToken();
+        const token = await getAuthToken();
         const url = editId
             ? `${API_BASE}/api/admin/reviews/${editId}`
             : `${API_BASE}/api/admin/reviews`;
         const method = editId ? "PUT" : "POST";
 
-        const response = await robustFetch(url, {
+        const response = await doFetch(url, {
             method,
             headers: {
                 "Content-Type": "application/json",
@@ -221,8 +241,8 @@ async function handleToggleClick(id, currentActive) {
     if (!confirm(`Are you sure you want to ${currentActive ? 'deactivate' : 'activate'} this feedback?`)) return;
 
     try {
-        const token = await getFirebaseIdToken();
-        const response = await robustFetch(`${API_BASE}/api/admin/reviews/${id}`, {
+        const token = await getAuthToken();
+        const response = await doFetch(`${API_BASE}/api/admin/reviews/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -246,8 +266,8 @@ async function handleDeleteClick(id) {
     if (!confirm("Are you sure you want to PERMANENTLY DELETE this feedback?")) return;
 
     try {
-        const token = await getFirebaseIdToken();
-        const response = await robustFetch(`${API_BASE}/api/admin/reviews/${id}`, {
+        const token = await getAuthToken();
+        const response = await doFetch(`${API_BASE}/api/admin/reviews/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`
