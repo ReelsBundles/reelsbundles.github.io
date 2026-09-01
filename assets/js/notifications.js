@@ -66,20 +66,35 @@
     }
 
     function updateBadgeCount() {
-        const badgeEl = document.getElementById("notifBadge");
-        if (!badgeEl) return;
-
         // FILTER: Bell Badge & Drawer displays ALERTS ONLY
-        const alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
+        let alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
+
+        // Maintenance Mode Fallback Alert if maintenance is currently active
+        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || document.getElementById("maintOverlay");
+        if (isMaintActive && alertNotifs.length === 0) {
+            alertNotifs = [{
+                id: "maint_auto_alert",
+                type: "alert",
+                title: "⚙️ Scheduled Maintenance Active",
+                message: "ReelsBundles is undergoing scheduled system upgrades. Systems will resume shortly.",
+                active: true
+            }];
+        }
+
         const readIds = getReadNotificationIds();
         const unreadAlerts = alertNotifs.filter(n => !readIds.includes(n.id));
 
-        if (unreadAlerts.length > 0) {
-            badgeEl.textContent = unreadAlerts.length > 9 ? "9+" : unreadAlerts.length;
-            badgeEl.classList.remove("hidden");
-        } else {
-            badgeEl.classList.add("hidden");
-        }
+        const badges = document.querySelectorAll("#notifBadge, #maintBellBadge, .bell-badge, .notif-badge");
+        badges.forEach(badgeEl => {
+            if (unreadAlerts.length > 0) {
+                badgeEl.textContent = unreadAlerts.length > 9 ? "9+" : unreadAlerts.length;
+                badgeEl.classList.remove("hidden");
+                badgeEl.style.display = "inline-block";
+            } else {
+                badgeEl.classList.add("hidden");
+                badgeEl.style.display = "none";
+            }
+        });
     }
 
     function escapeHtml(text) {
@@ -110,7 +125,18 @@
         if (!bodyEl) return;
 
         // ROUTING RULE: Bell Drawer displays ALERTS ONLY
-        const alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
+        let alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
+
+        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || document.getElementById("maintOverlay");
+        if (isMaintActive && alertNotifs.length === 0) {
+            alertNotifs = [{
+                id: "maint_auto_alert",
+                type: "alert",
+                title: "⚙️ Scheduled Maintenance Active",
+                message: "ReelsBundles is undergoing scheduled system upgrades. Systems will resume shortly.",
+                active: true
+            }];
+        }
 
         if (alertNotifs.length === 0) {
             bodyEl.innerHTML = `
@@ -259,7 +285,7 @@
 
     // Global Click Delegation for Bell Button
     document.addEventListener("click", (e) => {
-        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn, .notif-card-btn");
+        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn, .notif-card-btn, #maintBellBtn, .maint-bell-btn, .notification-bell-btn");
         if (bell) {
             e.stopPropagation();
             toggleDrawer();
