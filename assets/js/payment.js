@@ -900,21 +900,7 @@ function saveCheckoutSession(
 }
 
 
-/* ==========================================================
-   FIREBASE TOKEN
-========================================================== */
 
-async function getFirebaseIdToken() {
-    if (!auth) return null;
-    const currentUser = auth.currentUser;
-    if (!currentUser) return null;
-    try {
-        return await currentUser.getIdToken(true);
-    } catch (e) {
-        console.warn("[PAYMENT AUTH] Failed to get ID token:", e);
-        return null;
-    }
-}
 
 /* ==========================================================
    CREATE ORDER
