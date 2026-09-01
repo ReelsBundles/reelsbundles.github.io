@@ -212,7 +212,31 @@ let activeNotifications = [];
         `).join("");
     }
 
+    function isNotificationAllowedPage() {
+        if (document.getElementById("maintOverlay")) {
+            return true;
+        }
+
+        const path = window.location.pathname.toLowerCase();
+
+        if (path.includes("/admin/")) {
+            return false;
+        }
+
+        const isIndex = path.endsWith("/") || 
+                        path.endsWith("/index.html") || 
+                        path.endsWith("/index") || 
+                        path.endsWith("/reelsbundles.github.io/") || 
+                        path === "" ||
+                        path.endsWith("/reelsbundles.github.io");
+
+        const isDashboard = path.includes("dashboard.html") || path.endsWith("/dashboard");
+
+        return isIndex || isDashboard;
+    }
+
     function toggleDrawer() {
+        if (!isNotificationAllowedPage()) return;
         initNotificationUI();
         const drawerEl = document.getElementById("notifDrawer");
         const backdropEl = document.getElementById("notifBackdrop");
@@ -243,6 +267,15 @@ let activeNotifications = [];
     }
 
     function initNotificationUI() {
+        if (!isNotificationAllowedPage()) {
+            const floatingBtn = document.getElementById("notifBellBtn");
+            if (floatingBtn) floatingBtn.remove();
+            const drawerEl = document.getElementById("notifDrawer");
+            if (drawerEl) drawerEl.remove();
+            const backdropEl = document.getElementById("notifBackdrop");
+            if (backdropEl) backdropEl.remove();
+            return;
+        }
         // Create backdrop if missing
         if (!document.getElementById("notifBackdrop")) {
             const backdrop = document.createElement("div");
