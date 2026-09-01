@@ -12,6 +12,7 @@ import {
     getCurrentUserEntitlement,
     logoutUser
 } from "./auth-common.js";
+import { renderFeedbackWidget } from "./feedback.js";
 
 
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
@@ -38,6 +39,9 @@ let liveBundles = [];
 document.addEventListener(
     "DOMContentLoaded",
     async () => {
+        try {
+            renderFeedbackWidget("feedbackWidgetContainer");
+        } catch (e) {}
 
 
 

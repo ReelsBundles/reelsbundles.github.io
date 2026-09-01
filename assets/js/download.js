@@ -6,6 +6,7 @@ import {
     syncUserToBackend,
     startUserStatusSync
 } from "./auth-common.js";
+import { renderFeedbackWidget } from "./feedback.js";
 /* ==========================================================
    REELSBUNDLES
    USER DOWNLOAD LIBRARY
@@ -3285,6 +3286,7 @@ window.addEventListener(
 
 
                 await loadBundleLibrary();
+                try { renderFeedbackWidget("feedbackWidgetContainer"); } catch (e) {}
 
             }
 

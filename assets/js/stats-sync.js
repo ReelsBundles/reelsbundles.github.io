@@ -5,6 +5,7 @@
 ========================================================== */
 
 import { robustFetch } from "./auth-common.js";
+import { loadPublicCustomerReviews } from "./feedback.js";
 
 const API_BASE =
     window.REELS_BUNDLES_API_BASE ||
@@ -60,4 +61,7 @@ export async function fetchAndSyncStats() {
 
 document.addEventListener("DOMContentLoaded", () => {
     fetchAndSyncStats();
+    try {
+        loadPublicCustomerReviews("liveReviewsContainer");
+    } catch (e) {}
 });
