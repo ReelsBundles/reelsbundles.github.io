@@ -191,8 +191,8 @@
                 <div class="maint-message">${escapeHtml(message)}</div>
                 ${middleSectionHtml}
                 <div class="maint-actions">
-                    <a href="https://t.me/reelsbundles" target="_blank" class="maint-btn maint-btn-primary">
-                        💬 Telegram Support
+                    <a href="contact.html" class="maint-btn maint-btn-primary">
+                        📩 Contact Support
                     </a>
                     <button type="button" onclick="location.reload()" class="maint-btn maint-btn-secondary">
                         🔄 Refresh Page
