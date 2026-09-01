@@ -405,7 +405,7 @@ export const getCurrentUserEntitlement = async () => {
     }
 };
 
-async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+export async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
     for (let i = 0; i <= retries; i++) {
         try {
             const response = await window.fetch(url, options);
