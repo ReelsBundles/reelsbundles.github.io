@@ -252,3 +252,10 @@ export async function loadPublicCustomerReviews(containerId = "liveReviewsContai
         console.warn("[Reviews Loader] Unable to load public customer reviews:", e.message);
     }
 }
+
+if (typeof document !== "undefined") {
+    document.addEventListener("DOMContentLoaded", () => {
+        loadPublicCustomerReviews();
+        setInterval(loadPublicCustomerReviews, 3000);
+    });
+}

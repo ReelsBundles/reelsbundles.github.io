@@ -33,6 +33,14 @@ async function doFetch(url, options = {}) {
 document.addEventListener("DOMContentLoaded", () => {
     loadAdminReviews();
 
+    // Auto-refresh admin reviews table every 3 seconds in background
+    setInterval(() => {
+        const editId = document.getElementById("editReviewId")?.value;
+        if (!editId) {
+            loadAdminReviews(true);
+        }
+    }, 3000);
+
     const form = document.getElementById("adminReviewForm");
     if (form) {
         form.addEventListener("submit", handleSaveReview);
@@ -49,9 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-async function loadAdminReviews() {
+async function loadAdminReviews(isSilent = false) {
     const tbody = document.getElementById("reviewsTbody");
-    if (tbody) {
+    if (!isSilent && tbody && currentReviews.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="padding:24px; text-align:center; color:#94a3b8;">Loading feedback data...</td></tr>`;
     }
 
@@ -80,7 +88,7 @@ async function loadAdminReviews() {
         renderReviewsTable(currentReviews);
     } catch (err) {
         console.error("Load Reviews Error:", err);
-        if (tbody) {
+        if (!isSilent && tbody) {
             tbody.innerHTML = `<tr><td colspan="7" style="padding:24px; text-align:center; color:#ef4444;">Failed to load feedback data: ${err.message}</td></tr>`;
         }
     }

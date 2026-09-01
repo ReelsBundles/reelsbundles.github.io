@@ -64,4 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
         loadPublicCustomerReviews("liveReviewsContainer");
     } catch (e) {}
+
+    // Auto-refresh live stats & public customer reviews every 3 seconds
+    setInterval(() => {
+        fetchAndSyncStats();
+        try {
+            loadPublicCustomerReviews("liveReviewsContainer");
+        } catch (e) {}
+    }, 3000);
 });
