@@ -272,10 +272,18 @@ let activeNotifications = [];
             document.getElementById("notifCloseBtn")?.addEventListener("click", closeDrawer);
         }
 
-        // Remove floating bell widget permanently if present
-        const floatingBtn = document.querySelector(".notif-card-btn.floating, #notifBellBtn.floating");
-        if (floatingBtn) {
-            floatingBtn.remove();
+        // Auto-inject floating notification bell in bottom-left corner if missing
+        if (!document.getElementById("notifBellBtn")) {
+            const bellBtn = document.createElement("button");
+            bellBtn.id = "notifBellBtn";
+            bellBtn.className = "notif-card-btn floating";
+            bellBtn.type = "button";
+            bellBtn.title = "System Announcements";
+            bellBtn.innerHTML = `
+                🔔
+                <span class="notif-badge hidden" id="notifBadge"></span>
+            `;
+            document.body.appendChild(bellBtn);
         }
 
         fetchPublicNotifications();
