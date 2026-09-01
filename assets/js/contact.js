@@ -225,15 +225,3 @@ function showContactAlert(message, type = "success") {
     alertBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
-    for (let i = 0; i <= retries; i++) {
-        try {
-            const response = await window.fetch(url, options);
-            return response;
-        } catch (err) {
-            console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);
-            if (i === retries) throw err;
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-        }
-    }
-}
