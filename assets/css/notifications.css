@@ -57,31 +57,23 @@
     box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
 }
 
-/* Floating Bell Widget in Bottom-Left Corner */
-.notif-card-btn.floating, #notifBellBtn.floating, #notifBellBtn {
+/* Floating Bell Button */
+.notif-bell-btn.floating,
+.notif-card-btn.floating {
     position: fixed;
-    bottom: 28px;
-    left: 28px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(124, 58, 237, 0.9);
-    border: 1px solid rgba(167, 139, 250, 0.5);
-    color: #ffffff;
-    font-size: 22px;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4), 0 0 15px rgba(0, 0, 0, 0.5);
-    z-index: 99999;
-    transition: all 0.25s ease;
+    bottom: 24px;
+    left: 24px;
+    z-index: 99990;
+    font-size: 13px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
 }
 
-.notif-card-btn.floating:hover, #notifBellBtn.floating:hover, #notifBellBtn:hover {
-    transform: scale(1.1);
-    background: #7c3aed;
-    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.6);
+.notif-bell-btn.floating:hover,
+.notif-card-btn.floating:hover {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 14px 40px rgba(124, 58, 237, 0.7);
 }
 
 /* Badge Count */

@@ -272,18 +272,19 @@ let activeNotifications = [];
             document.getElementById("notifCloseBtn")?.addEventListener("click", closeDrawer);
         }
 
-        // Auto-inject floating notification bell in bottom-left corner if missing
-        if (!document.getElementById("notifBellBtn")) {
-            const bellBtn = document.createElement("button");
+        // Format or auto-inject Notification Card Button if missing
+        let bellBtn = document.getElementById("notifBellBtn");
+        if (!bellBtn) {
+            bellBtn = document.createElement("button");
+            bellBtn.type = "button";
             bellBtn.id = "notifBellBtn";
             bellBtn.className = "notif-card-btn floating";
-            bellBtn.type = "button";
-            bellBtn.title = "System Announcements";
-            bellBtn.innerHTML = `
-                🔔
-                <span class="notif-badge hidden" id="notifBadge"></span>
-            `;
+            bellBtn.title = "Notifications";
+            bellBtn.innerHTML = `<span>🔔</span> Notifications <span class="notif-badge hidden" id="notifBadge">0</span>`;
             document.body.appendChild(bellBtn);
+        } else if (!bellBtn.innerHTML.includes("Notifications")) {
+            bellBtn.className = "notif-card-btn";
+            bellBtn.innerHTML = `<span>🔔</span> Notifications <span class="notif-badge hidden" id="notifBadge">0</span>`;
         }
 
         fetchPublicNotifications();
