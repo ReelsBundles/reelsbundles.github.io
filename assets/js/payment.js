@@ -984,7 +984,7 @@ async function createPaymentOrder(customer) {
 
         let msg = data?.message || "Unable to create payment order.";
         if (String(msg).toLowerCase().includes("authentication failed")) {
-            msg = "Payment Gateway Credentials Error: Please check Cashfree API Keys on server.";
+            msg = "Payment Gateway Credentials Error: Please check UroPay API Keys on server.";
         }
 
         throw new Error(
