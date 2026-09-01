@@ -1,11 +1,57 @@
 "use strict";
 import { auth } from "./firebase-client.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
 /* ==========================================================
-   REELSBUNDLES PAYMENT
-   PAYMENT PAGE JAVASCRIPT
+   MANDATORY AUTH GUARD & 3S SESSION AUTO-LOGOUT ON EXIT
 ========================================================== */
+
+// 1. Mandatory Sign-in / Sign-up Guard
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        console.warn("[PAYMENT GUARD] 🔒 Authentication required to access Payment page. Redirecting to login...");
+        const redirectTarget = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = `login.html?redirect=${redirectTarget}`;
+        return;
+    }
+
+    const fullNameEl = document.getElementById("fullName");
+    const emailEl = document.getElementById("email");
+    if (user.email && emailEl && !emailEl.value) {
+        emailEl.value = user.email;
+    }
+    if (user.displayName && fullNameEl && !fullNameEl.value) {
+        fullNameEl.value = user.displayName;
+    }
+});
+
+// 2. Auto-Logout Session When Exiting Payment Flow
+let isExitingPaymentFlow = false;
+document.addEventListener("click", (e) => {
+    const link = e.target.closest("a");
+    if (link && link.href) {
+        try {
+            const targetUrl = new URL(link.href, window.location.href);
+            if (!targetUrl.pathname.includes("payment") && !targetUrl.pathname.includes("success")) {
+                isExitingPaymentFlow = true;
+                console.log("[PAYMENT GUARD] 🚪 User exiting payment flow. Logging out session in 3s...");
+                setTimeout(() => {
+                    signOut(auth).catch(() => {});
+                    localStorage.removeItem("user_email");
+                    sessionStorage.clear();
+                }, 500);
+            }
+        } catch (err) {}
+    }
+});
+
+window.addEventListener("pagehide", () => {
+    if (isExitingPaymentFlow) {
+        signOut(auth).catch(() => {});
+        localStorage.removeItem("user_email");
+        sessionStorage.clear();
+    }
+});
 
 
 /* ==========================================================
