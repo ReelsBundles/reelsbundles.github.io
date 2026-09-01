@@ -226,11 +226,36 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
             overlay.innerHTML = innerContent;
         }
 
-        // Attach listener for Tester Passcode Modal
+        // Ensure notifications CSS and JS are loaded for the notification drawer
+        if (!document.querySelector("link[href*='notifications.css']")) {
+            const cssLink = document.createElement("link");
+            cssLink.rel = "stylesheet";
+            cssLink.href = "assets/css/notifications.css";
+            document.head.appendChild(cssLink);
+        }
+        if (!document.querySelector("script[src*='notifications.js']")) {
+            const jsScript = document.createElement("script");
+            jsScript.type = "module";
+            jsScript.src = "assets/js/notifications.js";
+            document.head.appendChild(jsScript);
+        }
+
+        // Attach listeners for Tester Passcode Modal & Notification Bell
         setTimeout(() => {
             const btn = document.getElementById("openTesterModalBtn");
             if (btn) {
                 btn.onclick = () => openTesterPasscodeModal(data);
+            }
+            const bellBtn = document.getElementById("maintBellBtn");
+            if (bellBtn) {
+                bellBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (typeof window.toggleNotifDrawer === "function") {
+                        window.toggleNotifDrawer();
+                    } else if (typeof window.initNotificationUI === "function") {
+                        window.initNotificationUI();
+                    }
+                };
             }
         }, 100);
 

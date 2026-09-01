@@ -298,4 +298,9 @@ let activeNotifications = [];
     }
 
     window.copyCouponCode = copyToClipboard;
+    window.toggleNotifDrawer = function() {
+        initNotificationUI();
+        toggleDrawer();
+    };
+    window.initNotificationUI = initNotificationUI;
 })();
