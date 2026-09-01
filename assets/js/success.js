@@ -10,7 +10,7 @@
    - Failed payment redirects to failed.html
 ========================================================== */
 
-import { getFirebaseIdToken } from "./auth-common.js";
+import { getFirebaseIdToken, robustFetch } from "./auth-common.js";
 
 
 /* ==========================================================
@@ -349,10 +349,11 @@ async function verifyPayment() {
              * PAYMENT FLOW NOT CHANGED.
              */
 
-            const token = await getFirebaseIdToken();
-            if (!token) {
-                throw new Error("Authentication required. Please login again.");
-            }
+            const headers = { "Accept": "application/json" };
+            try {
+                const token = await getFirebaseIdToken();
+                if (token) headers["Authorization"] = `Bearer ${token}`;
+            } catch (e) {}
 
             response =
                 await robustFetch(
@@ -362,15 +363,7 @@ async function verifyPayment() {
                         method:
                             "GET",
 
-                        headers: {
-
-                            "Authorization":
-                                `Bearer ${token}`,
-
-                            "Accept":
-                                "application/json"
-
-                        },
+                        headers,
 
                         cache:
                             "no-store",
