@@ -77,18 +77,12 @@ function escapeHtml(str) {
 
 
 /*
- * Cashfree mode.
- *
- * Current project is using Cashfree.
- * Keep "sandbox" while testing.
- *
- * Production mein backend/payment credentials
- * production par switch karne ke baad "production"
- * karna hai.
+ * Dynamic Payment Gateway Environment Mode
+ * - Uses 'sandbox' / 'test' on Localhost / 127.0.0.1
+ * - Uses 'production' on Live Production Domains
  */
-
-const CASHFREE_MODE =
-    "production";
+const isProdHost = window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1";
+const CASHFREE_MODE = isProdHost ? "production" : "sandbox";
 
 
 /* ==========================================================
