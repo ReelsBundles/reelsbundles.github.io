@@ -116,11 +116,8 @@ body {
 ========================================================== */
 
 .demo-hero {
-
-    padding: 170px 0 85px;
-
+    padding: 100px 0 30px;
     text-align: center;
-
 }
 
 
@@ -1363,10 +1360,7 @@ body {
 @media (max-width: 760px) {
 
     .demo-hero {
-
-        padding:
-            135px 0 65px;
-
+        padding: 90px 0 25px;
     }
 
 
