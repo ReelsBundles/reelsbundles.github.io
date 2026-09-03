@@ -215,6 +215,10 @@ function hideStatusNotice() {
 ========================================================== */
 async function fetchReportData(params) {
     const token = getAdminToken();
+    if (!token) {
+        throw new Error("Admin session expired. Please log in to ReelsBundles Admin Panel first.");
+    }
+
     const query = new URLSearchParams();
     for (const [k, v] of Object.entries(params)) {
         if (v && v !== "ALL") query.set(k, v);
@@ -517,12 +521,16 @@ function generateExcelWorkbook(report) {
    summary cards, top failures, and paginated event table.
 ========================================================== */
 function generatePdfDocument(report) {
-    if (typeof window.jspdf === "undefined" || typeof window.jspdf.jsPDF === "undefined") {
-        throw new Error("jsPDF library not loaded. Please check network connectivity.");
+    const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (typeof jsPDF !== "undefined" ? jsPDF : null);
+    if (!jsPDFClass) {
+        throw new Error("jsPDF library not loaded. Please check your internet connection.");
     }
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF("landscape", "pt", "a4");
+    const doc = new jsPDFClass("landscape", "pt", "a4");
+    if (typeof doc.autoTable !== "function") {
+        throw new Error("jsPDF-AutoTable plugin not loaded. Please check your internet connection.");
+    }
+
     const s = report.summary || {};
     const now = new Date();
     const dateStr = now.toISOString().slice(0, 10);
