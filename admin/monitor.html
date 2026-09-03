@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live Error + API Diagnostic Monitor | ReelsBundles Admin</title>
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-monitor.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Consolas&display=swap" rel="stylesheet">
+</head>
+<body class="admin-monitor-page">
+
+<div class="admin-layout">
+
+    <!-- ==================================================
+         UNIFIED ADMIN SIDEBAR
+    =================================================== -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="monitor.html" class="admin-nav-item active">
+                <span>🩺</span> Live Monitor
+            </a>
+            <a href="users.html" class="admin-nav-item">
+                <span>👥</span> Users
+            </a>
+            <a href="bundles.html" class="admin-nav-item">
+                <span>📦</span> Bundles
+            </a>
+            <a href="orders.html" class="admin-nav-item">
+                <span>🧾</span> Orders
+            </a>
+            <a href="coupons.html" class="admin-nav-item">
+                <span>🎟️</span> Coupons
+            </a>
+            <a href="reviews.html" class="admin-nav-item">
+                <span>⭐</span> Feedback Manager
+            </a>
+            <a href="notifications.html" class="admin-nav-item">
+                <span>🔔</span> Notifications
+            </a>
+            <a href="maintenance.html" class="admin-nav-item">
+                <span>🛠️</span> Maintenance
+            </a>
+            <a href="demo-videos.html" class="admin-nav-item">
+                <span>🎬</span> Demo Videos
+            </a>
+            <a href="download.html" class="admin-nav-item">
+                <span>⬇️</span> Downloads
+            </a>
+            <a href="storage.html" class="admin-nav-item">
+                <span>☁️</span> Cloud Storage
+            </a>
+        </nav>
+
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">Admin</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+
+        <!-- TOPBAR -->
+        <header class="monitor-topbar">
+            <div>
+                <span class="page-eyebrow" style="color:#a855f7; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">OBSERVABILITY & LIVE ERROR MONITOR</span>
+                <h1 style="font-size:26px; font-weight:800; margin:0 0 4px; color:#fff;">Live API & Diagnostic Monitor</h1>
+                <p style="color:rgba(255,255,255,0.6); font-size:13px; margin:0;">Real-time User + Admin observability, UroPay payment flow, error classification, and root-cause tracing.</p>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <span id="connectionBadge" class="connection-badge connected">
+                    🟢 Live (SSE Connected)
+                </span>
+
+                <button type="button" id="toggleFeedBtn" class="action-btn" title="Pause or resume live incoming events">
+                    ⏸️ Pause Stream
+                </button>
+
+                <button type="button" id="openTestSuiteBtn" class="action-btn primary" title="Simulate diagnostic test events">
+                    ⚡ Diagnostic Test Suite
+                </button>
+
+                <button type="button" id="refreshBtn" class="action-btn" title="Refresh all telemetry data">
+                    ↻ Refresh
+                </button>
+
+                <button type="button" id="clearLogsBtn" class="action-btn danger" title="Clear diagnostic logs only (business data untouched)">
+                    🗑️ Clear Logs
+                </button>
+            </div>
+        </header>
+
+        <!-- LIVE ERROR ALERT BANNER (POPS UP ON NEW FAILURE) -->
+        <aside id="liveAlertBanner" class="live-alert-banner" role="alert" aria-live="polite">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <span style="font-size:24px;">🔴</span>
+                <div>
+                    <strong id="alertTitle" style="color:#fff; font-size:14px; display:block;">NEW ERROR DETECTED</strong>
+                    <span id="alertDetails" style="color:rgba(255,255,255,0.8); font-size:12.5px;">Method / Endpoint — Category</span>
+                </div>
+            </div>
+            <button type="button" id="inspectAlertBtn" class="action-btn" style="background:#fff; color:#000; font-weight:700; border:none;">
+                🔍 Inspect Error
+            </button>
+        </aside>
+
+        <!-- OVERALL SYSTEM HEALTH SCORE CARD -->
+        <section class="health-overview-card">
+            <div class="health-gauge-box">
+                <span style="font-size:12px; color:var(--text-muted); font-weight:700; text-transform:uppercase; letter-spacing:0.8px;">Overall System Health</span>
+                <div id="overallHealthVal" class="health-score-val">100%</div>
+                <small style="color:var(--text-dim); font-size:11px; display:block;">Calculated from actual telemetry</small>
+            </div>
+
+            <div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Health Breakdown By Subsystem</span>
+                    <small style="color:var(--text-dim); font-size:10.5px;">Formula: 25% User + 20% Admin + 20% UroPay + 15% Download + 10% DB + 10% Frontend</small>
+                </div>
+
+                <div class="subscores-grid">
+                    <div class="subscore-item">
+                        <div class="subscore-title">User APIs</div>
+                        <div id="subHealthUser" class="subscore-val" style="color:#34d399;">100%</div>
+                    </div>
+                    <div class="subscore-item">
+                        <div class="subscore-title">Admin APIs</div>
+                        <div id="subHealthAdmin" class="subscore-val" style="color:#a855f7;">100%</div>
+                    </div>
+                    <div class="subscore-item">
+                        <div class="subscore-title">UroPay Payment</div>
+                        <div id="subHealthPayment" class="subscore-val" style="color:#38bdf8;">100%</div>
+                    </div>
+                    <div class="subscore-item">
+                        <div class="subscore-title">Download & Drive</div>
+                        <div id="subHealthDownload" class="subscore-val" style="color:#f472b6;">100%</div>
+                    </div>
+                    <div class="subscore-item">
+                        <div class="subscore-title">Database</div>
+                        <div id="subHealthDatabase" class="subscore-val" style="color:#fbbf24;">100%</div>
+                    </div>
+                    <div class="subscore-item">
+                        <div class="subscore-title">Frontend Health</div>
+                        <div id="subHealthFrontend" class="subscore-val" style="color:#4ade80;">100%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10 TELEMETRY METRIC OVERVIEW CARDS -->
+        <section class="metrics-grid-10">
+            <article class="metric-card-mini">
+                <div class="label">Total Requests</div>
+                <div id="metricTotal" class="value">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Telemetry volume</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label" style="color:#34d399;">Pass (2xx/3xx)</div>
+                <div id="metricPass" class="value" style="color:#34d399;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Successful runs</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label" style="color:#f87171;">Fail (4xx/5xx)</div>
+                <div id="metricFail" class="value" style="color:#f87171;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Total failures</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">4xx Errors</div>
+                <div id="metric4xx" class="value" style="color:#fbbf24;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Auth / Client / 404</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">5xx Errors</div>
+                <div id="metric5xx" class="value" style="color:#f87171;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Server / Upstream</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">Frontend Errors</div>
+                <div id="metricFrontend" class="value" style="color:#f472b6;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">JS exceptions / net</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">Database Errors</div>
+                <div id="metricDatabase" class="value" style="color:#fbbf24;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Firestore queries</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">Payment Errors</div>
+                <div id="metricPayment" class="value" style="color:#38bdf8;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">UroPay / Verify</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">Avg Latency</div>
+                <div id="metricAvgDuration" class="value" style="color:#c084fc;">0ms</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Response time</small>
+            </article>
+
+            <article class="metric-card-mini">
+                <div class="label">Active Problems</div>
+                <div id="metricIncidents" class="value" style="color:#f59e0b;">0</div>
+                <small style="color:var(--text-dim); font-size:10.5px;">Recent clusters (30m)</small>
+            </article>
+        </section>
+
+        <!-- CURRENT PROBLEMS / ACTIVE INCIDENTS SECTION -->
+        <section id="incidentsSection" class="incidents-section" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="font-size:16px; font-weight:700; margin:0; display:flex; align-items:center; gap:8px;">
+                    <span>🚨</span> Current Active Problems <span id="incidentCountBadge" class="badge badge-fail" style="margin-left:6px;">0</span>
+                </h3>
+                <small style="color:var(--text-muted); font-size:11px;">Aggregated across last 30 minutes</small>
+            </div>
+            <div id="incidentsGrid" class="incidents-grid">
+                <!-- Incident cards injected dynamically -->
+            </div>
+        </section>
+
+        <!-- LIVE API REQUESTS SECTION -->
+        <section>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="font-size:18px; font-weight:700; margin:0; display:flex; align-items:center; gap:8px;">
+                    <span>⚡</span> Live API Requests
+                </h3>
+                <span id="showingCount" style="font-size:12px; color:var(--text-muted);">Showing 0 requests</span>
+            </div>
+
+            <!-- TOOLBAR: SEARCH & MULTI-DIMENSIONAL FILTERS -->
+            <div class="monitor-toolbar">
+                <div class="filter-group">
+                    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search endpoint, Request ID, error, page...">
+                </div>
+
+                <div class="filter-group">
+                    <select id="filterSource" class="select-filter">
+                        <option value="ALL">Source: All</option>
+                        <option value="USER">USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="PUBLIC">PUBLIC</option>
+                        <option value="SYSTEM">SYSTEM</option>
+                        <option value="FRONTEND">FRONTEND</option>
+                    </select>
+
+                    <select id="filterResult" class="select-filter">
+                        <option value="ALL">Result: All</option>
+                        <option value="PASS">PASS</option>
+                        <option value="FAIL">FAIL</option>
+                    </select>
+
+                    <select id="filterMethod" class="select-filter">
+                        <option value="ALL">Method: All</option>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+
+                    <select id="filterStatusCode" class="select-filter">
+                        <option value="ALL">Status: All</option>
+                        <option value="2xx">2xx (Success)</option>
+                        <option value="3xx">3xx (Redirect)</option>
+                        <option value="4xx">4xx (Client/Auth)</option>
+                        <option value="5xx">5xx (Server/Gateway)</option>
+                    </select>
+
+                    <select id="filterCategory" class="select-filter">
+                        <option value="ALL">Category: All</option>
+                        <option value="UROPAY">UROPAY</option>
+                        <option value="UROPAY_CALLBACK">UROPAY_CALLBACK</option>
+                        <option value="PAYMENT_VERIFICATION">PAYMENT_VERIFICATION</option>
+                        <option value="PAYMENT">PAYMENT</option>
+                        <option value="DATABASE">DATABASE</option>
+                        <option value="AUTHENTICATION">AUTHENTICATION</option>
+                        <option value="AUTHORIZATION">AUTHORIZATION</option>
+                        <option value="GOOGLE DRIVE">GOOGLE DRIVE</option>
+                        <option value="DOWNLOAD">DOWNLOAD</option>
+                        <option value="ENTITLEMENT">ENTITLEMENT</option>
+                        <option value="FRONTEND">FRONTEND</option>
+                        <option value="NETWORK">NETWORK</option>
+                        <option value="TIMEOUT">TIMEOUT</option>
+                        <option value="VALIDATION">VALIDATION</option>
+                        <option value="ROUTING">ROUTING</option>
+                        <option value="BACKEND">BACKEND</option>
+                        <option value="UNKNOWN">UNKNOWN</option>
+                    </select>
+
+                    <button type="button" id="resetFiltersBtn" class="action-btn" style="padding:7px 12px; font-size:12px;">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- REQUESTS TABLE -->
+            <div class="table-container">
+                <table class="telemetry-table">
+                    <thead>
+                        <tr>
+                            <th style="width:90px;">Time</th>
+                            <th style="width:80px;">Source</th>
+                            <th style="width:120px;">Page</th>
+                            <th style="width:70px;">Method</th>
+                            <th>Endpoint</th>
+                            <th style="width:70px;">Status</th>
+                            <th style="width:70px;">Result</th>
+                            <th style="width:80px;">Duration</th>
+                            <th>Error / Diagnosis</th>
+                            <th style="width:140px;">Request ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestsTableBody">
+                        <tr>
+                            <td colspan="10" style="text-align:center; padding:30px; color:var(--text-muted);">
+                                Initializing live request telemetry stream...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SUB-MATRICES: ENDPOINT HEALTH & PAGE HEALTH -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(420px, 1fr)); gap:24px; margin-top:30px;">
+            
+            <!-- ENDPOINT HEALTH -->
+            <section class="table-container" style="padding:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <h3 style="font-size:16px; font-weight:700; margin:0;">🎯 Endpoint Health & Error Rates</h3>
+                    <small style="color:var(--text-muted); font-size:11px;">Sorted by failure rate</small>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="telemetry-table" style="font-size:12px;">
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Source</th>
+                                <th>Calls</th>
+                                <th>Pass</th>
+                                <th>Fail</th>
+                                <th>Error %</th>
+                                <th>Avg</th>
+                                <th>P95</th>
+                            </tr>
+                        </thead>
+                        <tbody id="endpointHealthBody">
+                            <tr><td colspan="8" style="text-align:center; padding:15px; color:var(--text-muted);">Loading endpoint health...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PAGE HEALTH -->
+            <section class="table-container" style="padding:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <h3 style="font-size:16px; font-weight:700; margin:0;">📄 Page-Level Health Matrix</h3>
+                    <small style="color:var(--text-muted); font-size:11px;">API & Frontend health by page</small>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="telemetry-table" style="font-size:12px;">
+                        <thead>
+                            <tr>
+                                <th>Page Name</th>
+                                <th>Status</th>
+                                <th>Total Calls</th>
+                                <th>API Failures</th>
+                                <th>Frontend Errors</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pageHealthBody">
+                            <tr><td colspan="5" style="text-align:center; padding:15px; color:var(--text-muted);">Loading page health...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<!-- ==================================================
+     DEEP DIAGNOSTIC SLIDEOVER DRAWER
+=================================================== -->
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+<aside id="diagnosticDrawer" class="diagnostic-drawer" role="dialog" aria-labelledby="drawerTitle">
+    
+    <div class="drawer-header">
+        <div>
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+                <span id="drawerStatusBadge" class="badge badge-fail" style="font-size:13px; padding:4px 10px;">500 FAIL</span>
+                <span id="drawerMethodBadge" class="method-tag method-post">POST</span>
+                <span id="drawerCategoryBadge" class="badge" style="background:rgba(168, 85, 247, 0.2); color:#c084fc;">UROPAY</span>
+            </div>
+            <h2 id="drawerTitle" style="font-size:18px; font-weight:700; margin:0 0 4px; color:#fff; word-break:break-all;">/api/payment/create-order</h2>
+            <div style="font-size:12px; color:var(--text-dim); display:flex; align-items:center; gap:8px;">
+                <span>ID: <code id="drawerRequestId" style="color:#38bdf8;">RB-1234</code></span>
+                <button type="button" id="copyRequestIdBtn" class="action-btn" style="padding:2px 8px; font-size:11px;">Copy</button>
+            </div>
+        </div>
+
+        <button type="button" id="closeDrawerBtn" class="action-btn" style="padding:6px 12px; font-size:16px;">
+            ✕
+        </button>
+    </div>
+
+    <div class="drawer-body">
+
+        <!-- 1. WHAT WENT WRONG -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>🔴</span> WHAT FAILED
+            </div>
+            <p id="drawerWhatFailed" style="font-size:14px; font-weight:600; color:#fca5a5; margin:0 0 8px; line-height:1.5;">
+                UroPay API order creation failed while contacting upstream gateway.
+            </p>
+            <div class="prop-grid">
+                <span class="prop-name">Error Category:</span>
+                <span id="drawerCategoryText" class="prop-value" style="font-weight:700; color:#c084fc;">UROPAY_UPSTREAM</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Error Code:</span>
+                <span id="drawerErrorCodeText" class="prop-value" style="font-family:monospace;">UROPAY_UPSTREAM_ERROR</span>
+            </div>
+        </div>
+
+        <!-- 2. ROOT CAUSE -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>🎯</span> ROOT CAUSE
+            </div>
+            <div id="drawerRootCauseBox" style="padding:10px 14px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.25); border-radius:10px; font-weight:700; color:#fca5a5; font-size:13.5px; font-family:monospace;">
+                UROPAY_UPSTREAM → upstream request failed
+            </div>
+        </div>
+
+        <!-- 3. FAILURE CHAIN -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>⛓️</span> FAILURE CHAIN
+            </div>
+            <div id="drawerFailureChain" class="failure-chain-flow">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+
+        <!-- 4. WHERE & WHEN IT FAILED -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>📍</span> WHERE & WHEN IT FAILED
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Client Page:</span>
+                <span id="drawerPageText" class="prop-value">Payment</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Source Type:</span>
+                <span id="drawerSourceText" class="prop-value">USER</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">HTTP Endpoint:</span>
+                <span id="drawerEndpointText" class="prop-value">/api/payment/create-order</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Backend Route:</span>
+                <span id="drawerRouteText" class="prop-value">/api/payment/create-order</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">External Service:</span>
+                <span id="drawerServiceText" class="prop-value">UroPay (api.uropai.in)</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Execution Duration:</span>
+                <span id="drawerDurationText" class="prop-value">421ms</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Timestamp:</span>
+                <span id="drawerTimestampText" class="prop-value">2026-09-03T18:15:20.123Z</span>
+            </div>
+        </div>
+
+        <!-- 5. REQUEST TIMELINE & TRACE -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>⏱️</span> REQUEST EXECUTION TIMELINE
+            </div>
+            <div id="drawerTimeline" class="timeline-list">
+                <!-- Milestones injected dynamically -->
+            </div>
+        </div>
+
+        <!-- 6. CONTEXT & SANITIZED USER INFO -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>👤</span> CLIENT & CONTEXT METADATA
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Masked User ID:</span>
+                <span id="drawerUserMaskedText" class="prop-value">usr_***4f12</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">User Role:</span>
+                <span id="drawerUserRoleText" class="prop-value">user</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Correlation ID:</span>
+                <span id="drawerCorrelationIdText" class="prop-value" style="font-family:monospace; font-size:12px;">corr_174612</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">Referer:</span>
+                <span id="drawerRefererText" class="prop-value" style="font-size:12px;">https://reelsbundles.github.io/payment.html</span>
+            </div>
+            <div class="prop-grid">
+                <span class="prop-name">User Agent:</span>
+                <span id="drawerUserAgentText" class="prop-value" style="font-size:11.5px; color:var(--text-muted);">Mozilla/5.0...</span>
+            </div>
+        </div>
+
+        <!-- 7. SAFE TECHNICAL ERROR (RAW) -->
+        <div class="detail-section">
+            <div class="detail-section-title">
+                <span>🛡️</span> SAFE TECHNICAL ERROR (SECRETS REDACTED)
+            </div>
+            <pre id="drawerSafeErrorBox" class="code-box">No technical error stack captured.</pre>
+        </div>
+
+    </div>
+</aside>
+
+<!-- ==================================================
+     TEST SUITE MODAL
+=================================================== -->
+<div id="testSuiteModal" class="drawer-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#0f1523; border:1px solid var(--border-color); border-radius:18px; padding:28px; width:520px; max-width:92vw; box-shadow:0 20px 60px rgba(0,0,0,0.9);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <h3 style="margin:0; font-size:18px; font-weight:700;">⚡ Run Diagnostic Test Events</h3>
+            <button type="button" id="closeTestModalBtn" class="action-btn" style="padding:4px 10px;">✕</button>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:18px;">
+            Safely simulate a diagnostic event to test error classification, root-cause detection, SSE streaming, and the diagnostic slideover.
+        </p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+            <button type="button" class="action-btn test-run-btn" data-type="uropay" style="text-align:left; justify-content:flex-start;">
+                💳 UroPay Upstream Error (502)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="uropay_verify" style="text-align:left; justify-content:flex-start;">
+                🔍 UroPay Verification (500)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="uropay_webhook" style="text-align:left; justify-content:flex-start;">
+                🪝 UroPay Webhook Signature (400)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="database" style="text-align:left; justify-content:flex-start;">
+                🗄️ Database Query Error (500)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="drive" style="text-align:left; justify-content:flex-start;">
+                ☁️ Google Drive Stream (500)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="entitlement" style="text-align:left; justify-content:flex-start;">
+                🔒 Entitlement Missing (403)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="auth" style="text-align:left; justify-content:flex-start;">
+                🔑 Auth Token Expired (401)
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="frontend" style="text-align:left; justify-content:flex-start;">
+                💻 Frontend JS Exception
+            </button>
+            <button type="button" class="action-btn test-run-btn" data-type="pass" style="text-align:left; justify-content:flex-start; grid-column:1 / -1; background:rgba(16, 185, 129, 0.15); color:#34d399; border-color:rgba(16, 185, 129, 0.3);">
+                ✅ Normal Successful API Request (200 PASS)
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- CLIENT OBSERVABILITY & MONITOR CONTROLLER -->
+<script type="module" src="../assets/js/diagnostic-client.js"></script>
+<script type="module" src="assets/js/admin-monitor.js"></script>
+</body>
+</html>
