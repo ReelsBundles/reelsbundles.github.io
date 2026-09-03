@@ -23,7 +23,12 @@ function getAdminToken() {
 }
 
 const token = getAdminToken();
-const admin = JSON.parse(localStorage.getItem("admin_data") || "{}");
+let admin = {};
+try {
+    admin = JSON.parse(localStorage.getItem("admin_data") || "{}");
+} catch (e) {
+    admin = {};
+}
 
 if (!token) {
     location.href = "index.html";
@@ -185,64 +190,107 @@ setInterval(async () => {
 }, TELEMETRY_REFRESH_INTERVAL_MS);
 
 function bindEventListeners() {
-    // Refresh button
-    if (refreshBtn) {
-        refreshBtn.onclick = () => {
-            loadAllTelemetry();
+    // 1. Refresh button
+    const rBtn = document.getElementById("refreshBtn") || refreshBtn;
+    if (rBtn) {
+        rBtn.onclick = async () => {
+            const origHtml = rBtn.innerHTML;
+            rBtn.disabled = true;
+            rBtn.innerHTML = "↻ Refreshing...";
+            try {
+                await loadAllTelemetry();
+                rBtn.innerHTML = "✅ Refreshed!";
+                setTimeout(() => {
+                    rBtn.innerHTML = origHtml;
+                    rBtn.disabled = false;
+                }, 700);
+            } catch (err) {
+                rBtn.innerHTML = origHtml;
+                rBtn.disabled = false;
+            }
         };
     }
 
-    // Pause/Resume toggle
-    if (toggleFeedBtn) {
-        toggleFeedBtn.onclick = () => {
+    // 2. Pause/Resume toggle
+    const tBtn = document.getElementById("toggleFeedBtn") || toggleFeedBtn;
+    if (tBtn) {
+        tBtn.onclick = () => {
             isStreamPaused = !isStreamPaused;
             if (isStreamPaused) {
-                toggleFeedBtn.innerHTML = "▶️ Resume Stream";
-                toggleFeedBtn.style.background = "rgba(245, 158, 11, 0.2)";
-                toggleFeedBtn.style.borderColor = "rgba(245, 158, 11, 0.4)";
+                tBtn.innerHTML = "▶️ Resume Stream";
+                tBtn.style.background = "rgba(245, 158, 11, 0.2)";
+                tBtn.style.borderColor = "rgba(245, 158, 11, 0.4)";
             } else {
-                toggleFeedBtn.innerHTML = "⏸️ Pause Stream";
-                toggleFeedBtn.style.background = "";
-                toggleFeedBtn.style.borderColor = "";
+                tBtn.innerHTML = "⏸️ Pause Stream";
+                tBtn.style.background = "";
+                tBtn.style.borderColor = "";
                 loadRequests();
             }
         };
     }
 
-    // Clear logs button
-    if (clearLogsBtn) {
-        clearLogsBtn.onclick = async () => {
+    // 3. Clear logs button
+    const cBtn = document.getElementById("clearLogsBtn") || clearLogsBtn;
+    if (cBtn) {
+        cBtn.onclick = async () => {
             if (!confirm("Are you sure you want to clear all monitoring logs?\n\n(This will strictly clear monitoring logs only. Users, orders, bundles, payments, and downloads will NEVER be affected.)")) {
                 return;
             }
+            const origHtml = cBtn.innerHTML;
+            cBtn.disabled = true;
+            cBtn.innerHTML = "⏳ Clearing...";
             try {
                 const res = await fetch(`${API_BASE}/admin/monitor/clear`, {
                     method: "POST",
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
-                    loadAllTelemetry();
+                    cBtn.innerHTML = "✅ Cleared!";
+                    await loadAllTelemetry();
+                    setTimeout(() => {
+                        cBtn.innerHTML = origHtml;
+                        cBtn.disabled = false;
+                    }, 1000);
+                } else {
+                    let msg = "Server error " + res.status;
+                    try {
+                        const d = await res.json();
+                        if (d.message) msg = d.message;
+                    } catch (e) {}
+                    alert("Failed to clear logs: " + msg);
+                    cBtn.innerHTML = origHtml;
+                    cBtn.disabled = false;
                 }
             } catch (err) {
                 alert("Failed to clear logs: " + err.message);
+                cBtn.innerHTML = origHtml;
+                cBtn.disabled = false;
             }
         };
     }
 
-    // Test Suite Modal
-    if (openTestSuiteBtn && testSuiteModal) {
-        openTestSuiteBtn.onclick = () => {
-            testSuiteModal.style.display = "flex";
+    // 4. Test Suite Modal
+    const tsBtn = document.getElementById("openTestSuiteBtn") || openTestSuiteBtn;
+    const tsModal = document.getElementById("testSuiteModal") || testSuiteModal;
+    const ctBtn = document.getElementById("closeTestModalBtn") || closeTestModalBtn;
+    if (tsBtn && tsModal) {
+        tsBtn.onclick = () => {
+            tsModal.style.display = "flex";
+            tsModal.classList.add("active");
         };
     }
-    if (closeTestModalBtn && testSuiteModal) {
-        closeTestModalBtn.onclick = () => {
-            testSuiteModal.style.display = "none";
+    if (ctBtn && tsModal) {
+        ctBtn.onclick = () => {
+            tsModal.style.display = "none";
+            tsModal.classList.remove("active");
         };
     }
-    if (testSuiteModal) {
-        testSuiteModal.onclick = (e) => {
-            if (e.target === testSuiteModal) testSuiteModal.style.display = "none";
+    if (tsModal) {
+        tsModal.onclick = (e) => {
+            if (e.target === tsModal) {
+                tsModal.style.display = "none";
+                tsModal.classList.remove("active");
+            }
         };
     }
 
@@ -905,13 +953,23 @@ function openDrawer(r) {
         }
     }
 
-    drawerBackdrop.classList.add("active");
-    diagnosticDrawer.classList.add("active");
+    if (drawerBackdrop) {
+        drawerBackdrop.classList.add("active");
+        drawerBackdrop.style.display = "block";
+    }
+    if (diagnosticDrawer) {
+        diagnosticDrawer.classList.add("active");
+    }
 }
 
 function closeDrawer() {
-    if (drawerBackdrop) drawerBackdrop.classList.remove("active");
-    if (diagnosticDrawer) diagnosticDrawer.classList.remove("active");
+    if (drawerBackdrop) {
+        drawerBackdrop.classList.remove("active");
+        drawerBackdrop.style.display = "none";
+    }
+    if (diagnosticDrawer) {
+        diagnosticDrawer.classList.remove("active");
+    }
 }
 
 function escapeHtml(str) {

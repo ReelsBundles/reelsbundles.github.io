@@ -73,6 +73,8 @@ body.admin-monitor-page {
 
 /* Controls header */
 .monitor-topbar {
+    position: relative;
+    z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -446,9 +448,11 @@ body.admin-monitor-page {
     transition: opacity 0.25s ease;
 }
 
-.drawer-backdrop.active {
-    opacity: 1;
-    pointer-events: auto;
+.drawer-backdrop.active,
+.drawer-backdrop[style*="display: flex"],
+.drawer-backdrop[style*="display:flex"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 
 .diagnostic-drawer {

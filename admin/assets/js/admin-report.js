@@ -48,18 +48,22 @@ let activeDateRange = "7d";
 ========================================================== */
 export function initReportControls() {
     // Topbar & Shortcut buttons
-    if (openReportModalBtn) {
-        openReportModalBtn.onclick = () => openModal("ALL");
+    const openBtn = document.getElementById("openReportModalBtn") || openReportModalBtn;
+    if (openBtn) {
+        openBtn.onclick = () => openModal("ALL");
     }
-    if (openCustomReportBtn) {
-        openCustomReportBtn.onclick = () => openModal(activeScope);
+    const customBtn = document.getElementById("openCustomReportBtn") || openCustomReportBtn;
+    if (customBtn) {
+        customBtn.onclick = () => openModal(activeScope);
     }
-    if (closeReportModalBtn && reportConfigModal) {
-        closeReportModalBtn.onclick = closeModal;
+    const closeBtn = document.getElementById("closeReportModalBtn") || closeReportModalBtn;
+    if (closeBtn) {
+        closeBtn.onclick = closeModal;
     }
-    if (reportConfigModal) {
-        reportConfigModal.onclick = (e) => {
-            if (e.target === reportConfigModal) closeModal();
+    const modal = document.getElementById("reportConfigModal") || reportConfigModal;
+    if (modal) {
+        modal.onclick = (e) => {
+            if (e.target === modal) closeModal();
         };
     }
 
@@ -94,27 +98,33 @@ export function initReportControls() {
     });
 
     // Modal action buttons
-    if (generatePdfBtn) {
-        generatePdfBtn.onclick = () => handleModalExport("pdf");
+    const pdfBtn = document.getElementById("generatePdfBtn") || generatePdfBtn;
+    if (pdfBtn) {
+        pdfBtn.onclick = () => handleModalExport("pdf");
     }
-    if (generateExcelBtn) {
-        generateExcelBtn.onclick = () => handleModalExport("xlsx");
+    const xlsxBtn = document.getElementById("generateExcelBtn") || generateExcelBtn;
+    if (xlsxBtn) {
+        xlsxBtn.onclick = () => handleModalExport("xlsx");
     }
 }
 
 function openModal(defaultScope = "ALL") {
-    if (!reportConfigModal) return;
+    const modal = document.getElementById("reportConfigModal") || reportConfigModal;
+    if (!modal) return;
     activeScope = defaultScope;
     document.querySelectorAll(".report-scope-btn").forEach(b => {
         if (b.dataset.scope === defaultScope) b.classList.add("active");
         else b.classList.remove("active");
     });
-    reportConfigModal.style.display = "flex";
+    modal.style.display = "flex";
+    modal.classList.add("active");
 }
 
 function closeModal() {
-    if (reportConfigModal) {
-        reportConfigModal.style.display = "none";
+    const modal = document.getElementById("reportConfigModal") || reportConfigModal;
+    if (modal) {
+        modal.style.display = "none";
+        modal.classList.remove("active");
     }
 }
 
