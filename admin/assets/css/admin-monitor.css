@@ -612,3 +612,51 @@ pre.code-box {
     color: #fff;
     word-break: break-all;
 }
+
+/* ==========================================================
+   REPORT EXPORT CONTROLS & MODAL
+========================================================== */
+.report-btn-group {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    padding: 3px 6px;
+    gap: 4px;
+}
+
+.report-quick-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    color: #fff;
+    padding: 4px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.report-quick-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.report-quick-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.report-scope-btn.active {
+    border-color: rgba(59, 130, 246, 0.8) !important;
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #93c5fd !important;
+}
+
+.report-range-preset-btn.active {
+    border-color: rgba(168, 85, 247, 0.8) !important;
+    background: rgba(168, 85, 247, 0.2) !important;
+    color: #e9d5ff !important;
+}

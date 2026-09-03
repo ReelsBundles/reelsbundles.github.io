@@ -98,6 +98,10 @@
                     ⚡ Diagnostic Test Suite
                 </button>
 
+                <button type="button" id="openReportModalBtn" class="action-btn primary" style="background: linear-gradient(135deg, #2563eb, #3b82f6); border:none;" title="Export User & Admin Diagnostic Reports (PDF & Excel)">
+                    📑 Export Reports
+                </button>
+
                 <button type="button" id="refreshBtn" class="action-btn" title="Refresh all telemetry data">
                     ↻ Refresh
                 </button>
@@ -238,6 +242,48 @@
             </div>
             <div id="incidentsGrid" class="incidents-grid">
                 <!-- Incident cards injected dynamically -->
+            </div>
+        </section>
+
+        <!-- REPORT SHORTCUTS / EXPORT CARD -->
+        <section class="report-shortcuts-card" style="background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(168,85,247,0.05)); border:1px solid rgba(59,130,246,0.25); border-radius:16px; padding:18px 22px; margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="background:rgba(59,130,246,0.2); width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px;">
+                        📑
+                    </div>
+                    <div>
+                        <strong style="color:#fff; font-size:15px; display:block;">Production Monitoring Reports</strong>
+                        <small style="color:var(--text-muted); font-size:12px;">Export User, Admin, and System diagnostic reports in PDF or multi-sheet Excel (.xlsx)</small>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <!-- USER REPORT -->
+                    <div class="report-btn-group">
+                        <span class="report-group-label" style="font-size:11px; font-weight:700; color:#60a5fa; margin-right:4px;">👤 USER:</span>
+                        <button type="button" class="report-quick-btn" data-type="USER" data-format="pdf" title="Generate User Monitoring PDF">📄 PDF</button>
+                        <button type="button" class="report-quick-btn" data-type="USER" data-format="xlsx" title="Generate User Monitoring Excel (.xlsx)">📊 Excel</button>
+                    </div>
+
+                    <!-- ADMIN REPORT -->
+                    <div class="report-btn-group">
+                        <span class="report-group-label" style="font-size:11px; font-weight:700; color:#c084fc; margin-right:4px;">🛡️ ADMIN:</span>
+                        <button type="button" class="report-quick-btn" data-type="ADMIN" data-format="pdf" title="Generate Admin Monitoring PDF">📄 PDF</button>
+                        <button type="button" class="report-quick-btn" data-type="ADMIN" data-format="xlsx" title="Generate Admin Monitoring Excel (.xlsx)">📊 Excel</button>
+                    </div>
+
+                    <!-- ALL REPORT -->
+                    <div class="report-btn-group">
+                        <span class="report-group-label" style="font-size:11px; font-weight:700; color:#34d399; margin-right:4px;">🌐 ALL:</span>
+                        <button type="button" class="report-quick-btn" data-type="ALL" data-format="pdf" title="Generate All Monitoring PDF">📄 PDF</button>
+                        <button type="button" class="report-quick-btn" data-type="ALL" data-format="xlsx" title="Generate All Monitoring Excel (.xlsx)">📊 Excel</button>
+                    </div>
+
+                    <button type="button" id="openCustomReportBtn" class="action-btn" style="padding:7px 14px; font-size:12px; background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.15);" title="Filter by date range, error categories, and status">
+                        ⚙️ Custom Range & Filters...
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -596,8 +642,145 @@
     </div>
 </div>
 
-<!-- CLIENT OBSERVABILITY & MONITOR CONTROLLER -->
+<!-- ==================================================
+     REPORT CONFIGURATION & EXPORT MODAL
+=================================================== -->
+<div id="reportConfigModal" class="drawer-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#0f1523; border:1px solid var(--border-color); border-radius:18px; padding:28px; width:640px; max-width:94vw; box-shadow:0 20px 60px rgba(0,0,0,0.9); max-height:92vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <h3 style="margin:0; font-size:18px; font-weight:700; display:flex; align-items:center; gap:8px;">
+                <span>📑</span> Export Monitoring Report
+            </h3>
+            <button type="button" id="closeReportModalBtn" class="action-btn" style="padding:4px 10px;">✕</button>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+            Generate production diagnostic reports containing genuine telemetry, subsystem health, error classification, and detailed failure records.
+        </p>
+
+        <!-- REPORT SCOPE -->
+        <div style="margin-bottom:16px;">
+            <label style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">
+                1. Select Report Scope:
+            </label>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+                <button type="button" class="report-scope-btn active" data-scope="USER" style="padding:10px; border-radius:10px; border:1px solid rgba(59,130,246,0.5); background:rgba(59,130,246,0.15); color:#60a5fa; font-weight:700; cursor:pointer;">
+                    👤 USER / Customer
+                </button>
+                <button type="button" class="report-scope-btn" data-scope="ADMIN" style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:rgba(255,255,255,0.03); color:#fff; font-weight:600; cursor:pointer;">
+                    🛡️ ADMIN Panel
+                </button>
+                <button type="button" class="report-scope-btn" data-scope="ALL" style="padding:10px; border-radius:10px; border:1px solid var(--border-color); background:rgba(255,255,255,0.03); color:#fff; font-weight:600; cursor:pointer;">
+                    🌐 ALL Requests
+                </button>
+            </div>
+        </div>
+
+        <!-- DATE RANGE SELECTION -->
+        <div style="margin-bottom:16px;">
+            <label style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">
+                2. Select Date Range:
+            </label>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:8px; margin-bottom:10px;">
+                <button type="button" class="report-range-preset-btn" data-range="today" style="padding:7px; border-radius:8px; border:1px solid var(--border-color); background:rgba(255,255,255,0.04); color:#fff; font-size:12px; cursor:pointer;">Today</button>
+                <button type="button" class="report-range-preset-btn" data-range="yesterday" style="padding:7px; border-radius:8px; border:1px solid var(--border-color); background:rgba(255,255,255,0.04); color:#fff; font-size:12px; cursor:pointer;">Yesterday</button>
+                <button type="button" class="report-range-preset-btn active" data-range="7d" style="padding:7px; border-radius:8px; border:1px solid rgba(168,85,247,0.5); background:rgba(168,85,247,0.15); color:#c084fc; font-weight:700; font-size:12px; cursor:pointer;">Last 7 Days</button>
+                <button type="button" class="report-range-preset-btn" data-range="30d" style="padding:7px; border-radius:8px; border:1px solid var(--border-color); background:rgba(255,255,255,0.04); color:#fff; font-size:12px; cursor:pointer;">Last 30 Days</button>
+                <button type="button" class="report-range-preset-btn" data-range="custom" style="padding:7px; border-radius:8px; border:1px solid var(--border-color); background:rgba(255,255,255,0.04); color:#fff; font-size:12px; cursor:pointer;">Custom...</button>
+            </div>
+
+            <div id="customDateRangeBox" style="display:none; grid-template-columns:1fr 1fr; gap:10px; background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:10px;">
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Start Date</label>
+                    <input type="date" id="reportStartDate" class="search-input" style="width:100%; box-sizing:border-box; min-width:unset;">
+                </div>
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">End Date</label>
+                    <input type="date" id="reportEndDate" class="search-input" style="width:100%; box-sizing:border-box; min-width:unset;">
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTIONAL ADVANCED FILTERS -->
+        <div style="margin-bottom:20px; background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:12px; padding:14px;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">
+                3. Optional Filters:
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Result</label>
+                    <select id="reportFilterResult" class="select-filter" style="width:100%;">
+                        <option value="ALL">Result: All (PASS + FAIL)</option>
+                        <option value="PASS">PASS Only</option>
+                        <option value="FAIL">FAIL Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Status Code Family</label>
+                    <select id="reportFilterStatusCode" class="select-filter" style="width:100%;">
+                        <option value="ALL">Status: All</option>
+                        <option value="2xx">2xx (Success)</option>
+                        <option value="4xx">4xx (Client / Auth)</option>
+                        <option value="5xx">5xx (Server / Gateway)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">HTTP Method</label>
+                    <select id="reportFilterMethod" class="select-filter" style="width:100%;">
+                        <option value="ALL">Method: All</option>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px;">Error Category</label>
+                    <select id="reportFilterCategory" class="select-filter" style="width:100%;">
+                        <option value="ALL">Category: All</option>
+                        <option value="UROPAY">UROPAY</option>
+                        <option value="UROPAY_CALLBACK">UROPAY_CALLBACK</option>
+                        <option value="PAYMENT_VERIFICATION">PAYMENT_VERIFICATION</option>
+                        <option value="PAYMENT">PAYMENT</option>
+                        <option value="DATABASE">DATABASE</option>
+                        <option value="AUTHENTICATION">AUTHENTICATION</option>
+                        <option value="AUTHORIZATION">AUTHORIZATION</option>
+                        <option value="GOOGLE DRIVE">GOOGLE DRIVE</option>
+                        <option value="DOWNLOAD">DOWNLOAD</option>
+                        <option value="ENTITLEMENT">ENTITLEMENT</option>
+                        <option value="FRONTEND">FRONTEND</option>
+                        <option value="NETWORK">NETWORK</option>
+                        <option value="TIMEOUT">TIMEOUT</option>
+                        <option value="UPSTREAM">UPSTREAM</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- GENERATION STATUS SPINNER / MESSAGE -->
+        <div id="reportStatusNotice" style="display:none; padding:10px 14px; border-radius:8px; font-size:12.5px; margin-bottom:16px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#93c5fd;">
+            ⏳ Generating report...
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <button type="button" id="generatePdfBtn" class="action-btn primary" style="justify-content:center; padding:12px; background:linear-gradient(135deg, #ef4444, #dc2626); border:none; font-size:13.5px;">
+                📄 Download PDF Report
+            </button>
+            <button type="button" id="generateExcelBtn" class="action-btn primary" style="justify-content:center; padding:12px; background:linear-gradient(135deg, #10b981, #059669); border:none; font-size:13.5px;">
+                📊 Download Excel (.xlsx)
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- REPORT LIBRARIES: SHEETJS (EXCEL) + JSPDF (PDF) -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<!-- CLIENT OBSERVABILITY & MONITOR CONTROLLERS -->
 <script type="module" src="../assets/js/diagnostic-client.js"></script>
 <script type="module" src="assets/js/admin-monitor.js"></script>
+<script type="module" src="assets/js/admin-report.js"></script>
 </body>
 </html>
