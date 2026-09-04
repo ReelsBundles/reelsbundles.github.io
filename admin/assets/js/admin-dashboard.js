@@ -30,7 +30,10 @@ if (adminName) {
 const adminLogoutBtn = document.getElementById("adminLogoutBtn");
 if (adminLogoutBtn) {
     adminLogoutBtn.onclick = () => {
-        localStorage.clear();
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_data");
+        sessionStorage.removeItem("admin_token");
+        sessionStorage.removeItem("admin_data");
         location.href = "index.html";
     };
 }

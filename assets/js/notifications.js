@@ -64,20 +64,39 @@ let activeNotifications = [];
         }
     }
 
+    function getActiveMaintAlert() {
+        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || Boolean(document.getElementById("maintOverlay"));
+        if (!isMaintActive || !isNotificationAllowedPage()) {
+            return null;
+        }
+
+        let maintMsg = "ReelsBundles is undergoing scheduled system maintenance.";
+        try {
+            const raw = localStorage.getItem("rb_maint_data");
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && parsed.message) {
+                    maintMsg = parsed.message;
+                }
+            }
+        } catch (e) {}
+
+        return {
+            id: "system_maintenance_active_alert",
+            type: "alert",
+            title: "⚙️ Scheduled Maintenance Active",
+            message: maintMsg,
+            active: true
+        };
+    }
+
     function updateBadgeCount() {
         // FILTER: Bell Badge & Drawer displays ALERTS ONLY
         let alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
 
-        // Maintenance Mode Fallback Alert if maintenance is currently active
-        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || document.getElementById("maintOverlay");
-        if (isMaintActive && alertNotifs.length === 0) {
-            alertNotifs = [{
-                id: "maint_auto_alert",
-                type: "alert",
-                title: "⚙️ Scheduled Maintenance Active",
-                message: "ReelsBundles is undergoing scheduled system upgrades. Systems will resume shortly.",
-                active: true
-            }];
+        const maintAlert = getActiveMaintAlert();
+        if (maintAlert && !alertNotifs.some(n => n.id === maintAlert.id)) {
+            alertNotifs = [maintAlert, ...alertNotifs];
         }
 
         const readIds = getReadNotificationIds();
@@ -126,15 +145,9 @@ let activeNotifications = [];
         // ROUTING RULE: Bell Drawer displays ALERTS ONLY
         let alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
 
-        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || document.getElementById("maintOverlay");
-        if (isMaintActive && alertNotifs.length === 0) {
-            alertNotifs = [{
-                id: "maint_auto_alert",
-                type: "alert",
-                title: "⚙️ Scheduled Maintenance Active",
-                message: "ReelsBundles is undergoing scheduled system upgrades. Systems will resume shortly.",
-                active: true
-            }];
+        const maintAlert = getActiveMaintAlert();
+        if (maintAlert && !alertNotifs.some(n => n.id === maintAlert.id)) {
+            alertNotifs = [maintAlert, ...alertNotifs];
         }
 
         if (alertNotifs.length === 0) {
@@ -194,7 +207,13 @@ let activeNotifications = [];
         if (!container) return;
 
         // ROUTING RULE: User Dashboard displays ALERTS ONLY
-        const alertNotifs = notifications.filter(n => n.type === "alert" && n.active !== false);
+        let alertNotifs = (notifications || []).filter(n => n.type === "alert" && n.active !== false);
+
+        const maintAlert = getActiveMaintAlert();
+        if (maintAlert && !alertNotifs.some(n => n.id === maintAlert.id)) {
+            alertNotifs = [maintAlert, ...alertNotifs];
+        }
+
         if (alertNotifs.length === 0) {
             container.style.display = "none";
             return;
@@ -230,7 +249,7 @@ let activeNotifications = [];
                         path === "" ||
                         path.endsWith("/reelsbundles.github.io");
 
-        const isDashboard = path.includes("dashboard.html") || path.endsWith("/dashboard");
+        const isDashboard = path.includes("dashboard.html") || path.endsWith("/dashboard") || path.includes("/dashboard/");
 
         return isIndex || isDashboard;
     }
@@ -341,10 +360,23 @@ let activeNotifications = [];
         initNotificationUI();
     }
 
+    function syncMaintenanceNotifications() {
+        updateBadgeCount();
+        renderNotificationList();
+        updateDashboardAlerts(activeNotifications);
+    }
+
+    window.addEventListener("storage", (e) => {
+        if (e.key === "rb_maint_active" || e.key === "rb_maint_data") {
+            syncMaintenanceNotifications();
+        }
+    });
+
     window.copyCouponCode = copyToClipboard;
     window.toggleNotifDrawer = function() {
         initNotificationUI();
         toggleDrawer();
     };
     window.initNotificationUI = initNotificationUI;
+    window.syncMaintenanceNotifications = syncMaintenanceNotifications;
 })();

@@ -202,3 +202,69 @@
 .maint-tester-link:hover {
     color: #a78bfa;
 }
+
+/* ==========================================================
+   REAL MAINTENANCE ALERT BANNER (INDEX & DASHBOARD)
+========================================================== */
+.user-real-maint-banner {
+    position: relative;
+    z-index: 99999;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(185, 28, 28, 0.28));
+    border-bottom: 1px solid rgba(239, 68, 68, 0.45);
+    padding: 12px 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    animation: maint-banner-slide-down 0.35s ease-out;
+}
+
+@keyframes maint-banner-slide-down {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-real-maint-banner-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+
+.user-real-maint-banner .maint-banner-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.user-real-maint-banner .maint-banner-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1.5;
+}
+
+.user-real-maint-banner .maint-banner-title {
+    color: #fca5a5;
+    font-weight: 700;
+}
+
+.user-real-maint-banner .maint-banner-sep {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.user-real-maint-banner .maint-banner-msg {
+    color: #fecaca;
+    font-weight: 500;
+}

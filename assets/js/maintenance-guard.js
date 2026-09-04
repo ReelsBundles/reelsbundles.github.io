@@ -35,27 +35,120 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         const isTesterSessionActive = sessionStorage.getItem("rb_maint_tester_session") === "true";
         if (isTesterSessionActive) {
             console.log("[MAINTENANCE GUARD] 🔓 Session Tester Bypass Active. Showing Live Site.");
+            const cachedMaintActive = localStorage.getItem("rb_maint_active") === "true";
+            if (cachedMaintActive) {
+                try {
+                    const cachedObj = JSON.parse(localStorage.getItem("rb_maint_data") || "{}");
+                    renderRealMaintAlertBanner(cachedObj.message);
+                } catch (e) {}
+            }
             // Still run polling in case maintenance turns off or session changes
             startRealtimeTelemetryPolling();
             return;
         }
     } catch (e) {}
 
+    function isIndexPage() {
+        const path = window.location.pathname.toLowerCase();
+        return path === "" ||
+               path === "/" ||
+               path.endsWith("/index.html") ||
+               path.endsWith("/index") ||
+               path.endsWith("/reelsbundles.github.io/") ||
+               path.endsWith("/reelsbundles.github.io");
+    }
+
+    function isDashboardPage() {
+        const path = window.location.pathname.toLowerCase();
+        return path.includes("dashboard.html") || path.endsWith("/dashboard") || path.includes("/dashboard/");
+    }
+
+    function renderRealMaintAlertBanner(message) {
+        // EXACTLY 2 user pages get the banner: User Index and User Dashboard
+        // (The 3rd page is User Maintenance page which is #maintOverlay itself)
+        if (!isIndexPage() && !isDashboardPage()) {
+            removeRealMaintAlertBanner();
+            return;
+        }
+
+        const cleanMsg = escapeHtml(message || "🛠️ ReelsBundles is undergoing scheduled system maintenance.");
+        let banner = document.getElementById("realMaintAlertBanner");
+
+        const bannerHtml = `
+            <div class="user-real-maint-banner-inner">
+                <span class="maint-banner-icon">⚠️</span>
+                <div class="maint-banner-content">
+                    <span class="maint-banner-title">Scheduled System Maintenance</span>
+                    <span class="maint-banner-sep">•</span>
+                    <span class="maint-banner-msg">${cleanMsg}</span>
+                </div>
+            </div>
+        `;
+
+        if (!banner) {
+            banner = document.createElement("div");
+            banner.id = "realMaintAlertBanner";
+            banner.className = "user-real-maint-banner";
+            banner.innerHTML = bannerHtml;
+
+            const insertBanner = () => {
+                if (isIndexPage()) {
+                    const headerWrapper = document.querySelector(".fixed-header-wrapper");
+                    if (headerWrapper) {
+                        headerWrapper.insertBefore(banner, headerWrapper.firstChild);
+                        return;
+                    }
+                } else if (isDashboardPage()) {
+                    const mainContent = document.querySelector(".dashboard-content") || document.querySelector(".dashboard-main");
+                    if (mainContent) {
+                        mainContent.insertBefore(banner, mainContent.firstChild);
+                        return;
+                    }
+                }
+                if (document.body) {
+                    document.body.insertBefore(banner, document.body.firstChild);
+                }
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", insertBanner);
+            } else {
+                insertBanner();
+            }
+        } else {
+            banner.innerHTML = bannerHtml;
+        }
+    }
+
+    function removeRealMaintAlertBanner() {
+        const banner = document.getElementById("realMaintAlertBanner");
+        if (banner) banner.remove();
+    }
+
     // 2. FAST SYNC PRE-BLOCK: Prevent 2-3s flash of index page on refresh
     try {
         const isCachedActive = localStorage.getItem("rb_maint_active") === "true";
         if (isCachedActive) {
-            const preStyle = document.createElement("style");
-            preStyle.id = "maintPreBlockStyle";
-            preStyle.textContent = `
-                body > *:not(#maintOverlay):not(#testerPassModal) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
-                html { background: #030712 !important; }
-            `;
-            (document.head || document.documentElement).appendChild(preStyle);
+            const isTester = sessionStorage.getItem("rb_maint_tester_session") === "true";
+            if (!isTester) {
+                const preStyle = document.createElement("style");
+                preStyle.id = "maintPreBlockStyle";
+                preStyle.textContent = `
+                    body > *:not(#maintOverlay):not(#testerPassModal) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+                    html { background: #030712 !important; }
+                `;
+                (document.head || document.documentElement).appendChild(preStyle);
 
-            const cachedData = localStorage.getItem("rb_maint_data");
-            if (cachedData) {
-                renderMaintenanceOverlay(JSON.parse(cachedData));
+                const cachedData = localStorage.getItem("rb_maint_data");
+                if (cachedData) {
+                    renderMaintenanceOverlay(JSON.parse(cachedData));
+                }
+            } else {
+                const cachedData = localStorage.getItem("rb_maint_data");
+                if (cachedData) {
+                    const parsed = JSON.parse(cachedData);
+                    renderRealMaintAlertBanner(parsed?.message);
+                }
             }
         }
     } catch (e) {}
@@ -79,6 +172,14 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                         localStorage.setItem("rb_maint_data", JSON.stringify(data));
                     } catch (e) {}
 
+                    // 1. Show real maintenance alert banner on User Index & User Dashboard
+                    renderRealMaintAlertBanner(data.message);
+
+                    // Sync notifications if controller is present
+                    if (typeof window.syncMaintenanceNotifications === "function") {
+                        window.syncMaintenanceNotifications();
+                    }
+
                     if (isTesterSessionActive) {
                         removeMaintenanceOverlay();
                         return;
@@ -93,6 +194,11 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                         localStorage.removeItem("rb_maint_data");
                     } catch (e) {}
                     removeMaintenanceOverlay();
+                    removeRealMaintAlertBanner();
+
+                    if (typeof window.syncMaintenanceNotifications === "function") {
+                        window.syncMaintenanceNotifications();
+                    }
 
                     // Auto-reload live site if overlay was active previously or maintenance ended live
                     if (hadOverlay || lastMaintenanceState === true) {
@@ -421,6 +527,10 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                     try { localStorage.setItem("rb_maint_pin", String(pin).trim()); } catch (e) {}
                     modal.style.display = "none";
                     removeMaintenanceOverlay();
+                    renderRealMaintAlertBanner(data?.message);
+                    if (typeof window.syncMaintenanceNotifications === "function") {
+                        window.syncMaintenanceNotifications();
+                    }
                     alert("✨ Live site unlocked for testing in this browser session!\n\nNote: Closing this tab or browser will automatically expire the tester session.");
                 } else {
                     if (errEl) {
