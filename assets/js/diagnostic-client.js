@@ -157,8 +157,12 @@
     window.fetch = async function(input, init = {}) {
         const urlStr = typeof input === "string" ? input : (input?.url || "");
 
-        // Don't instrument monitoring reporting itself
-        if (urlStr.includes("/api/monitor/client-error") || urlStr.includes("/api/admin/monitor")) {
+        // Don't instrument monitoring reporting itself or third-party assets
+        if (
+            urlStr.includes("/api/monitor/client-error") ||
+            urlStr.includes("/api/admin/monitor") ||
+            (!urlStr.startsWith("/api") && !urlStr.includes("/api/"))
+        ) {
             return originalFetch.apply(this, arguments);
         }
 
