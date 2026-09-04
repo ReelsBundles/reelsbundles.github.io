@@ -1827,25 +1827,12 @@ function createDriveItemCard(item, bundle) {
             }
 
             if (isMega && item.type === "mega") {
-                const token = await getAuthToken();
-                if (!token) {
-                    redirectToLogin();
-                    return;
-                }
-
-                let megaEndpoint = `/api/user/bundles/${encodeURIComponent(bundleId)}/mega`;
-                if (item.id && item.type !== "mega") {
-                    megaEndpoint += `?fileId=${encodeURIComponent(item.id)}`;
-                }
-
-                const response = await apiFetch(megaEndpoint);
-                if (response.redirected && response.url) {
-                    window.open(response.url, "_blank", "noopener,noreferrer");
-                } else if (response.ok) {
-                    window.open(`${API_BASE}${megaEndpoint}`, "_blank", "noopener,noreferrer");
-                } else {
-                    await throwApiError(response, "Unable to access MEGA storage.");
-                }
+                await downloadDriveItem(
+                    bundleId,
+                    item.id || "root",
+                    item.name || "download",
+                    card
+                );
                 return;
             }
 
