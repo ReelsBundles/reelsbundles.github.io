@@ -46,12 +46,11 @@ let activeNotifications = [];
                     updateBadgeCount();
                     renderNotificationList();
                     updateTopTickerBar(data.notifications);
-                    updateDashboardAlerts(data.notifications);
+                    updateDashboardAlerts();
                 }
             }
         } catch (err) {
             console.warn("[NOTIFICATIONS] Fetch warning:", err);
-            // Fallback cached notifications
             try {
                 const cached = localStorage.getItem("rb_cached_notifications");
                 if (cached) {
@@ -59,48 +58,87 @@ let activeNotifications = [];
                     updateBadgeCount();
                     renderNotificationList();
                     updateTopTickerBar(activeNotifications);
+                    updateDashboardAlerts();
                 }
             } catch (e) {}
         }
+
+        // Also fetch active Important Alerts
+        try {
+            const resAlerts = await fetch(`${API_BASE}/system/important-alerts`, { cache: "no-store" });
+            if (resAlerts.ok) {
+                const alertData = await resAlerts.json();
+                if (alertData.success && Array.isArray(alertData.alerts)) {
+                    try {
+                        localStorage.setItem("rb_active_important_alerts", JSON.stringify(alertData.alerts));
+                    } catch (e) {}
+                    updateBadgeCount();
+                    renderNotificationList();
+                    updateDashboardAlerts();
+                }
+            }
+        } catch (e) {}
     }
 
-    function getActiveMaintAlert() {
-        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || Boolean(document.getElementById("maintOverlay"));
-        if (!isMaintActive || !isNotificationAllowedPage()) {
-            return null;
+    function getAllActiveAlerts() {
+        if (!isNotificationAllowedPage()) {
+            return [];
         }
 
-        let maintMsg = "ReelsBundles is undergoing scheduled system maintenance.";
+        const alerts = [];
+
+        // 1. Maintenance Alert
+        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || Boolean(document.getElementById("maintOverlay"));
+        if (isMaintActive) {
+            let maintMsg = "ReelsBundles is undergoing scheduled system maintenance.";
+            try {
+                const raw = localStorage.getItem("rb_maint_data");
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && parsed.message) {
+                        maintMsg = parsed.message;
+                    }
+                }
+            } catch (e) {}
+
+            alerts.push({
+                id: "system_maintenance_active_alert",
+                type: "alert",
+                category: "maintenance",
+                title: "⚙️ Scheduled Maintenance Active",
+                message: maintMsg,
+                active: true
+            });
+        }
+
+        // 2. Important Alerts
         try {
-            const raw = localStorage.getItem("rb_maint_data");
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (parsed && parsed.message) {
-                    maintMsg = parsed.message;
+            const rawAlerts = localStorage.getItem("rb_active_important_alerts");
+            if (rawAlerts) {
+                const list = JSON.parse(rawAlerts);
+                if (Array.isArray(list)) {
+                    list.filter(a => a.active !== false).forEach(a => {
+                        alerts.push({
+                            id: a.id || "important_alert",
+                            type: "alert",
+                            category: "important",
+                            title: a.title || "⚠️ Important Alert",
+                            message: a.message || "",
+                            active: true
+                        });
+                    });
                 }
             }
         } catch (e) {}
 
-        return {
-            id: "system_maintenance_active_alert",
-            type: "alert",
-            title: "⚙️ Scheduled Maintenance Active",
-            message: maintMsg,
-            active: true
-        };
+        return alerts;
     }
 
     function updateBadgeCount() {
         // FILTER: Bell Badge & Drawer displays ALERTS ONLY
-        let alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
-
-        const maintAlert = getActiveMaintAlert();
-        if (maintAlert && !alertNotifs.some(n => n.id === maintAlert.id)) {
-            alertNotifs = [maintAlert, ...alertNotifs];
-        }
-
+        const systemAlerts = getAllActiveAlerts();
         const readIds = getReadNotificationIds();
-        const unreadAlerts = alertNotifs.filter(n => !readIds.includes(n.id));
+        const unreadAlerts = systemAlerts.filter(n => !readIds.includes(n.id));
 
         const badges = document.querySelectorAll("#notifBadge, #maintBellBadge, .bell-badge, .notif-badge");
         badges.forEach(badgeEl => {
@@ -143,14 +181,9 @@ let activeNotifications = [];
         if (!bodyEl) return;
 
         // ROUTING RULE: Bell Drawer displays ALERTS ONLY
-        let alertNotifs = activeNotifications.filter(n => n.type === "alert" && n.active !== false);
+        const systemAlerts = getAllActiveAlerts();
 
-        const maintAlert = getActiveMaintAlert();
-        if (maintAlert && !alertNotifs.some(n => n.id === maintAlert.id)) {
-            alertNotifs = [maintAlert, ...alertNotifs];
-        }
-
-        if (alertNotifs.length === 0) {
+        if (systemAlerts.length === 0) {
             bodyEl.innerHTML = `
                 <div class="notif-empty">
                     <div class="notif-empty-icon">🔔</div>
@@ -160,12 +193,18 @@ let activeNotifications = [];
             return;
         }
 
-        const html = alertNotifs.map(n => {
+        const html = systemAlerts.map(n => {
+            const isMaint = n.category === "maintenance";
+            const tagText = isMaint ? "🛠️ MAINTENANCE" : "⚠️ IMPORTANT ALERT";
+            const tagStyle = isMaint
+                ? "background:rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.4); color:#fca5a5;"
+                : "background:rgba(234, 179, 8, 0.2); border:1px solid rgba(234, 179, 8, 0.4); color:#fde047;";
+
             return `
-                <div class="notif-item alert" data-id="${escapeHtml(n.id)}">
+                <div class="notif-item alert ${n.category || ''}" data-id="${escapeHtml(n.id)}">
                     <div class="notif-item-header">
                         <h5 class="notif-item-title">${escapeHtml(n.title)}</h5>
-                        <span class="notif-type-tag alert">⚠️ ALERT</span>
+                        <span class="notif-type-tag alert" style="${tagStyle}">${tagText}</span>
                     </div>
                     <p class="notif-item-msg">${escapeHtml(n.message)}</p>
                 </div>
@@ -202,33 +241,38 @@ let activeNotifications = [];
         tickerContentEl.innerHTML = itemsHtml;
     }
 
-    function updateDashboardAlerts(notifications) {
+    function updateDashboardAlerts() {
         const container = document.getElementById("dashboardAlertContainer") || document.getElementById("dashboardAlerts");
         if (!container) return;
 
         // ROUTING RULE: User Dashboard displays ALERTS ONLY
-        let alertNotifs = (notifications || []).filter(n => n.type === "alert" && n.active !== false);
+        const systemAlerts = getAllActiveAlerts();
 
-        const maintAlert = getActiveMaintAlert();
-        if (maintAlert && !alertNotifs.some(n => n.id === maintAlert.id)) {
-            alertNotifs = [maintAlert, ...alertNotifs];
-        }
-
-        if (alertNotifs.length === 0) {
+        if (systemAlerts.length === 0) {
             container.style.display = "none";
+            container.innerHTML = "";
             return;
         }
 
         container.style.display = "block";
-        container.innerHTML = alertNotifs.map(n => `
-            <div class="dashboard-alert-card" style="background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.35); border-radius:14px; padding:14px 18px; margin-bottom:16px; color:#f87171; display:flex; align-items:center; gap:12px;">
-                <span style="font-size:20px;">⚠️</span>
-                <div>
-                    <strong style="color:#fff; font-size:14px; display:block;">${escapeHtml(n.title)}</strong>
-                    <span style="font-size:13px; color:#fca5a5;">${escapeHtml(n.message)}</span>
+        container.innerHTML = systemAlerts.map(n => {
+            const isMaint = n.category === "maintenance";
+            const bg = isMaint ? "rgba(239, 68, 68, 0.15)" : "rgba(234, 179, 8, 0.15)";
+            const border = isMaint ? "rgba(239, 68, 68, 0.35)" : "rgba(234, 179, 8, 0.4)";
+            const icon = isMaint ? "🛠️" : "⚠️";
+            const titleColor = "#fff";
+            const msgColor = isMaint ? "#fca5a5" : "#fef08a";
+
+            return `
+                <div class="dashboard-alert-card ${n.category || ''}" style="background:${bg}; border:1px solid ${border}; border-radius:14px; padding:14px 18px; margin-bottom:14px; display:flex; align-items:flex-start; gap:12px;">
+                    <span style="font-size:22px; line-height:1.2;">${icon}</span>
+                    <div>
+                        <strong style="color:${titleColor}; font-size:14px; display:block; margin-bottom:2px;">${escapeHtml(n.title)}</strong>
+                        <span style="font-size:13px; color:${msgColor}; line-height:1.5;">${escapeHtml(n.message)}</span>
+                    </div>
                 </div>
-            </div>
-        `).join("");
+            `;
+        }).join("");
     }
 
     function isNotificationAllowedPage() {
@@ -363,11 +407,11 @@ let activeNotifications = [];
     function syncMaintenanceNotifications() {
         updateBadgeCount();
         renderNotificationList();
-        updateDashboardAlerts(activeNotifications);
+        updateDashboardAlerts();
     }
 
     window.addEventListener("storage", (e) => {
-        if (e.key === "rb_maint_active" || e.key === "rb_maint_data") {
+        if (e.key === "rb_maint_active" || e.key === "rb_maint_data" || e.key === "rb_active_important_alerts") {
             syncMaintenanceNotifications();
         }
     });

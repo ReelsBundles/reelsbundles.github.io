@@ -51,6 +51,9 @@ async function initAdminMaintenanceUI() {
     if (document.getElementById("pageMaintForm")) {
         loadPageMaintData();
     }
+    if (document.getElementById("createImportantAlertForm")) {
+        initImportantAlertsUI();
+    }
 }
 
 function openMaintenanceConfigModal() {
@@ -359,3 +362,316 @@ window.testPublicVisitorView = testPublicVisitorView;
 window.loadPageMaintData = loadPageMaintData;
 window.updatePagePreviewUI = updatePagePreviewUI;
 window.syncDateModeUI = syncDateModeUI;
+
+/* ==========================================================
+   IMPORTANT ALERTS CONTROLLER & PERSISTENT STORAGE
+========================================================== */
+const STORAGE_KEY_ALERTS = "rb_admin_persistent_important_alerts";
+let cachedAlertsList = [];
+let editingAlertId = null;
+
+function getAdminAuthHeader() {
+    const token = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+    return token ? { "Authorization": `Bearer ${token}` } : {};
+}
+
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function getStoredImportantAlerts() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY_ALERTS);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function setStoredImportantAlerts(list) {
+    try {
+        localStorage.setItem(STORAGE_KEY_ALERTS, JSON.stringify(list || []));
+    } catch (e) {}
+}
+
+function initImportantAlertsUI() {
+    // Immediately render cached alerts to prevent layout flicker
+    cachedAlertsList = getStoredImportantAlerts();
+    if (cachedAlertsList.length > 0) {
+        renderImportantAlertsTable(cachedAlertsList);
+    }
+
+    // Fetch alerts from backend
+    loadImportantAlerts();
+
+    const form = document.getElementById("createImportantAlertForm");
+    if (form) {
+        form.addEventListener("submit", handleCreateImportantAlert);
+    }
+}
+
+async function loadImportantAlerts() {
+    try {
+        const res = await fetch(`${MAINT_API_BASE}/admin/system/important-alerts`, {
+            headers: getAdminAuthHeader(),
+            cache: "no-store"
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.alerts)) {
+            // Auto-restore if backend storage was wiped on container reboot
+            if (data.alerts.length === 0) {
+                const local = getStoredImportantAlerts();
+                if (local.length > 0) {
+                    for (const item of local) {
+                        try {
+                            await fetch(`${MAINT_API_BASE}/admin/system/important-alerts`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    ...getAdminAuthHeader()
+                                },
+                                body: JSON.stringify(item)
+                            });
+                        } catch (e) {}
+                    }
+                    const refetch = await fetch(`${MAINT_API_BASE}/admin/system/important-alerts`, {
+                        headers: getAdminAuthHeader(),
+                        cache: "no-store"
+                    });
+                    if (refetch.ok) {
+                        const reData = await refetch.json();
+                        if (reData.success && Array.isArray(reData.alerts)) {
+                            data.alerts = reData.alerts;
+                        }
+                    }
+                }
+            }
+
+            cachedAlertsList = data.alerts;
+            setStoredImportantAlerts(cachedAlertsList);
+            renderImportantAlertsTable(cachedAlertsList);
+        }
+    } catch (e) {
+        console.warn("Using offline/cached important alerts:", e);
+        cachedAlertsList = getStoredImportantAlerts();
+        renderImportantAlertsTable(cachedAlertsList);
+    }
+}
+
+function renderImportantAlertsTable(list) {
+    const tbody = document.getElementById("importantAlertsTableBody");
+    const countEl = document.getElementById("importantAlertsCount");
+    if (!tbody) return;
+
+    if (countEl) countEl.textContent = `${list.length} total`;
+
+    if (!list || list.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align:center; padding:30px; color:#94a3b8;">
+                    No Important Alerts found. Create one using the form on the left.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = list.map(a => {
+        let levelBadge = `<span style="background:rgba(245, 158, 11, 0.15); color:#fbbf24; border:1px solid rgba(245, 158, 11, 0.3); padding:4px 10px; border-radius:999px; font-weight:700; font-size:12px;">⚠️ NOTICE</span>`;
+        if (a.level === "danger") {
+            levelBadge = `<span style="background:rgba(239, 68, 68, 0.15); color:#f87171; border:1px solid rgba(239, 68, 68, 0.3); padding:4px 10px; border-radius:999px; font-weight:700; font-size:12px;">🚨 CRITICAL</span>`;
+        } else if (a.level === "info") {
+            levelBadge = `<span style="background:rgba(59, 130, 246, 0.15); color:#93c5fd; border:1px solid rgba(59, 130, 246, 0.3); padding:4px 10px; border-radius:999px; font-weight:700; font-size:12px;">ℹ️ INFO</span>`;
+        }
+
+        const statusBadge = a.active
+            ? `<span style="background:rgba(34, 197, 94, 0.2); color:#4ade80; padding:4px 10px; border-radius:999px; font-weight:600; font-size:12px; border:1px solid rgba(34, 197, 94, 0.4);">🟢 ACTIVE</span>`
+            : `<span style="background:rgba(100, 116, 139, 0.2); color:#94a3b8; padding:4px 10px; border-radius:999px; font-weight:600; font-size:12px; border:1px solid rgba(100, 116, 139, 0.4);">⚪ INACTIVE</span>`;
+
+        const dateFormatted = a.updatedAt ? new Date(a.updatedAt).toLocaleDateString() : (a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "-");
+
+        return `
+            <tr>
+                <td>
+                    <strong style="color:#fff; display:block; font-size:14px; margin-bottom:4px;">${escapeHtml(a.title)}</strong>
+                    <div style="color:#cbd5e1; font-size:12px; line-height:1.4;">${escapeHtml(a.message)}</div>
+                </td>
+                <td>${levelBadge}</td>
+                <td>${statusBadge}</td>
+                <td style="color:#94a3b8; font-size:12px; white-space:nowrap;">${dateFormatted}</td>
+                <td style="white-space:nowrap;">
+                    <button type="button" class="btn-action" style="background:rgba(59,130,246,0.2); border-color:rgba(59,130,246,0.4); color:#93c5fd; margin-right:4px;" onclick="editImportantAlertItem('${a.id}')">
+                        ✏️ Edit
+                    </button>
+                    <button type="button" class="btn-action" style="background:rgba(255,255,255,0.08); margin-right:4px;" onclick="toggleImportantAlertStatus('${a.id}', ${!a.active})">
+                        ${a.active ? "Disable" : "Enable"}
+                    </button>
+                    <button type="button" class="btn-action btn-danger" onclick="deleteImportantAlertItem('${a.id}')">
+                        🗑️ Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+async function handleCreateImportantAlert(e) {
+    e.preventDefault();
+    const titleInput = document.getElementById("alertTitle");
+    const messageInput = document.getElementById("alertMessage");
+    const levelInput = document.getElementById("alertLevel");
+    const activeInput = document.getElementById("alertActive");
+    const submitBtn = document.getElementById("submitAlertBtn");
+
+    const title = titleInput ? titleInput.value.trim() : "";
+    const message = messageInput ? messageInput.value.trim() : "";
+    const level = levelInput ? levelInput.value : "warning";
+    const active = activeInput ? activeInput.value === "true" : true;
+
+    if (!title || !message) {
+        alert("Please enter both Alert Title and Message.");
+        return;
+    }
+
+    if (submitBtn) submitBtn.disabled = true;
+
+    const payload = { title, message, level, active };
+
+    try {
+        let res;
+        if (editingAlertId) {
+            res = await fetch(`${MAINT_API_BASE}/admin/system/important-alerts/${editingAlertId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...getAdminAuthHeader()
+                },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            res = await fetch(`${MAINT_API_BASE}/admin/system/important-alerts`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...getAdminAuthHeader()
+                },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || "Failed to save alert");
+        }
+
+        const data = await res.json();
+        alert(data.message || (editingAlertId ? "Important Alert updated successfully!" : "Important Alert created successfully!"));
+        cancelEditImportantAlert();
+        await loadImportantAlerts();
+    } catch (err) {
+        alert("Error: " + err.message);
+    } finally {
+        if (submitBtn) submitBtn.disabled = false;
+    }
+}
+
+function editImportantAlertItem(id) {
+    const alertItem = cachedAlertsList.find(a => a.id === id);
+    if (!alertItem) return;
+
+    editingAlertId = id;
+
+    const titleInput = document.getElementById("alertTitle");
+    const messageInput = document.getElementById("alertMessage");
+    const levelInput = document.getElementById("alertLevel");
+    const activeInput = document.getElementById("alertActive");
+    const submitBtn = document.getElementById("submitAlertBtn");
+    const cancelBtn = document.getElementById("cancelAlertEditBtn");
+    const formTitle = document.getElementById("alertFormTitle");
+
+    if (titleInput) titleInput.value = alertItem.title || "";
+    if (messageInput) messageInput.value = alertItem.message || "";
+    if (levelInput) levelInput.value = alertItem.level || "warning";
+    if (activeInput) activeInput.value = String(Boolean(alertItem.active));
+
+    if (submitBtn) submitBtn.textContent = "💾 Update Important Alert";
+    if (cancelBtn) cancelBtn.style.display = "inline-block";
+    if (formTitle) formTitle.textContent = "✏️ Edit Important Alert";
+
+    const formEl = document.getElementById("createImportantAlertForm");
+    if (formEl) {
+        formEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+}
+
+function cancelEditImportantAlert() {
+    editingAlertId = null;
+    const form = document.getElementById("createImportantAlertForm");
+    if (form) form.reset();
+
+    const submitBtn = document.getElementById("submitAlertBtn");
+    const cancelBtn = document.getElementById("cancelAlertEditBtn");
+    const formTitle = document.getElementById("alertFormTitle");
+
+    if (submitBtn) submitBtn.textContent = "➕ Publish Important Alert";
+    if (cancelBtn) cancelBtn.style.display = "none";
+    if (formTitle) formTitle.textContent = "➕ Create Important Alert";
+}
+
+async function toggleImportantAlertStatus(id, newStatus) {
+    try {
+        const res = await fetch(`${MAINT_API_BASE}/admin/system/important-alerts/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                ...getAdminAuthHeader()
+            },
+            body: JSON.stringify({ active: newStatus })
+        });
+        if (!res.ok) throw new Error("Failed to update alert status");
+        const data = await res.json();
+
+        const idx = cachedAlertsList.findIndex(a => a.id === id);
+        if (idx !== -1) {
+            cachedAlertsList[idx] = data.alert || { ...cachedAlertsList[idx], active: newStatus };
+            setStoredImportantAlerts(cachedAlertsList);
+            renderImportantAlertsTable(cachedAlertsList);
+        }
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+}
+
+async function deleteImportantAlertItem(id) {
+    if (!confirm("⚠️ Are you sure you want to permanently delete this Important Alert? This action cannot be undone.")) {
+        return;
+    }
+    try {
+        const res = await fetch(`${MAINT_API_BASE}/admin/system/important-alerts/${id}`, {
+            method: "DELETE",
+            headers: getAdminAuthHeader()
+        });
+        if (!res.ok) throw new Error("Failed to delete alert");
+
+        cachedAlertsList = cachedAlertsList.filter(a => a.id !== id);
+        setStoredImportantAlerts(cachedAlertsList);
+        renderImportantAlertsTable(cachedAlertsList);
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+}
+
+window.editImportantAlertItem = editImportantAlertItem;
+window.cancelEditImportantAlert = cancelEditImportantAlert;
+window.toggleImportantAlertStatus = toggleImportantAlertStatus;
+window.deleteImportantAlertItem = deleteImportantAlertItem;
+window.initImportantAlertsUI = initImportantAlertsUI;
+window.loadImportantAlerts = loadImportantAlerts;

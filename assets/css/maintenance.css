@@ -268,3 +268,59 @@
     color: #fecaca;
     font-weight: 500;
 }
+
+/* ==========================================================
+   REAL IMPORTANT ALERT BANNER (INDEX & DASHBOARD)
+========================================================== */
+.user-real-important-banner {
+    position: relative;
+    z-index: 99998;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(202, 138, 4, 0.32));
+    border-bottom: 1px solid rgba(234, 179, 8, 0.5);
+    padding: 12px 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    animation: maint-banner-slide-down 0.35s ease-out;
+}
+
+.user-real-important-banner-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+
+.user-real-important-banner .important-banner-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.user-real-important-banner .important-banner-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1.5;
+}
+
+.user-real-important-banner .important-banner-title {
+    color: #fde047;
+    font-weight: 700;
+}
+
+.user-real-important-banner .important-banner-sep {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.user-real-important-banner .important-banner-msg {
+    color: #fef08a;
+    font-weight: 500;
+}
+

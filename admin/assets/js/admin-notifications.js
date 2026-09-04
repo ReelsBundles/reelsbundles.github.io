@@ -94,7 +94,7 @@ function renderNotificationsTable(list) {
     tbody.innerHTML = list.map(n => {
         const typeBadge = n.type === "coupon"
             ? `<span class="badge-coupon">🎁 COUPON</span>`
-            : (n.type === "alert" ? `<span class="badge-alert">⚠️ ALERT</span>` : `<span class="badge-announcement">📢 INFO</span>`);
+            : `<span class="badge-announcement">📢 INFO</span>`;
 
         const statusBadge = n.active
             ? `<span class="badge-active">ACTIVE</span>`
@@ -143,16 +143,19 @@ async function loadNotifications() {
 
         if (!res.ok) throw new Error("Failed to load notifications");
         const data = await res.json();
-        const serverList = Array.isArray(data.notifications) ? data.notifications : [];
+        const rawServerList = Array.isArray(data.notifications) ? data.notifications : [];
+        const serverList = rawServerList.filter(n => n.type !== "alert");
 
         if (serverList.length > 0) {
             cachedNotificationsList = serverList;
             setStoredNotifications(serverList);
             renderNotificationsTable(cachedNotificationsList);
         } else if (cachedNotificationsList.length > 0) {
-            // Server was restarted/empty: restore persistent notifications back to the server
-            renderNotificationsTable(cachedNotificationsList);
-            for (const notif of cachedNotificationsList) {
+            const normalList = cachedNotificationsList.filter(n => n.type !== "alert");
+            cachedNotificationsList = normalList;
+            setStoredNotifications(normalList);
+            renderNotificationsTable(normalList);
+            for (const notif of normalList) {
                 try {
                     await fetch(`${API_BASE}/admin/notifications`, {
                         method: "POST",
@@ -199,7 +202,7 @@ function editNotificationItem(id) {
 
     if (titleInput) titleInput.value = item.title || "";
     if (msgInput) msgInput.value = item.message || "";
-    if (typeSelect) typeSelect.value = item.type || "announcement";
+    if (typeSelect) typeSelect.value = item.type === "coupon" ? "coupon" : "announcement";
     if (couponInput) couponInput.value = item.couponCode || "";
     if (audienceSelect) audienceSelect.value = item.targetAudience || "all";
 
@@ -232,7 +235,7 @@ async function handleCreateNotification(e) {
     const payload = {
         title: document.getElementById("notifTitle").value.trim(),
         message: document.getElementById("notifMessage").value.trim(),
-        type: document.getElementById("notifType").value,
+        type: document.getElementById("notifType").value === "coupon" ? "coupon" : "announcement",
         couponCode: document.getElementById("couponCode").value.trim().toUpperCase(),
         targetAudience: document.getElementById("targetAudience").value,
         active: true

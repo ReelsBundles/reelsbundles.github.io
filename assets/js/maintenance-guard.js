@@ -125,6 +125,118 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         if (banner) banner.remove();
     }
 
+    function renderRealImportantAlertBanner(alerts) {
+        if (!isIndexPage() && !isDashboardPage()) {
+            removeRealImportantAlertBanner();
+            return;
+        }
+
+        const activeList = Array.isArray(alerts) ? alerts.filter(a => a.active !== false) : [];
+        if (activeList.length === 0) {
+            removeRealImportantAlertBanner();
+            return;
+        }
+
+        const primaryAlert = activeList[0];
+        const cleanTitle = escapeHtml(primaryAlert.title || "Important Alert");
+        const cleanMsg = escapeHtml(primaryAlert.message || "");
+
+        let banner = document.getElementById("realImportantAlertBanner");
+        const bannerHtml = `
+            <div class="user-real-important-banner-inner">
+                <span class="important-banner-icon">⚠️</span>
+                <div class="important-banner-content">
+                    <span class="important-banner-title">${cleanTitle}</span>
+                    <span class="important-banner-sep">•</span>
+                    <span class="important-banner-msg">${cleanMsg}</span>
+                </div>
+            </div>
+        `;
+
+        if (!banner) {
+            banner = document.createElement("div");
+            banner.id = "realImportantAlertBanner";
+            banner.className = "user-real-important-banner";
+            banner.innerHTML = bannerHtml;
+
+            const insertBanner = () => {
+                if (isIndexPage()) {
+                    const headerWrapper = document.querySelector(".fixed-header-wrapper");
+                    if (headerWrapper) {
+                        const maintBanner = document.getElementById("realMaintAlertBanner");
+                        if (maintBanner && maintBanner.nextSibling) {
+                            headerWrapper.insertBefore(banner, maintBanner.nextSibling);
+                        } else {
+                            headerWrapper.appendChild(banner);
+                        }
+                        return;
+                    }
+                } else if (isDashboardPage()) {
+                    const mainContent = document.querySelector(".dashboard-content") || document.querySelector(".dashboard-main");
+                    if (mainContent) {
+                        const maintBanner = document.getElementById("realMaintAlertBanner");
+                        if (maintBanner && maintBanner.nextSibling) {
+                            mainContent.insertBefore(banner, maintBanner.nextSibling);
+                        } else {
+                            mainContent.insertBefore(banner, mainContent.firstChild);
+                        }
+                        return;
+                    }
+                }
+                if (document.body) {
+                    document.body.insertBefore(banner, document.body.firstChild);
+                }
+            };
+
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", insertBanner);
+            } else {
+                insertBanner();
+            }
+        } else {
+            banner.innerHTML = bannerHtml;
+        }
+    }
+
+    function removeRealImportantAlertBanner() {
+        const banner = document.getElementById("realImportantAlertBanner");
+        if (banner) banner.remove();
+    }
+
+    async function checkImportantAlertStatus() {
+        if (!isIndexPage() && !isDashboardPage()) {
+            removeRealImportantAlertBanner();
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE}/system/important-alerts`, { cache: "no-store" });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.success && Array.isArray(data.alerts)) {
+                try {
+                    localStorage.setItem("rb_active_important_alerts", JSON.stringify(data.alerts));
+                } catch (e) {}
+
+                if (data.alerts.length > 0) {
+                    renderRealImportantAlertBanner(data.alerts);
+                } else {
+                    removeRealImportantAlertBanner();
+                }
+            } else {
+                removeRealImportantAlertBanner();
+            }
+        } catch (e) {
+            try {
+                const cached = JSON.parse(localStorage.getItem("rb_active_important_alerts") || "[]");
+                if (cached.length > 0) {
+                    renderRealImportantAlertBanner(cached);
+                } else {
+                    removeRealImportantAlertBanner();
+                }
+            } catch (err) {}
+        }
+    }
+
     // 2. FAST SYNC PRE-BLOCK: Prevent 2-3s flash of index page on refresh
     try {
         const isCachedActive = localStorage.getItem("rb_maint_active") === "true";
@@ -219,12 +331,14 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         // Poll backend telemetry every 5 seconds for real-time auto-lock / auto-unlock / message sync
         telemetryPollTimer = setInterval(() => {
             checkMaintenanceStatus(true);
+            checkImportantAlertStatus();
         }, 5000);
 
         // Also check instantly when tab regains focus / visibility
         document.addEventListener("visibilitychange", () => {
             if (document.visibilityState === "visible") {
                 checkMaintenanceStatus(true);
+                checkImportantAlertStatus();
             }
         });
     }
@@ -282,6 +396,26 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
             `;
         }
 
+        let importantAlertHtml = "";
+        try {
+            const rawAlerts = localStorage.getItem("rb_active_important_alerts");
+            if (rawAlerts) {
+                const alerts = JSON.parse(rawAlerts);
+                if (Array.isArray(alerts) && alerts.length > 0) {
+                    const topAlert = alerts[0];
+                    importantAlertHtml = `
+                        <div style="margin:16px 0; padding:14px 18px; background:rgba(234, 179, 8, 0.15); border:1px solid rgba(234, 179, 8, 0.4); border-radius:14px; color:#fde047; font-size:13px; text-align:left;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                <span style="font-size:16px;">⚠️</span>
+                                <strong style="color:#fff;">${escapeHtml(topAlert.title || "Important Notice")}</strong>
+                            </div>
+                            <div style="color:#fef08a; line-height:1.5;">${escapeHtml(topAlert.message || "")}</div>
+                        </div>
+                    `;
+                }
+            }
+        } catch (e) {}
+
         const innerContent = `
             <div class="maint-card" style="position: relative;">
                 <button type="button" class="notification-bell-btn maint-bell-btn" id="maintBellBtn" title="View Live System Alerts" style="position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 20px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
@@ -299,6 +433,7 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                 <h1 class="maint-title">We'll Be Back Soon!</h1>
                 <div class="maint-message">${escapeHtml(message)}</div>
                 ${middleSectionHtml}
+                ${importantAlertHtml}
                 <div class="maint-actions">
                     <a href="contact.html" class="maint-btn maint-btn-primary">
                         📩 Contact Support
@@ -588,8 +723,12 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
     startRealtimeTelemetryPolling();
 
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => checkMaintenanceStatus());
+        document.addEventListener("DOMContentLoaded", () => {
+            checkMaintenanceStatus();
+            checkImportantAlertStatus();
+        });
     } else {
         checkMaintenanceStatus();
+        checkImportantAlertStatus();
     }
 })();

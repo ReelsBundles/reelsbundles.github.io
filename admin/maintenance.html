@@ -20,6 +20,13 @@
         .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; border-radius: 10px; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
         .preview-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 20px; padding: 32px; text-align: center; color: #fff; }
+        .btn-action { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-action:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .btn-danger { color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .admin-table th { padding: 12px 14px; color: #94a3b8; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .admin-table td { padding: 14px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 13px; vertical-align: middle; }
+        .admin-table tr:hover { background: rgba(255,255,255,0.02); }
     </style>
 </head>
 <body>
@@ -56,7 +63,7 @@
                 <span>🔔</span> Notifications
             </a>
             <a href="maintenance.html" class="admin-nav-item active">
-                <span>🛠️</span> Maintenance
+                <span>⚠️</span> Important Alerts & Maintenance
             </a>
             <a href="demo-videos.html" class="admin-nav-item">
                 <span>🎬</span> Demo Videos
@@ -83,8 +90,8 @@
         <header class="admin-topbar">
             <div>
                 <span class="page-eyebrow">SYSTEM CONTROLS</span>
-                <h1 style="font-size:24px; font-weight:800; color:#fff; margin:4px 0 2px;">🛠️ Maintenance Mode Manager</h1>
-                <p style="font-size:13px; color:#94a3b8; margin:0;">Toggle Maintenance Mode ON/OFF, set completion countdown timers, and manage user announcements.</p>
+                <h1 style="font-size:24px; font-weight:800; color:#fff; margin:4px 0 2px;">⚠️ Important Alerts & System Maintenance</h1>
+                <p style="font-size:13px; color:#94a3b8; margin:0;">Configure sitewide Important Alerts and control System Maintenance Mode.</p>
             </div>
             <div style="display:flex; gap:12px; align-items:center;">
                 <button type="button" id="adminMaintToggleBtn" onclick="openMaintenanceConfigModal()" style="font-size:12px; border-radius:999px; font-weight:700; padding:6px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.25); color:#4ade80; outline:none;">
@@ -93,7 +100,89 @@
             </div>
         </header>
 
-        <div class="maint-grid">
+        <!-- ==========================================
+             SECTION A: IMPORTANT ALERTS (SEPARATE FROM NOTIFICATIONS)
+             ========================================== -->
+        <div style="margin-top:28px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h2 style="font-size:19px; font-weight:800; color:#fbbf24; margin:0 0 4px; display:flex; align-items:center; gap:8px;">
+                    <span>⚠️</span> Section A: Important Alerts Manager
+                </h2>
+                <p style="font-size:12.5px; color:#94a3b8; margin:0;">Create, edit, enable/disable, and explicitly delete Important Alerts. Displayed exclusively on User Home, Dashboard & Maintenance Screen.</p>
+            </div>
+            <span id="importantAlertsCount" style="font-size:12px; color:#c4b5fd; background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3); padding:4px 12px; border-radius:999px; font-weight:700;">0 total</span>
+        </div>
+
+        <div class="maint-grid" style="margin-top:18px; margin-bottom:40px;">
+            <div class="form-card">
+                <h3 id="alertFormTitle" style="margin-bottom:18px; font-size:17px; color:#fff;">➕ Create Important Alert</h3>
+                <form id="createImportantAlertForm">
+                    <div class="form-group">
+                        <label for="alertTitle">Alert Title *</label>
+                        <input type="text" id="alertTitle" class="form-control" placeholder="e.g. 🚨 Scheduled Database Migration" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alertMessage">Alert Message *</label>
+                        <textarea id="alertMessage" class="form-control" rows="3" placeholder="Enter detailed alert message to display to users..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alertLevel">Severity / Level *</label>
+                        <select id="alertLevel" class="form-control">
+                            <option value="warning" selected>⚠️ Warning / Notice (Yellow/Amber)</option>
+                            <option value="danger">🚨 Urgent / Critical (Red)</option>
+                            <option value="info">ℹ️ General Info / Update (Blue)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="alertActive">Status *</label>
+                        <select id="alertActive" class="form-control">
+                            <option value="true" selected>🟢 Active (Visible on allowed user pages)</option>
+                            <option value="false">⚪ Inactive (Disabled / Hidden)</option>
+                        </select>
+                    </div>
+
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button type="button" id="cancelAlertEditBtn" onclick="cancelEditImportantAlert()" style="display:none; flex:1; padding:12px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#cbd5e1; font-weight:600; cursor:pointer;">❌ Cancel Edit</button>
+                        <button type="submit" class="btn-submit" id="submitAlertBtn" style="flex:2;">➕ Publish Important Alert</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="admin-table-container" style="background:rgba(30, 41, 59, 0.7); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:20px; backdrop-filter:blur(10px); overflow-x:auto;">
+                <h4 style="font-size:16px; color:#fff; margin:0 0 16px;">Configured Important Alerts</h4>
+                <table class="admin-table" style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="text-align:left; border-bottom:1px solid rgba(255,255,255,0.1); color:#94a3b8; font-size:12px;">
+                            <th style="padding:10px;">TITLE & MESSAGE</th>
+                            <th style="padding:10px;">LEVEL</th>
+                            <th style="padding:10px;">STATUS</th>
+                            <th style="padding:10px;">UPDATED</th>
+                            <th style="padding:10px;">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importantAlertsTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding:30px; color:#94a3b8;">Loading Important Alerts...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             SECTION B: SYSTEM MAINTENANCE MODE
+             ========================================== -->
+        <div style="padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); margin-top:24px;">
+            <h2 style="font-size:19px; font-weight:800; color:#a78bfa; margin:0 0 4px; display:flex; align-items:center; gap:8px;">
+                <span>🛠️</span> Section B: Maintenance Mode Manager
+            </h2>
+            <p style="font-size:12.5px; color:#94a3b8; margin:0;">Toggle Maintenance Mode ON/OFF, set countdown completion timers, manage announcement and tester bypass PIN.</p>
+        </div>
+
+        <div class="maint-grid" style="margin-top:18px;">
             <div class="form-card">
                 <h3 style="margin-bottom:18px; font-size:18px; color:#fff;">Configure Maintenance Mode</h3>
                 <form id="pageMaintForm">
@@ -205,9 +294,6 @@
     };
 
     document.addEventListener("DOMContentLoaded", () => {
-        loadPageMaintData();
-        document.getElementById("pageMaintForm").addEventListener("submit", handlePageMaintSubmit);
-
         const presetSelect = document.getElementById("pageMaintReasonPreset");
         const msgTextarea = document.getElementById("pageMaintMessage");
 
@@ -216,77 +302,11 @@
                 const val = presetSelect.value;
                 if (val !== "other" && PRESET_MESSAGES[val]) {
                     msgTextarea.value = PRESET_MESSAGES[val];
+                    if (typeof updatePagePreviewUI === "function") updatePagePreviewUI();
                 }
             });
         }
     });
-
-    async function loadPageMaintData() {
-        try {
-            const res = await fetch(`${MAINT_API_BASE}/system/maintenance`, { cache: "no-store" });
-            if (!res.ok) return;
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById("pageMaintStatus").value = String(Boolean(data.maintenance));
-                document.getElementById("pageMaintMessage").value = data.message || "";
-                if (data.expectedBack) {
-                    const d = new Date(data.expectedBack);
-                    document.getElementById("pageMaintDate").value = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
-                    document.getElementById("prevMaintDate").textContent = new Date(data.expectedBack).toLocaleString();
-                } else {
-                    document.getElementById("prevMaintDate").textContent = "No Date Set";
-                }
-
-                document.getElementById("prevMaintStatus").textContent = data.maintenance ? "🔴 UNDER MAINTENANCE (ON)" : "🟢 SYSTEM ACTIVE (OFF)";
-                document.getElementById("prevMaintStatus").style.color = data.maintenance ? "#f87171" : "#4ade80";
-                document.getElementById("prevMaintMsg").textContent = data.message || "-";
-            }
-        } catch (e) {}
-    }
-
-    async function handlePageMaintSubmit(e) {
-        e.preventDefault();
-        const btn = document.getElementById("pageMaintSubmitBtn");
-        btn.disabled = true;
-
-        const maintenanceVal = document.getElementById("pageMaintStatus").value === "true";
-        const messageVal = document.getElementById("pageMaintMessage").value.trim();
-        const dateVal = document.getElementById("pageMaintDate").value;
-
-        let parsedDate = null;
-        if (dateVal) {
-            const d = new Date(dateVal);
-            if (!isNaN(d.getTime())) {
-                parsedDate = d.toISOString();
-            }
-        }
-
-        const payload = {
-            maintenance: maintenanceVal,
-            message: messageVal || "🛠️ ReelsBundles is currently undergoing scheduled system upgrades.",
-            expectedBack: parsedDate,
-            showTimer: true
-        };
-
-        try {
-            const res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) throw new Error("Failed to update maintenance settings");
-
-            const data = await res.json();
-            alert(data.message || "Maintenance settings updated!");
-            loadPageMaintData();
-            if (typeof fetchMaintenanceState === "function") fetchMaintenanceState();
-        } catch (err) {
-            alert("Error: " + err.message);
-        } finally {
-            btn.disabled = false;
-        }
-    }
 </script>
 </body>
 </html>
