@@ -219,7 +219,15 @@ export async function loadPublicCustomerReviews(containerId = "liveReviewsContai
         const reviews = data.reviews || [];
         const stats = data.stats || {};
 
-        if (reviews.length === 0) return;
+        if (reviews.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px 16px; color: #9ca3af; font-size: 15px;">
+                    <p style="margin-bottom: 8px; font-weight: 500;">No customer reviews yet.</p>
+                    <p style="font-size: 13px; color: #6b7280;">Be the first verified customer to share your experience!</p>
+                </div>
+            `;
+            return;
+        }
 
         let html = `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 32px;">

@@ -85,9 +85,9 @@ export const getCurrentFirebaseUser = () => {
    Wait for Firebase auth state restoration.
 ========================================================== */
 
-export const getFirebaseIdToken = async () => {
+export const getFirebaseIdToken = async (forceRefresh = false) => {
     if (auth.currentUser) {
-        return await auth.currentUser.getIdToken();
+        return await auth.currentUser.getIdToken(forceRefresh);
     }
 
     const user = await new Promise((resolve) => {
@@ -111,7 +111,7 @@ export const getFirebaseIdToken = async () => {
         return null;
     }
 
-    return await user.getIdToken();
+    return await user.getIdToken(forceRefresh);
 };
 
 export const createUserSession = async () => {
@@ -193,8 +193,15 @@ export const logoutUser = async () => {
         const suspendedReason = localStorage.getItem("rb_suspended_reason");
         const userEmail = localStorage.getItem("rb_user_email");
 
-        localStorage.clear();
-        sessionStorage.clear();
+        // Targeted user auth cleanup without wiping persistent notifications or admin configs
+        const userKeysToRemove = [
+            "user_email", "user_token", "rb_user_token", "rb_user_email",
+            "rb_user", "rb_user_profile", "rb_maint_tester_session"
+        ];
+        userKeysToRemove.forEach(k => {
+            try { localStorage.removeItem(k); } catch (e) {}
+            try { sessionStorage.removeItem(k); } catch (e) {}
+        });
 
         if (isSuspended === "true") {
             localStorage.setItem("rb_is_suspended", "true");
@@ -407,6 +414,25 @@ export async function robustFetch(url, options = {}, retries = 2, delayMs = 1500
     for (let i = 0; i <= retries; i++) {
         try {
             const response = await window.fetch(url, options);
+
+            // If 401 Unauthorized occurs on an authenticated request, attempt a transparent token refresh and retry once
+            if (response.status === 401 && i === 0 && auth && auth.currentUser) {
+                try {
+                    const freshToken = await auth.currentUser.getIdToken(true);
+                    if (freshToken && options.headers) {
+                        if (typeof options.headers.set === "function") {
+                            options.headers.set("Authorization", `Bearer ${freshToken}`);
+                        } else {
+                            options.headers["Authorization"] = `Bearer ${freshToken}`;
+                        }
+                        console.log(`[ROBUST FETCH] 🔄 Transparently refreshed Firebase ID token on 401 for ${url}`);
+                        continue;
+                    }
+                } catch (refreshErr) {
+                    console.warn("[ROBUST FETCH] Token auto-refresh warning:", refreshErr);
+                }
+            }
+
             return response;
         } catch (err) {
             console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);

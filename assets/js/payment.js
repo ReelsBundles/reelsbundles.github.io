@@ -26,33 +26,8 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// 2. Auto-Logout Session When Exiting Payment Flow
-let isExitingPaymentFlow = false;
-document.addEventListener("click", (e) => {
-    const link = e.target.closest("a");
-    if (link && link.href) {
-        try {
-            const targetUrl = new URL(link.href, window.location.href);
-            if (!targetUrl.pathname.includes("payment") && !targetUrl.pathname.includes("success")) {
-                isExitingPaymentFlow = true;
-                console.log("[PAYMENT GUARD] 🚪 User exiting payment flow. Logging out session in 3s...");
-                setTimeout(() => {
-                    signOut(auth).catch(() => {});
-                    localStorage.removeItem("user_email");
-                    sessionStorage.clear();
-                }, 500);
-            }
-        } catch (err) {}
-    }
-});
-
-window.addEventListener("pagehide", () => {
-    if (isExitingPaymentFlow) {
-        signOut(auth).catch(() => {});
-        localStorage.removeItem("user_email");
-        sessionStorage.clear();
-    }
-});
+// 2. Preserve Authenticated Session During Payment & Navigation
+// Authenticated user session is preserved across checkout redirects and external gateway hops.
 
 
 /* ==========================================================

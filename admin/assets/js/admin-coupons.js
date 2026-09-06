@@ -268,10 +268,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if (form) form.addEventListener("submit", handleCreateCoupon);
 });
 
+function getAdminAuthHeader() {
+    const token = localStorage.getItem("admin_token") ||
+                  localStorage.getItem("rb_admin_token") ||
+                  sessionStorage.getItem("admin_token") ||
+                  sessionStorage.getItem("rb_admin_token");
+    return token ? { "Authorization": `Bearer ${token}` } : {};
+}
+
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    const authHeaders = getAdminAuthHeader();
+    const finalHeaders = { ...authHeaders, ...(options.headers || {}) };
+    const mergedOptions = { ...options, headers: finalHeaders };
     for (let i = 0; i <= retries; i++) {
         try {
-            const response = await window.fetch(url, options);
+            const response = await window.fetch(url, mergedOptions);
             return response;
         } catch (err) {
             console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);

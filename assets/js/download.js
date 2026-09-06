@@ -559,8 +559,14 @@ function setupLogout() {
             console.error("[Downloads] Logout error:", error);
         } finally {
             try {
-                localStorage.clear();
-                sessionStorage.clear();
+                const userKeysToRemove = [
+                    "user_email", "user_token", "rb_user_token", "rb_user_email",
+                    "rb_user", "rb_user_profile", "rb_maint_tester_session"
+                ];
+                userKeysToRemove.forEach(k => {
+                    try { localStorage.removeItem(k); } catch (e) {}
+                    try { sessionStorage.removeItem(k); } catch (e) {}
+                });
             } catch(e) {}
             window.location.href = "index.html";
         }

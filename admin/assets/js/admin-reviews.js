@@ -8,7 +8,18 @@ const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
 const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 let currentReviews = [];
 
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           localStorage.getItem("token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("token") || "";
+}
+
 async function getAuthToken() {
+    const adminToken = getAdminToken();
+    if (adminToken) return adminToken;
     try {
         if (typeof getFirebaseIdToken === "function") {
             return await getFirebaseIdToken();
@@ -82,7 +93,13 @@ async function loadAdminReviews(isSilent = false) {
         if (countBadge) countBadge.textContent = `${currentReviews.length} Reviews`;
 
         const avgBadge = document.getElementById("avgRatingBadge");
-        if (avgBadge) avgBadge.textContent = `${stats.averageRating || 4.9}★ Average (${stats.satisfactionPercentage || 99}% Positive)`;
+        if (avgBadge) {
+            if (currentReviews.length === 0) {
+                avgBadge.textContent = "0 Reviews";
+            } else {
+                avgBadge.textContent = `${stats.averageRating || 5.0}★ Average (${stats.satisfactionPercentage || 100}% Positive)`;
+            }
+        }
 
         renderReviewsTable(currentReviews);
     } catch (err) {
@@ -98,7 +115,7 @@ function renderReviewsTable(reviews) {
     if (!tbody) return;
 
     if (reviews.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="padding:24px; text-align:center; color:#94a3b8;">No customer feedback found. Use the form on the left to add one!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="padding:24px; text-align:center; color:#94a3b8;">No customer feedback found yet.</td></tr>`;
         return;
     }
 

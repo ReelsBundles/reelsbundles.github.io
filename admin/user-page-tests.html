@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User & Admin Page Testing Cockpit | ReelsBundles Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/admin-dashboard.css">
+    <link rel="stylesheet" href="assets/css/admin-monitor.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+    <style>
+        .cockpit-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .cockpit-stat-card {
+            background: #0f1523;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .cockpit-stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+        }
+        .cockpit-stat-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            padding-bottom: 2px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 10px 18px;
+            border-radius: 10px 10px 0 0;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.03);
+        }
+        .tab-btn.active {
+            color: #a855f7;
+            background: #0f1523;
+            border-color: var(--border-color);
+            border-bottom-color: #0f1523;
+            font-weight: 700;
+        }
+        .test-card {
+            background: #0f1523;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .test-card:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .test-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .test-card-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .badge-cat {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.4px;
+        }
+        .badge-user-page { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-admin-page { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-core-api { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-status {
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .badge-running { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-pass { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-fail { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-not-verified { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .details-box {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: none;
+        }
+        .checks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .check-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .check-item.pass { border-left: 3px solid #10b981; }
+        .check-item.fail { border-left: 3px solid #ef4444; background: rgba(239, 68, 68, 0.08); }
+        .code-snippet {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: #e2e8f0;
+            background: #070a12;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            overflow-x: auto;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            margin: 14px 0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981, #6366f1, #a855f7);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="admin-brand">
+            <div class="admin-brand-icon">▶</div>
+            <div>
+                <strong>ReelsBundles</strong>
+                <span>ADMIN PANEL</span>
+            </div>
+        </div>
+
+        <nav class="admin-nav">
+            <a href="dashboard.html" class="admin-nav-item"><span>📊</span> Dashboard</a>
+            <a href="monitor.html" class="admin-nav-item"><span>🩺</span> Live Monitor</a>
+            <a href="user-page-tests.html" class="admin-nav-item active"><span>🧪</span> Page Testing Cockpit</a>
+            <a href="users.html" class="admin-nav-item"><span>👥</span> Users</a>
+            <a href="bundles.html" class="admin-nav-item"><span>📦</span> Bundles</a>
+            <a href="orders.html" class="admin-nav-item"><span>🧾</span> Orders</a>
+            <a href="coupons.html" class="admin-nav-item"><span>🎟️</span> Coupons</a>
+            <a href="reviews.html" class="admin-nav-item"><span>⭐</span> Feedback Manager</a>
+            <a href="notifications.html" class="admin-nav-item"><span>🔔</span> Notifications</a>
+            <a href="maintenance.html" class="admin-nav-item"><span>⚠️</span> Important Alerts & Maintenance</a>
+            <a href="demo-videos.html" class="admin-nav-item"><span>🎬</span> Demo Videos</a>
+            <a href="download.html" class="admin-nav-item"><span>⬇️</span> Downloads</a>
+            <a href="storage.html" class="admin-nav-item"><span>☁️</span> Cloud Storage</a>
+        </nav>
+
+        <div class="admin-sidebar-footer" style="padding:15px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto;">
+            <div class="admin-user-info" style="margin-bottom: 10px;">
+                <strong id="adminSidebarName" style="color:#fff; font-size:13.5px; display:block;">Admin</strong>
+                <small style="color:#94a3b8; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:600;">SUPER ADMINISTRATOR</small>
+            </div>
+            <button type="button" id="adminLogoutBtn" class="admin-logout-btn" style="width:100%; padding:10px; background:rgba(239, 68, 68, 0.15); border:1px solid rgba(239, 68, 68, 0.3); border-radius:10px; color:#f87171; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+                🚪 Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+        <!-- TOPBAR -->
+        <header class="monitor-topbar" style="margin-bottom: 24px;">
+            <div>
+                <span class="page-eyebrow" style="color:#a855f7; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:4px;">
+                    QUALITY ASSURANCE & AUTOMATED ORCHESTRATION
+                </span>
+                <h1 style="font-size:26px; font-weight:800; margin:0 0 4px; color:#fff;">User & Admin Page Testing Cockpit</h1>
+                <p style="color:rgba(255,255,255,0.6); font-size:13px; margin:0;">
+                    Complete 16-point verification matrix for every User page, 14 Admin pages, and 22 Backend APIs.
+                </p>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <button type="button" id="btnRunMasterSuite" class="action-btn primary" style="background: linear-gradient(135deg, #10b981, #059669); border:none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); font-weight:700;" title="Run complete end-to-end Master Test Suite (Phases A through J)">
+                    🚀 Run All Tests (Master Suite)
+                </button>
+
+                <button type="button" id="btnRunAllUserPages" class="action-btn primary" style="background: linear-gradient(135deg, #7c3aed, #6366f1); border:none;" title="Verify all 18 user-facing pages simultaneously">
+                    🧪 Run All User Pages (18)
+                </button>
+
+                <button type="button" id="btnRunAudit" class="action-btn" title="Audit production codebase for dummy/mock/fake data">
+                    🔍 Real-Data Audit
+                </button>
+
+                <button type="button" id="btnRefresh" class="action-btn" title="Refresh registry & results">
+                    ↻ Refresh
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI STATS -->
+        <section class="cockpit-stats-grid">
+            <div class="cockpit-stat-card">
+                <div class="cockpit-stat-label">Total Test Targets</div>
+                <div class="cockpit-stat-value" id="statTotalTargets">54</div>
+                <small style="color:var(--text-dim); font-size:11px;">18 User + 14 Admin + 22 APIs</small>
+            </div>
+            <div class="cockpit-stat-card">
+                <div class="cockpit-stat-label">Passed Tests</div>
+                <div class="cockpit-stat-value" id="statPassedTests" style="color:#34d399;">—</div>
+                <small style="color:var(--text-dim); font-size:11px;">100% verified contracts</small>
+            </div>
+            <div class="cockpit-stat-card">
+                <div class="cockpit-stat-label">Failed Tests</div>
+                <div class="cockpit-stat-value" id="statFailedTests" style="color:#f87171;">0</div>
+                <small style="color:var(--text-dim); font-size:11px;">Immediate root-cause analysis</small>
+            </div>
+            <div class="cockpit-stat-card">
+                <div class="cockpit-stat-label">Safe Skipped / Not Verified</div>
+                <div class="cockpit-stat-value" id="statNotVerified" style="color:#fbbf24;">—</div>
+                <small style="color:var(--text-dim); font-size:11px;">No live customer charges</small>
+            </div>
+            <div class="cockpit-stat-card">
+                <div class="cockpit-stat-label">Production Real Data</div>
+                <div class="cockpit-stat-value" id="statAuditStatus" style="font-size:18px; color:#34d399; margin-top:6px;">CLEAN ✅</div>
+                <small style="color:var(--text-dim); font-size:11px;">Zero dummy data confirmed</small>
+            </div>
+        </section>
+
+        <!-- CONTROLS & FILTER TABS -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+            <div class="tab-bar" style="margin-bottom:0; border-bottom:none;">
+                <button type="button" class="tab-btn active" data-tab="ALL">All Targets (54)</button>
+                <button type="button" class="tab-btn" data-tab="USER_PAGE">User Pages (18)</button>
+                <button type="button" class="tab-btn" data-tab="ADMIN_PAGE">Admin Pages (14)</button>
+                <button type="button" class="tab-btn" data-tab="CORE_API">Core APIs (22)</button>
+            </div>
+
+            <div style="display:flex; gap:10px; align-items:center;">
+                <input type="text" id="searchInput" placeholder="Search page name, endpoint, selector..." style="padding:8px 14px; background:#0f1523; border:1px solid var(--border-color); border-radius:8px; color:#fff; font-size:13px; width:260px; outline:none;" />
+            </div>
+        </div>
+
+        <!-- TARGETS CONTAINER -->
+        <section id="targetsListContainer">
+            <div style="text-align:center; padding:40px; color:var(--text-muted);">
+                ⏳ Loading test registry from backend...
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- ==================================================
+     MASTER SUITE PROGRESS MODAL (SSE)
+=================================================== -->
+<div id="masterSuiteProgressModal" class="drawer-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#0f1523; border:1px solid var(--border-color); border-radius:18px; padding:28px; width:680px; max-width:94vw; box-shadow:0 20px 60px rgba(0,0,0,0.95); max-height:92vh; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h3 style="margin:0; font-size:18px; font-weight:700; display:flex; align-items:center; gap:8px;">
+                <span>🚀</span> Master Test Suite Execution
+            </h3>
+            <span id="suiteStatusBadge" class="badge-status badge-running">RUNNING</span>
+        </div>
+
+        <p style="font-size:13px; color:var(--text-muted); margin:0 0 10px 0;">
+            Executing Phases A through J with live telemetry streaming and isolated failure capture.
+        </p>
+
+        <div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600;">
+                <span id="currentPhaseLabel" style="color:#a855f7;">Initializing test runner...</span>
+                <span id="progressPercentLabel" style="color:var(--text-muted);">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="progressBarFill" class="progress-bar-fill"></div>
+            </div>
+        </div>
+
+        <div style="margin-top:10px; flex:1; min-height:220px; max-height:320px; overflow-y:auto; background:#070a12; border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px; font-family:'JetBrains Mono', monospace; font-size:12px; line-height:1.5;" id="suiteLiveConsole">
+            <div style="color:#64748b;">[Test Orchestrator] Ready. Connecting to SSE telemetry stream...</div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+            <button type="button" id="closeProgressModalBtn" class="action-btn" style="display:none;">Close & View Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================
+     MASTER SUITE RESULT MODAL
+=================================================== -->
+<div id="masterSuiteResultModal" class="drawer-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#0f1523; border:1px solid var(--border-color); border-radius:18px; padding:28px; width:820px; max-width:95vw; box-shadow:0 20px 60px rgba(0,0,0,0.95); max-height:92vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <div>
+                <h3 style="margin:0; font-size:20px; font-weight:800; color:#fff;" id="resultModalTitle">Master Test Suite Completed</h3>
+                <small style="color:var(--text-muted);" id="resultModalSubtitle">Run ID: — | Duration: —</small>
+            </div>
+            <button type="button" id="closeResultModalBtn" class="action-btn" style="padding:4px 10px;">✕</button>
+        </div>
+
+        <div id="resultModalSummaryCards" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:20px;">
+            <!-- Rendered by JS -->
+        </div>
+
+        <h4 style="font-size:14px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin:0 0 12px 0;">Phases Summary (A through J)</h4>
+        <div id="resultModalPhasesList" style="display:flex; flex-direction:column; gap:10px;">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script type="module" src="../assets/js/diagnostic-client.js"></script>
+<script type="module" src="assets/js/admin-user-page-tests.js"></script>
+</body>
+</html>

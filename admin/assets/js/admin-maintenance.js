@@ -87,18 +87,29 @@ function injectTopbarMaintenanceControls() {
 
 async function fetchMaintenanceState() {
     try {
-        const res = await fetch(`${MAINT_API_BASE}/system/maintenance`, { cache: "no-store" });
+        const authHeaders = typeof getAdminAuthHeader === "function" ? getAdminAuthHeader() : {};
+        let res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
+            cache: "no-store",
+            headers: authHeaders
+        });
+        if (!res.ok) {
+            res = await fetch(`${MAINT_API_BASE}/system/maintenance`, {
+                cache: "no-store",
+                headers: authHeaders
+            });
+        }
         if (!res.ok) return;
 
         const data = await res.json();
         if (data.success) {
+            const raw = data.settings || data;
             currentMaintenanceState = {
-                maintenance: Boolean(data.maintenance),
-                message: data.message || "",
-                expectedBack: data.expectedBack || null,
-                showTimer: data.showTimer !== false,
-                testerPasscode: data.testerPasscode || "5796",
-                bypassKey: data.bypassKey || "RB_TESTER_KEY_5796"
+                maintenance: Boolean(raw.maintenance),
+                message: raw.message || "",
+                expectedBack: raw.expectedBack || null,
+                showTimer: raw.showTimer !== false,
+                testerPasscode: raw.testerPasscode || "5796",
+                bypassKey: raw.bypassKey || `RB_TESTER_KEY_${raw.testerPasscode || "5796"}`
             };
             updateAdminTopbarBadge();
             updatePagePreviewUI();
@@ -138,7 +149,7 @@ function loadPageMaintData() {
     if (msgInput) msgInput.value = currentMaintenanceState.message || "";
     
     if (passcodeInput) {
-        const livePin = currentMaintenanceState.testerPasscode || "5045";
+        const livePin = currentMaintenanceState.testerPasscode || "5796";
         passcodeInput.value = livePin;
         if (activePinText) activePinText.textContent = livePin;
 
@@ -227,7 +238,10 @@ function loadPageMaintData() {
             try {
                 const res = await fetch(`${MAINT_API_BASE}/admin/system/maintenance`, {
                     method: "PUT",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        ...getAdminAuthHeader()
+                    },
                     body: JSON.stringify(payload)
                 });
 
@@ -274,7 +288,7 @@ function updatePagePreviewUI() {
     const currentMsg = formMsg ? formMsg.value.trim() : currentMaintenanceState.message;
     const isDateSetMode = formDateMode ? formDateMode.value === "set" : Boolean(currentMaintenanceState.expectedBack);
     const currentDateVal = formDate ? formDate.value : "";
-    const currentPin = (formPin ? formPin.value.trim() : "") || currentMaintenanceState.testerPasscode || "5045";
+    const currentPin = (formPin ? formPin.value.trim() : "") || currentMaintenanceState.testerPasscode || "5796";
 
     if (statusEl) {
         if (isMaintOn) {
@@ -371,7 +385,10 @@ let cachedAlertsList = [];
 let editingAlertId = null;
 
 function getAdminAuthHeader() {
-    const token = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+    const token = localStorage.getItem("admin_token") ||
+                  localStorage.getItem("rb_admin_token") ||
+                  sessionStorage.getItem("admin_token") ||
+                  sessionStorage.getItem("rb_admin_token");
     return token ? { "Authorization": `Bearer ${token}` } : {};
 }
 

@@ -14,16 +14,21 @@ function getAdminToken() {
 }
 
 const token = getAdminToken();
-const admin = JSON.parse(localStorage.getItem("admin_data") || "{}");
+const admin = JSON.parse(localStorage.getItem("admin_data") || sessionStorage.getItem("admin_data") || "{}");
 
 if (!token) {
     location.href = "index.html";
 }
 
-// Show Admin Name
+// Show Admin Name in topbar and sidebar
+const adminEmail = admin.email || admin.username || "Super Admin";
 const adminName = document.getElementById("adminName");
 if (adminName) {
-    adminName.textContent = admin.email || "Admin";
+    adminName.textContent = adminEmail;
+}
+const adminSidebarName = document.getElementById("adminSidebarName");
+if (adminSidebarName) {
+    adminSidebarName.textContent = adminEmail;
 }
 
 // Logout Handlers
@@ -52,17 +57,49 @@ setInterval(loadDashboard, 10000);
 
 async function loadDashboard() {
     try {
+        const currentToken = getAdminToken();
+        if (!currentToken) {
+            location.href = "index.html";
+            return;
+        }
+
         const response = await robustFetch(`${API_BASE}/admin/dashboard`, {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${currentToken}`
             }
         });
 
-        if (!response.ok) return;
+        if (response.status === 401 || response.status === 403) {
+            console.warn("[Admin Dashboard] Session expired or unauthorized. Redirecting to login...");
+            localStorage.removeItem("admin_token");
+            localStorage.removeItem("admin_data");
+            sessionStorage.removeItem("admin_token");
+            sessionStorage.removeItem("admin_data");
+            location.href = "index.html";
+            return;
+        }
+
+        if (!response.ok) {
+            const ordersTable = document.getElementById("ordersTable");
+            if (ordersTable && ordersTable.innerHTML.includes("Loading live orders")) {
+                ordersTable.innerHTML = `<p style="color:#ef4444; font-size:13px; text-align:center; padding:15px;">Failed to load live orders (HTTP ${response.status}).</p>`;
+            }
+            const downloadsTable = document.getElementById("downloadsTable");
+            if (downloadsTable && downloadsTable.innerHTML.includes("Loading live downloads")) {
+                downloadsTable.innerHTML = `<p style="color:#ef4444; font-size:13px; text-align:center; padding:15px;">Failed to load live downloads (HTTP ${response.status}).</p>`;
+            }
+            return;
+        }
 
         const data = await response.json();
-        if (!data || !data.success) return;
+        if (!data || !data.success) {
+            const ordersTable = document.getElementById("ordersTable");
+            if (ordersTable && ordersTable.innerHTML.includes("Loading live orders")) {
+                ordersTable.innerHTML = `<p style="color:#ef4444; font-size:13px; text-align:center; padding:15px;">${escapeHtml(data?.message || "Error loading telemetry")}</p>`;
+            }
+            return;
+        }
 
         const stats = data.stats || data.dashboard || data;
 
@@ -149,9 +186,16 @@ async function loadDashboard() {
                 `;
             }
         }
-
     } catch (err) {
         console.error("[Admin Dashboard] Live telemetry error:", err);
+        const ordersTable = document.getElementById("ordersTable");
+        if (ordersTable && ordersTable.innerHTML.includes("Loading live orders")) {
+            ordersTable.innerHTML = `<p style="color:#ef4444; font-size:13px; text-align:center; padding:15px;">Unable to reach backend server. Please check connection.</p>`;
+        }
+        const downloadsTable = document.getElementById("downloadsTable");
+        if (downloadsTable && downloadsTable.innerHTML.includes("Loading live downloads")) {
+            downloadsTable.innerHTML = `<p style="color:#ef4444; font-size:13px; text-align:center; padding:15px;">Unable to reach backend server. Please check connection.</p>`;
+        }
     }
 }
 

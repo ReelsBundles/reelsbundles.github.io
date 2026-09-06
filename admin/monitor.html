@@ -31,6 +31,9 @@
             <a href="monitor.html" class="admin-nav-item active">
                 <span>🩺</span> Live Monitor
             </a>
+            <a href="user-page-tests.html" class="admin-nav-item">
+                <span>🧪</span> Page Testing Cockpit
+            </a>
             <a href="users.html" class="admin-nav-item">
                 <span>👥</span> Users
             </a>
@@ -97,6 +100,14 @@
                 <button type="button" id="openTestSuiteBtn" class="action-btn primary" title="Simulate diagnostic test events">
                     ⚡ Diagnostic Test Suite
                 </button>
+
+                <button type="button" id="runMasterTestSuiteBtn" class="action-btn primary" style="background: linear-gradient(135deg, #10b981, #059669); border:none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); font-weight:700;" title="Run complete end-to-end Master Test Suite across all 10 phases">
+                    🚀 Run All Tests
+                </button>
+
+                <a href="user-page-tests.html" id="openUserPageTestsBtn" class="action-btn" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;" title="Open isolated User & Admin Page Testing Cockpit">
+                    🧪 User Page Tests
+                </a>
 
                 <button type="button" id="openReportModalBtn" class="action-btn primary" style="background: linear-gradient(135deg, #2563eb, #3b82f6); border:none;" title="Export User & Admin Diagnostic Reports (PDF & Excel)">
                     📑 Export Reports
@@ -769,6 +780,66 @@
             <button type="button" id="generateExcelBtn" class="action-btn primary" style="justify-content:center; padding:12px; background:linear-gradient(135deg, #10b981, #059669); border:none; font-size:13.5px;">
                 📊 Download Excel (.xlsx)
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================
+     MASTER SUITE PROGRESS MODAL (SSE)
+=================================================== -->
+<div id="masterSuiteProgressModal" class="drawer-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#0f1523; border:1px solid var(--border-color); border-radius:18px; padding:28px; width:680px; max-width:94vw; box-shadow:0 20px 60px rgba(0,0,0,0.95); max-height:92vh; display:flex; flex-direction:column;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <h3 style="margin:0; font-size:18px; font-weight:700; display:flex; align-items:center; gap:8px;">
+                <span>🚀</span> Master Test Suite Execution
+            </h3>
+            <span id="suiteStatusBadge" class="connection-badge" style="background:rgba(245, 158, 11, 0.15); color:#fbbf24; border:1px solid rgba(245, 158, 11, 0.3);">RUNNING</span>
+        </div>
+
+        <p style="font-size:13px; color:var(--text-muted); margin:0 0 10px 0;">
+            Executing Phases A through J with live telemetry streaming and isolated failure capture.
+        </p>
+
+        <div>
+            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600;">
+                <span id="currentPhaseLabel" style="color:#a855f7;">Initializing test runner...</span>
+                <span id="progressPercentLabel" style="color:var(--text-muted);">0%</span>
+            </div>
+            <div style="width:100%; height:10px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden; margin:14px 0;">
+                <div id="progressBarFill" style="height:100%; width:0%; background:linear-gradient(90deg, #10b981, #6366f1, #a855f7); transition:width 0.3s ease;"></div>
+            </div>
+        </div>
+
+        <div style="margin-top:10px; flex:1; min-height:220px; max-height:320px; overflow-y:auto; background:#070a12; border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px; font-family:'JetBrains Mono', monospace; font-size:12px; line-height:1.5;" id="suiteLiveConsole">
+            <div style="color:#64748b;">[Test Orchestrator] Ready. Connecting to SSE telemetry stream...</div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+            <button type="button" id="closeProgressModalBtn" class="action-btn" style="display:none;">Close & View Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================================================
+     MASTER SUITE RESULT MODAL
+=================================================== -->
+<div id="masterSuiteResultModal" class="drawer-backdrop" style="display:none; align-items:center; justify-content:center;">
+    <div style="background:#0f1523; border:1px solid var(--border-color); border-radius:18px; padding:28px; width:820px; max-width:95vw; box-shadow:0 20px 60px rgba(0,0,0,0.95); max-height:92vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <div>
+                <h3 style="margin:0; font-size:20px; font-weight:800; color:#fff;" id="resultModalTitle">Master Test Suite Completed</h3>
+                <small style="color:var(--text-muted);" id="resultModalSubtitle">Run ID: — | Duration: —</small>
+            </div>
+            <button type="button" id="closeResultModalBtn" class="action-btn" style="padding:4px 10px;">✕</button>
+        </div>
+
+        <div id="resultModalSummaryCards" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:20px;">
+            <!-- Rendered by JS -->
+        </div>
+
+        <h4 style="font-size:14px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin:0 0 12px 0;">Phases Summary (A through J)</h4>
+        <div id="resultModalPhasesList" style="display:flex; flex-direction:column; gap:10px;">
+            <!-- Rendered by JS -->
         </div>
     </div>
 </div>

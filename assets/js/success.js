@@ -169,14 +169,23 @@ document.addEventListener(
 
 async function initializeSuccessPage() {
     try {
-        // Ensure Firebase auth state is initialized before verifying payment
+        // Ensure Firebase auth state is restored before verifying payment
         if (!auth.currentUser) {
             await new Promise((resolve) => {
+                let resolved = false;
                 const unsubscribe = onAuthStateChanged(auth, (u) => {
+                    if (resolved) return;
+                    resolved = true;
                     unsubscribe();
                     resolve(u);
                 });
-                setTimeout(resolve, 1500);
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        unsubscribe();
+                        resolve(auth.currentUser);
+                    }
+                }, 6000);
             });
         }
 
@@ -357,10 +366,29 @@ async function verifyPayment() {
              */
 
             const headers = { "Accept": "application/json" };
+            let token = null;
             try {
-                const token = await getFirebaseIdToken();
-                if (token) headers["Authorization"] = `Bearer ${token}`;
-            } catch (e) {}
+                token = await getFirebaseIdToken(true);
+            } catch (e) {
+                console.warn("[Success] Initial token retrieval attempt:", e);
+            }
+
+            if (!token && !auth.currentUser) {
+                try {
+                    await new Promise((resolve) => {
+                        const unsub = onAuthStateChanged(auth, (u) => {
+                            unsub();
+                            resolve(u);
+                        });
+                        setTimeout(resolve, 4000);
+                    });
+                    token = await getFirebaseIdToken(true);
+                } catch (e) {}
+            }
+
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
 
             response =
                 await robustFetch(
@@ -453,6 +481,15 @@ async function verifyPayment() {
                 console.log("[Success] Payment status is pending. Retrying verification in 3s...");
                 setTimeout(() => { verifyPayment(); }, 3000);
                 return;
+            }
+
+            if (response.status === 401 || (data?.message && String(data.message).toLowerCase().includes("authentication"))) {
+                if (!window._authRetryCount || window._authRetryCount < 3) {
+                    window._authRetryCount = (window._authRetryCount || 0) + 1;
+                    console.log(`[Success] Auth token pending or refreshing (attempt ${window._authRetryCount}). Retrying verification in 2s...`);
+                    setTimeout(() => { verifyPayment(); }, 2000);
+                    return;
+                }
             }
 
             const failureMessage =

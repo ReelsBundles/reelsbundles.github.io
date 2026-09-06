@@ -14,8 +14,17 @@ const STORAGE_KEY = "rb_admin_persistent_notifications";
 let editingNotificationId = null;
 let cachedNotificationsList = [];
 
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           localStorage.getItem("token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("token") || "";
+}
+
 // Enforce Admin Authentication
-const adminToken = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+const adminToken = getAdminToken();
 if (!adminToken) {
     window.location.href = "index.html";
 }
@@ -132,7 +141,7 @@ async function loadNotifications() {
     if (!tbody) return;
 
     try {
-        const token = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+        const token = getAdminToken();
         const headers = { "Content-Type": "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -242,7 +251,7 @@ async function handleCreateNotification(e) {
     };
 
     try {
-        const token = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+        const token = getAdminToken();
         const headers = { "Content-Type": "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -291,7 +300,7 @@ async function handleCreateNotification(e) {
 
 async function toggleNotificationStatus(id, newStatus) {
     try {
-        const token = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+        const token = getAdminToken();
         const headers = { "Content-Type": "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
@@ -321,7 +330,7 @@ async function deleteNotificationItem(id) {
     if (!confirm("Are you sure you want to delete this notification?")) return;
 
     try {
-        const token = localStorage.getItem("admin_token") || sessionStorage.getItem("admin_token");
+        const token = getAdminToken();
         const headers = { "Content-Type": "application/json" };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 

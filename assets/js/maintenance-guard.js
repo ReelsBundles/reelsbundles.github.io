@@ -203,8 +203,29 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         if (banner) banner.remove();
     }
 
+    function updateOverlayImportantAlert(alerts) {
+        const slot = document.getElementById("maintOverlayAlertSlot");
+        if (!slot) return;
+        const activeList = Array.isArray(alerts) ? alerts.filter(a => a.active !== false) : [];
+        if (activeList.length === 0) {
+            slot.innerHTML = "";
+            return;
+        }
+        const topAlert = activeList[0];
+        slot.innerHTML = `
+            <div style="margin:16px 0; padding:14px 18px; background:rgba(234, 179, 8, 0.15); border:1px solid rgba(234, 179, 8, 0.4); border-radius:14px; color:#fde047; font-size:13px; text-align:left;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <span style="font-size:16px;">⚠️</span>
+                    <strong style="color:#fff;">${escapeHtml(topAlert.title || "Important Notice")}</strong>
+                </div>
+                <div style="color:#fef08a; line-height:1.5;">${escapeHtml(topAlert.message || "")}</div>
+            </div>
+        `;
+    }
+
     async function checkImportantAlertStatus() {
-        if (!isIndexPage() && !isDashboardPage()) {
+        const hasOverlay = Boolean(document.getElementById("maintOverlay"));
+        if (!isIndexPage() && !isDashboardPage() && !hasOverlay) {
             removeRealImportantAlertBanner();
             return;
         }
@@ -217,21 +238,29 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                     localStorage.setItem("rb_active_important_alerts", JSON.stringify(data.alerts));
                 } catch (e) {}
 
-                if (data.alerts.length > 0) {
-                    renderRealImportantAlertBanner(data.alerts);
-                } else {
-                    removeRealImportantAlertBanner();
+                if (isIndexPage() || isDashboardPage()) {
+                    if (data.alerts.length > 0) {
+                        renderRealImportantAlertBanner(data.alerts);
+                    } else {
+                        removeRealImportantAlertBanner();
+                    }
                 }
+                updateOverlayImportantAlert(data.alerts);
             } else {
                 removeRealImportantAlertBanner();
+                updateOverlayImportantAlert([]);
             }
         } catch (e) {
             try {
                 const cached = JSON.parse(localStorage.getItem("rb_active_important_alerts") || "[]");
                 if (cached.length > 0) {
-                    renderRealImportantAlertBanner(cached);
+                    if (isIndexPage() || isDashboardPage()) {
+                        renderRealImportantAlertBanner(cached);
+                    }
+                    updateOverlayImportantAlert(cached);
                 } else {
                     removeRealImportantAlertBanner();
+                    updateOverlayImportantAlert([]);
                 }
             } catch (err) {}
         }
@@ -351,9 +380,26 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         if (overlay) overlay.remove();
 
         if (countdownInterval) clearInterval(countdownInterval);
+        if (document.body) {
+            document.body.style.overflow = "";
+        }
     }
 
     function renderMaintenanceOverlay(data) {
+        // Enforce background pre-block style dynamically on live activation
+        if (!document.getElementById("maintPreBlockStyle")) {
+            const preStyle = document.createElement("style");
+            preStyle.id = "maintPreBlockStyle";
+            preStyle.textContent = `
+                body > *:not(#maintOverlay):not(#testerPassModal):not(#maintAlertModal) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+                html { background: #030712 !important; }
+            `;
+            (document.head || document.documentElement).appendChild(preStyle);
+        }
+        if (document.body) {
+            document.body.style.overflow = "hidden";
+        }
+
         let overlay = document.getElementById("maintOverlay");
         const message = data.message || "🛠️ ReelsBundles is undergoing scheduled maintenance. We will be back online shortly!";
         
@@ -433,7 +479,7 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                 <h1 class="maint-title">We'll Be Back Soon!</h1>
                 <div class="maint-message">${escapeHtml(message)}</div>
                 ${middleSectionHtml}
-                ${importantAlertHtml}
+                <div id="maintOverlayAlertSlot">${importantAlertHtml}</div>
                 <div class="maint-actions">
                     <a href="contact.html" class="maint-btn maint-btn-primary">
                         📩 Contact Support
@@ -669,7 +715,7 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                     alert("✨ Live site unlocked for testing in this browser session!\n\nNote: Closing this tab or browser will automatically expire the tester session.");
                 } else {
                     if (errEl) {
-                        errEl.textContent = `❌ Incorrect Passcode (${pin}). Please try again.`;
+                        errEl.textContent = `❌ Incorrect Passcode. Please try again.`;
                         errEl.style.display = "block";
                     }
                 }

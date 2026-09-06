@@ -296,6 +296,13 @@ function bindEventListeners() {
         };
     }
 
+    const runMasterBtn = document.getElementById("runMasterTestSuiteBtn");
+    if (runMasterBtn) {
+        runMasterBtn.onclick = () => {
+            window.location.href = "user-page-tests.html?run=master";
+        };
+    }
+
     // Test Event Buttons
     document.querySelectorAll(".test-run-btn").forEach(btn => {
         btn.onclick = async () => {
@@ -327,6 +334,167 @@ function bindEventListeners() {
             }
         };
     });
+
+    // 4B. Master One-Click Test Suite ("🚀 Run All Tests")
+    const masterSuiteBtn = document.getElementById("runMasterTestSuiteBtn");
+    const masterProgModal = document.getElementById("masterSuiteProgressModal");
+    const masterResModal = document.getElementById("masterSuiteResultModal");
+    const closeProgBtn = document.getElementById("closeProgressModalBtn");
+    const closeResBtn = document.getElementById("closeResultModalBtn");
+
+    if (closeProgBtn && masterProgModal) {
+        closeProgBtn.onclick = () => { masterProgModal.style.display = "none"; };
+    }
+    if (closeResBtn && masterResModal) {
+        closeResBtn.onclick = () => { masterResModal.style.display = "none"; };
+    }
+
+    if (masterSuiteBtn && masterProgModal) {
+        masterSuiteBtn.onclick = async () => {
+            masterProgModal.style.display = "flex";
+            if (closeProgBtn) closeProgBtn.style.display = "none";
+            const liveConsole = document.getElementById("suiteLiveConsole");
+            const progressBar = document.getElementById("progressBarFill");
+            const phaseLabel = document.getElementById("currentPhaseLabel");
+            const percentLabel = document.getElementById("progressPercentLabel");
+            const statusBadge = document.getElementById("suiteStatusBadge");
+
+            if (liveConsole) liveConsole.innerHTML = '<div style="color:#64748b;">[Master Suite Orchestrator] Starting end-to-end execution across Phases A through J...</div>';
+            if (progressBar) progressBar.style.width = "5%";
+            if (statusBadge) {
+                statusBadge.textContent = "RUNNING";
+                statusBadge.style.color = "#fbbf24";
+            }
+
+            // SSE Telemetry Connection
+            const sseUrl = `${API_BASE}/admin/test/stream?token=${encodeURIComponent(token)}`;
+            let sse = null;
+            try {
+                sse = new EventSource(sseUrl);
+                sse.onmessage = (ev) => {
+                    try {
+                        const d = JSON.parse(ev.data);
+                        if (d.type === "phase_start") {
+                            if (phaseLabel) phaseLabel.textContent = d.message || `Running ${d.phaseKey}`;
+                            if (liveConsole) {
+                                liveConsole.innerHTML += `<div style="color:#38bdf8; margin-top:4px;">▶ ${d.message}</div>`;
+                                liveConsole.scrollTop = liveConsole.scrollHeight;
+                            }
+                        } else if (d.type === "phase_complete") {
+                            if (progressBar) progressBar.style.width = `${d.progress || 50}%`;
+                            if (percentLabel) percentLabel.textContent = `${d.progress || 50}%`;
+                            if (liveConsole) {
+                                const color = d.status === "PASS" ? "#34d399" : (d.status === "PASS WITH NOT VERIFIED" ? "#fbbf24" : "#f87171");
+                                liveConsole.innerHTML += `<div style="color:${color};">  ✓ ${d.phaseKey}: ${d.passed || 0} passed, ${d.failed || 0} failed (${d.status})</div>`;
+                                liveConsole.scrollTop = liveConsole.scrollHeight;
+                            }
+                        } else if (d.type === "suite_complete") {
+                            if (progressBar) progressBar.style.width = "100%";
+                            if (percentLabel) percentLabel.textContent = "100%";
+                            if (liveConsole) {
+                                liveConsole.innerHTML += `<div style="color:#10b981; font-weight:700; margin-top:8px;">🚀 Master Test Suite Execution Finished!</div>`;
+                                liveConsole.scrollTop = liveConsole.scrollHeight;
+                            }
+                            if (sse) sse.close();
+                        }
+                    } catch (e) {}
+                };
+            } catch (e) {}
+
+            try {
+                const res = await fetch(`${API_BASE}/admin/test/run-all`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ baseUrl: window.location.origin })
+                });
+                const data = await res.json();
+                if (sse) sse.close();
+                const report = data.report || data;
+
+                if (statusBadge) {
+                    const isPass = report.overallStatus === "PASS" || report.overallStatus === "PASS WITH NOT VERIFIED";
+                    statusBadge.textContent = report.overallStatus || "COMPLETED";
+                    statusBadge.style.color = isPass ? "#34d399" : "#f87171";
+                }
+
+                if (closeProgBtn) {
+                    closeProgBtn.style.display = "block";
+                    closeProgBtn.textContent = "View Detailed Report";
+                    closeProgBtn.onclick = () => {
+                        masterProgModal.style.display = "none";
+                        openMasterResultModal(report);
+                    };
+                }
+                loadAllTelemetry();
+            } catch (err) {
+                if (sse) sse.close();
+                if (liveConsole) liveConsole.innerHTML += `<div style="color:#f87171; margin-top:8px;">[ERROR] Suite execution failed: ${err.message}</div>`;
+                if (statusBadge) {
+                    statusBadge.textContent = "FAILED";
+                    statusBadge.style.color = "#f87171";
+                }
+                if (closeProgBtn) {
+                    closeProgBtn.style.display = "block";
+                    closeProgBtn.textContent = "Close";
+                }
+            }
+        };
+    }
+
+    function openMasterResultModal(report) {
+        if (!masterResModal) return;
+        const titleEl = document.getElementById("resultModalTitle");
+        const subEl = document.getElementById("resultModalSubtitle");
+        if (titleEl) titleEl.textContent = `Master Suite: ${report.overallStatus || 'Completed'}`;
+        if (subEl) subEl.textContent = `Run ID: ${report.runId || '—'} | Duration: ${report.durationFormatted || (report.durationMs + 'ms')}`;
+
+        const summaryCards = document.getElementById("resultModalSummaryCards");
+        if (summaryCards && report.summary) {
+            summaryCards.innerHTML = `
+                <div style="background:#070a12; border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px; text-align:center;">
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:700;">TOTAL TESTS</div>
+                    <div style="font-size:22px; font-weight:800; color:#fff;">${report.summary.totalTests}</div>
+                </div>
+                <div style="background:#070a12; border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px; text-align:center;">
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:700;">PASSED</div>
+                    <div style="font-size:22px; font-weight:800; color:#34d399;">${report.summary.passedTests}</div>
+                </div>
+                <div style="background:#070a12; border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px; text-align:center;">
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:700;">FAILED</div>
+                    <div style="font-size:22px; font-weight:800; color:#f87171;">${report.summary.failedTests}</div>
+                </div>
+                <div style="background:#070a12; border:1px solid rgba(255,255,255,0.06); border-radius:10px; padding:14px; text-align:center;">
+                    <div style="font-size:11px; color:var(--text-muted); font-weight:700;">NOT VERIFIED</div>
+                    <div style="font-size:22px; font-weight:800; color:#fbbf24;">${report.summary.notVerifiedTests}</div>
+                </div>
+            `;
+        }
+
+        const phasesList = document.getElementById("resultModalPhasesList");
+        if (phasesList && Array.isArray(report.suites)) {
+            phasesList.innerHTML = report.suites.map(s => {
+                const badgeColor = s.status === "PASS" ? "#34d399" : (s.status === "PASS WITH NOT VERIFIED" ? "#fbbf24" : "#f87171");
+                return `
+                    <div style="background:#070a12; border:1px solid var(--border-color); border-radius:10px; padding:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong style="color:#fff; font-size:14px;">${s.name}</strong>
+                                <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                                    Total: ${s.total} | Passed: ${s.passed} | Failed: ${s.failed} ${s.notVerified ? `| Not Verified: ${s.notVerified}` : ''}
+                                </div>
+                            </div>
+                            <span style="font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; border:1px solid ${badgeColor}; color:${badgeColor};">${s.status}</span>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        masterResModal.style.display = "flex";
+    }
 
     // Filters & Search
     let searchDebounce = null;

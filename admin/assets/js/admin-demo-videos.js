@@ -8,6 +8,24 @@ const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
         : "https://reelsbundles-backend.onrender.com/api"
 );
 const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
+
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") || "";
+}
+
+function getAdminAuthHeader() {
+    const token = getAdminToken();
+    return token ? { "Authorization": `Bearer ${token}` } : {};
+}
+
+const adminToken = getAdminToken();
+if (!adminToken) {
+    location.href = "index.html";
+}
+
 async function fetchDemoVideos() {
     const grid = document.getElementById("videosGrid");
     if (!grid) return;
@@ -131,9 +149,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 async function robustFetch(url, options = {}, retries = 2, delayMs = 1500) {
+    const authHeaders = getAdminAuthHeader();
+    const finalHeaders = { ...authHeaders, ...(options.headers || {}) };
+    const mergedOptions = { ...options, headers: finalHeaders };
     for (let i = 0; i <= retries; i++) {
         try {
-            const response = await window.fetch(url, options);
+            const response = await window.fetch(url, mergedOptions);
             return response;
         } catch (err) {
             console.warn(`[ROBUST FETCH] Attempt ${i + 1} failed for ${url}:`, err);

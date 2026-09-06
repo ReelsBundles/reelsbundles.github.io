@@ -1,4 +1,12 @@
-const token = localStorage.getItem("admin_token");
+function getAdminToken() {
+    return localStorage.getItem("admin_token") ||
+           localStorage.getItem("rb_admin_token") ||
+           localStorage.getItem("token") ||
+           sessionStorage.getItem("admin_token") ||
+           sessionStorage.getItem("rb_admin_token") ||
+           sessionStorage.getItem("token") || "";
+}
+
 const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
         ? "http://localhost:3000/api"
@@ -25,7 +33,7 @@ async function loadOrders() {
             `${API_BASE}/admin/orders?page=${page}&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${getAdminToken()}`
                 }
             }
         );
@@ -285,7 +293,7 @@ function attachDeleteButtons() {
 
                                     headers: {
                                         Authorization:
-                                            `Bearer ${token}`
+                                            `Bearer ${getAdminToken()}`
                                     }
                                 }
                             );
@@ -438,31 +446,6 @@ document
         }
 
     };
-    /* ==========================================================
-   DELETE SINGLE ORDER
-========================================================== */
-
-export async function deleteOrder(orderId) {
-
-    if (!orderId) {
-        throw new Error("Order ID is required.");
-    }
-
-    const docRef = db
-        .collection("payments")
-        .doc(orderId);
-
-    const doc = await docRef.get();
-
-    if (!doc.exists) {
-        throw new Error("Order not found.");
-    }
-
-    await docRef.delete();
-
-    return true;
-}
-
 
 /* ==========================================================
    DELETE ALL ORDERS
@@ -492,7 +475,7 @@ document
 
                         headers: {
                             Authorization:
-                                `Bearer ${token}`
+                                `Bearer ${getAdminToken()}`
                         }
                     }
                 );

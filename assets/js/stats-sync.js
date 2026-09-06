@@ -29,37 +29,43 @@ export async function fetchAndSyncStats() {
 
         // 1. Update text elements with data-stat attributes
         document.querySelectorAll("[data-stat='happy-customers']").forEach(el => {
-            el.textContent = stats.happyCustomers;
+            el.textContent = stats.happyCustomersCount > 0 ? `${stats.happyCustomersCount}+` : "0";
         });
 
         document.querySelectorAll("[data-stat='ready-reels']").forEach(el => {
-            el.textContent = stats.readyReels;
+            el.textContent = stats.readyReels || "200K+";
         });
 
         document.querySelectorAll("[data-stat='satisfaction']").forEach(el => {
-            el.textContent = stats.satisfaction;
+            el.textContent = stats.totalReviews > 0 ? `${stats.satisfactionPercentage}%` : "100%";
         });
 
         document.querySelectorAll("[data-stat='support']").forEach(el => {
-            el.textContent = stats.support;
+            el.textContent = stats.support || "24/7";
+        });
+
+        document.querySelectorAll("[data-stat='hero-rating']").forEach(el => {
+            if (stats.totalReviews > 0) {
+                el.textContent = `Rated ${stats.averageRating}/5 (${stats.totalReviews} Verified Review${stats.totalReviews === 1 ? '' : 's'})`;
+            } else {
+                el.textContent = "100% Real Verified Content";
+            }
         });
 
         // 2. Update data-counter & data-stat-counter elements
         document.querySelectorAll("[data-stat-counter='happy-customers'], [data-counter='10000']").forEach(el => {
-            if (stats.happyCustomersCount) {
-                el.setAttribute("data-counter", stats.happyCustomersCount);
-                if (!el.getAttribute("data-animated")) {
-                    el.textContent = (stats.happyCustomersCount / 1000).toFixed(1) + "K+";
-                }
+            const count = stats.happyCustomersCount || 0;
+            el.setAttribute("data-counter", count);
+            if (!el.getAttribute("data-animated")) {
+                el.textContent = count > 0 ? `${count}+` : "0";
             }
         });
 
         document.querySelectorAll("[data-stat-counter='satisfaction'], [data-counter='99']").forEach(el => {
-            if (stats.satisfaction) {
-                el.setAttribute("data-counter", stats.satisfactionPercentage || 99);
-                if (!el.getAttribute("data-animated")) {
-                    el.textContent = stats.satisfaction;
-                }
+            const sat = stats.totalReviews > 0 ? (stats.satisfactionPercentage || 100) : 100;
+            el.setAttribute("data-counter", sat);
+            if (!el.getAttribute("data-animated")) {
+                el.textContent = `${sat}%`;
             }
         });
 

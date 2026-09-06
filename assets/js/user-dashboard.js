@@ -223,7 +223,7 @@ async function loadUser() {
 
         try {
 
-            const entitlement = null;
+            const entitlement = await getCurrentUserEntitlement();
 
 
             if (entitlement) {
