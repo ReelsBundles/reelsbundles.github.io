@@ -12,7 +12,7 @@ onAuthStateChanged(auth, (user) => {
     if (!user) {
         console.warn("[PAYMENT GUARD] 🔒 Authentication required to access Payment page. Redirecting to login...");
         const redirectTarget = encodeURIComponent(window.location.pathname + window.location.search);
-        window.location.href = `login.html?redirect=${redirectTarget}`;
+        window.location.href = `/login?return=${redirectTarget}`;
         return;
     }
 
@@ -53,12 +53,10 @@ function escapeHtml(str) {
 
 
 /*
- * Dynamic Payment Gateway Environment Mode
- * - Uses 'sandbox' / 'test' on Localhost / 127.0.0.1
- * - Uses 'production' on Live Production Domains
+ * Payment Gateway Configuration
+ * - UroPay is the exclusive production payment gateway.
  */
 const isProdHost = window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1";
-const CASHFREE_MODE = isProdHost ? "production" : "sandbox";
 
 
 /* ==========================================================
@@ -1581,7 +1579,7 @@ function initializePaymentPage() {
         if (!user) {
             console.warn("[PAYMENT AUTH] User not logged in, redirecting to login page...");
             const currentUrl = window.location.pathname + window.location.search;
-            window.location.replace(`login.html?redirect=${encodeURIComponent(currentUrl)}`);
+            window.location.replace(`/login?return=${encodeURIComponent(currentUrl)}`);
         } else {
             console.log("[PAYMENT AUTH] Authenticated User:", user.email, user.uid);
             if (fullNameInput && !fullNameInput.value) {

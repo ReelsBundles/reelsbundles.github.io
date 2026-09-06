@@ -152,7 +152,7 @@ document.addEventListener(
 
 
                     window.location.href =
-                        "index.html";
+                        "/";
 
                 }
 
@@ -2620,7 +2620,7 @@ if (
 -------------------------------------------------- */
 
 const downloadPage =
-    `download.html?bundleId=${encodeURIComponent(bundleId)}`;
+    `/download?bundleId=${encodeURIComponent(bundleId)}`;
 
 console.log(
     "[Download] Opening secure download page:",
@@ -2809,11 +2809,11 @@ document.addEventListener(
                  */
 
                 const paymentUrl =
-                    `payment.html?plan=${encodeURIComponent(plan)}`;
+                    `/payment?plan=${encodeURIComponent(plan)}`;
 
 
                 window.location.href =
-                    `login.html?redirect=${encodeURIComponent(paymentUrl)}`;
+                    `/login?return=${encodeURIComponent(paymentUrl)}`;
 
 
                 return;
@@ -2835,7 +2835,7 @@ document.addEventListener(
             -------------------------------------------------- */
 
             const paymentUrl =
-                `payment.html?plan=${encodeURIComponent(plan)}`;
+                `/payment?plan=${encodeURIComponent(plan)}`;
 
 
             console.log(

@@ -28,19 +28,19 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/f
     }
 
     async function handleBuyClick(e) {
-        const link = e.target.closest("a[href*='payment.html'], button[data-plan]");
+        const link = e.target.closest("a[href*='payment'], button[data-plan]");
         if (!link) return;
 
         e.preventDefault();
 
         // Determine plan (basic or premium)
-        let href = link.getAttribute("href") || "payment.html?plan=basic";
+        let href = link.getAttribute("href") || "/payment?plan=basic";
         let plan = "basic";
         if (href.includes("plan=premium") || link.getAttribute("data-plan") === "premium" || (link.textContent && link.textContent.toLowerCase().includes("premium"))) {
             plan = "premium";
         }
 
-        const targetPaymentUrl = `payment.html?plan=${plan}`;
+        const targetPaymentUrl = `/payment?plan=${plan}`;
 
         // 1. Fast check if user is already logged in
         if (auth.currentUser || currentUser || isLocallyLoggedIn()) {
@@ -66,8 +66,8 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/f
         if (auth.currentUser || currentUser || isLocallyLoggedIn()) {
             window.location.href = targetPaymentUrl;
         } else {
-            // User NOT logged in -> Redirect to login with payment redirect target
-            const redirectUrl = `login.html?redirect=${encodeURIComponent(targetPaymentUrl)}&plan=${plan}`;
+            // User NOT logged in -> Redirect to login with safe internal payment return target
+            const redirectUrl = `/login?return=${encodeURIComponent(targetPaymentUrl)}&plan=${plan}`;
             window.location.href = redirectUrl;
         }
     }

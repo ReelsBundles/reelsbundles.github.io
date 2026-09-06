@@ -15,41 +15,42 @@ import { createUserSession, logoutUser, syncUserToBackend } from "./auth-common.
 // Helper function to extract redirect target URL cleanly
 function getSignupRedirect() {
     const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect");
+    const redirect = params.get("return") || params.get("redirect");
 
     if (!redirect) {
-        return "dashboard.html";
+        return "/dashboard";
     }
 
     try {
         const decoded = decodeURIComponent(redirect).trim();
-        if (
-            decoded.includes("payment") ||
-            decoded.includes("download") ||
-            decoded.includes("dashboard") ||
-            decoded.startsWith("user/") ||
-            decoded.startsWith("/") ||
-            decoded.startsWith(".")
-        ) {
-            return decoded;
+        // Disallow external URLs (prevent open redirect vulnerability)
+        if (decoded.includes("://") || decoded.startsWith("//") || decoded.startsWith("\\")) {
+            console.warn("[SIGNUP] External redirect rejected for security:", decoded);
+            return "/dashboard";
         }
+        // Normalize any .html to clean route
+        let clean = decoded.replace(/(?:^|\/|\.\/|\.\.\/)?([a-zA-Z0-9_-]+)\.html(\?|#|$)/g, (m, page, suffix) => {
+            return page === "index" ? "/" + suffix : "/" + page + suffix;
+        });
+        if (!clean.startsWith("/")) clean = "/" + clean;
+        return clean;
     } catch (error) {
         console.warn("[SIGNUP] Invalid redirect target:", error);
     }
 
-    return "dashboard.html";
+    return "/dashboard";
 }
 
 // Preserve redirect query parameters on login links
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
-    const redirectParam = params.get("redirect");
+    const returnParam = params.get("return") || params.get("redirect");
     const planParam = params.get("plan");
 
-    if (redirectParam) {
+    if (returnParam) {
         const loginLink = document.getElementById("loginLink") || document.querySelector("a[href*='login']");
         if (loginLink) {
-            let target = `login.html?redirect=${encodeURIComponent(redirectParam)}`;
+            let target = `/login?return=${encodeURIComponent(returnParam)}`;
             if (planParam) target += `&plan=${encodeURIComponent(planParam)}`;
             loginLink.setAttribute("href", target);
         }

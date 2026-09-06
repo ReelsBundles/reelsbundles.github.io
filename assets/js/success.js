@@ -1311,7 +1311,7 @@ function showSuccess() {
         () => {
 
             window.location.replace(
-                "download.html"
+                "/download"
             );
 
         },
@@ -1412,7 +1412,7 @@ function handleDownload() {
         "success"
     );
 
-    window.location.replace("download.html");
+    window.location.replace("/download");
 }
 
 
@@ -1633,7 +1633,7 @@ function redirectToFailedPage(
      */
 
     const failedUrl =
-        `failed.html?${params.toString()}`;
+        `/failed?${params.toString()}`;
 
 
     console.log(

@@ -53,7 +53,7 @@ document.addEventListener(
                                 if (user) {
 
                                     window.location.href =
-                                        `payment.html?plan=${encodeURIComponent(plan)}`;
+                                        `/payment?plan=${encodeURIComponent(plan)}`;
 
                                     resolve(true);
 
@@ -66,11 +66,11 @@ document.addEventListener(
                                    ========================================== */
 
                                 const returnUrl =
-                                    `payment.html?plan=${encodeURIComponent(plan)}`;
+                                    `/payment?plan=${encodeURIComponent(plan)}`;
 
 
                                 window.location.href =
-                                    `login.html?redirect=${encodeURIComponent(returnUrl)}`;
+                                    `/login?return=${encodeURIComponent(returnUrl)}&plan=${encodeURIComponent(plan)}`;
 
                                 resolve(false);
 

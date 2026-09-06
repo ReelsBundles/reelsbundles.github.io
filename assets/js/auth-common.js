@@ -14,8 +14,11 @@ const RAW_API_BASE = window.REELS_BUNDLES_API_BASE || (
 );
 const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") + "/api";
 (function sanitizeAllLinksAndAddressBar() {
-    // Keep .html extensions intact on GitHub Pages to ensure query parameters and 200 OK static page routing work reliably
-    if (window.location.hostname.includes("github.io") || window.location.search.includes("suspended=true")) {
+    // Strictly preserve Admin panel routing and URLs intact
+    if (window.location.pathname.includes("/admin/") || window.location.href.includes("/admin/")) {
+        return;
+    }
+    if (window.location.search.includes("suspended=true")) {
         return;
     }
     function cleanUrlPath(hrefStr) {
@@ -26,9 +29,9 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         if (hrefStr.startsWith("http://") || hrefStr.startsWith("https://")) {
             if (!hrefStr.includes(window.location.hostname)) return hrefStr;
         }
-        return hrefStr.replace(/([a-zA-Z0-9_-]+)\.html(\?|#|$)/g, function(match, pageName, suffix) {
+        return hrefStr.replace(/(?:^|\/|\.\/|\.\.\/)?([a-zA-Z0-9_-]+)\.html(\?|#|$)/g, function(match, pageName, suffix) {
             if (pageName === "index") return "/" + suffix;
-            return pageName + suffix;
+            return "/" + pageName + suffix;
         });
     }
 
@@ -49,7 +52,7 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
         var links = document.querySelectorAll("a[href*='.html']");
         links.forEach(function(a) {
             var oldHref = a.getAttribute("href");
-            if (oldHref && oldHref.includes(".html")) {
+            if (oldHref && oldHref.includes(".html") && !oldHref.includes("/admin/")) {
                 a.setAttribute("href", cleanUrlPath(oldHref));
             }
         });
@@ -63,14 +66,14 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
 
     document.addEventListener("mouseover", function(e) {
         var a = e.target.closest("a");
-        if (a && a.getAttribute("href") && a.getAttribute("href").includes(".html")) {
+        if (a && a.getAttribute("href") && a.getAttribute("href").includes(".html") && !a.getAttribute("href").includes("/admin/")) {
             a.setAttribute("href", cleanUrlPath(a.getAttribute("href")));
         }
     }, true);
 
     document.addEventListener("click", function(e) {
         var a = e.target.closest("a");
-        if (a && a.getAttribute("href") && a.getAttribute("href").includes(".html")) {
+        if (a && a.getAttribute("href") && a.getAttribute("href").includes(".html") && !a.getAttribute("href").includes("/admin/")) {
             a.setAttribute("href", cleanUrlPath(a.getAttribute("href")));
         }
     }, true);
@@ -350,14 +353,17 @@ export const redirectIfAuthenticated = () => {
             startUserStatusSync(user);
 
             const params = new URLSearchParams(window.location.search);
-            const redirect = params.get("redirect");
+            const redirect = params.get("return") || params.get("redirect");
             if (redirect) {
                 try {
-                    window.location.replace(decodeURIComponent(redirect));
-                    return;
+                    const decoded = decodeURIComponent(redirect);
+                    if (decoded.startsWith("/") && !decoded.includes("://")) {
+                        window.location.replace(decoded);
+                        return;
+                    }
                 } catch (e) {}
             }
-            window.location.replace("download.html");
+            window.location.replace("/download");
         }
     });
 };
@@ -365,7 +371,8 @@ export const redirectIfAuthenticated = () => {
 export const protectUserPage = () => {
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
-            window.location.href = "login.html";
+            const redirectTarget = encodeURIComponent(window.location.pathname + window.location.search);
+            window.location.href = `/login?return=${redirectTarget}`;
         } else {
             const res = await syncUserToBackend(user);
             if (res && res.disabled) return;

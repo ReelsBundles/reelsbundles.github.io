@@ -48,7 +48,7 @@ document.addEventListener(
             </button>
 
             <a
-                href="login.html"
+                href="/login"
                 class="btn btn--secondary"
                 id="landingSignIn"
             >
@@ -57,7 +57,7 @@ document.addEventListener(
 
 
             <a
-                href="signup.html"
+                href="/signup"
                 class="btn btn--primary"
                 id="landingGetStarted"
             >

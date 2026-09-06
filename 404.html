@@ -5,36 +5,43 @@
     <script>
     (function() {
         var routeMap = {
-            "/": "index.html",
-            "/index": "index.html",
-            "/login": "login.html",
-            "/signup": "signup.html",
-            "/dashboard": "dashboard.html",
-            "/payment": "payment.html",
-            "/success": "success.html",
-            "/download": "download.html",
-            "/contact": "contact.html",
-            "/demo": "demo.html",
-            "/disclaimer": "disclaimer.html",
-            "/failed": "failed.html",
-            "/forgot-password": "forgot-password.html",
-            "/privacy": "privacy.html",
-            "/refund": "refund.html",
-            "/terms": "terms.html",
-            "/maintenance": "maintenance.html",
-            "/maintenance/": "maintenance.html",
-            "/admin": "admin/index.html",
-            "/admin/": "admin/index.html",
-            "/admin/login": "admin/index.html",
-            "/admin/login.html": "admin/index.html",
-            "/admin/dashboard": "admin/dashboard.html",
-            "/admin/bundles": "admin/bundles.html",
-            "/admin/orders": "admin/orders.html",
-            "/admin/download": "admin/download.html",
-            "/admin/downloads": "admin/download.html",
-            "/admin/storage": "admin/storage.html",
-            "/admin/coupons": "admin/coupons.html",
-            "/admin/demo-videos": "admin/demo-videos.html"
+            "/": "/",
+            "/index": "/",
+            "/login": "/login",
+            "/signup": "/signup",
+            "/register": "/signup",
+            "/dashboard": "/dashboard",
+            "/payment": "/payment",
+            "/checkout": "/payment",
+            "/success": "/success",
+            "/payment-success": "/success",
+            "/download": "/download",
+            "/downloads": "/download",
+            "/bundles": "/bundles",
+            "/contact": "/contact",
+            "/support": "/contact",
+            "/demo": "/demo",
+            "/demo-videos": "/demo",
+            "/disclaimer": "/disclaimer",
+            "/failed": "/failed",
+            "/payment-failed": "/failed",
+            "/forgot-password": "/forgot-password",
+            "/privacy": "/privacy",
+            "/refund": "/refund",
+            "/terms": "/terms",
+            "/maintenance": "/maintenance",
+            "/admin": "/admin/index.html",
+            "/admin/": "/admin/index.html",
+            "/admin/login": "/admin/index.html",
+            "/admin/login.html": "/admin/index.html",
+            "/admin/dashboard": "/admin/dashboard.html",
+            "/admin/bundles": "/admin/bundles.html",
+            "/admin/orders": "/admin/orders.html",
+            "/admin/download": "/admin/download.html",
+            "/admin/downloads": "/admin/download.html",
+            "/admin/storage": "/admin/storage.html",
+            "/admin/coupons": "/admin/coupons.html",
+            "/admin/demo-videos": "/admin/demo-videos.html"
         };
 
         var pathname = window.location.pathname;
@@ -47,11 +54,11 @@
         var pageKey = segments.length > 0 ? '/' + segments[segments.length - 1] : '/';
         var cleanPageKey = pageKey.replace(/\.html$/, "");
 
-        var targetFile = routeMap[lowerPath] || routeMap[cleanPath] || routeMap[pageKey] || routeMap[cleanPageKey];
+        var targetRoute = routeMap[lowerPath] || routeMap[cleanPath] || routeMap[pageKey] || routeMap[cleanPageKey];
 
-        if (targetFile) {
+        if (targetRoute && targetRoute !== pathname && targetRoute !== lowerPath) {
             var queryAndHash = window.location.search + window.location.hash;
-            window.location.replace(targetFile + queryAndHash);
+            window.location.replace(targetRoute + queryAndHash);
         }
     })();
     </script>
@@ -199,9 +206,9 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="assets/css/notifications.css">
-    <link rel="stylesheet" href="assets/css/maintenance.css">
-    <script src="assets/js/maintenance-guard.js"></script>
+    <link rel="stylesheet" href="/assets/css/notifications.css">
+    <link rel="stylesheet" href="/assets/css/maintenance.css">
+    <script src="/assets/js/maintenance-guard.js"></script>
 </head>
 <body>
 
@@ -215,23 +222,23 @@
     <header class="navbar">
         <div class="container navbar__container">
             <!-- Logo -->
-            <a href="index.html" class="navbar__logo">
+            <a href="/" class="navbar__logo">
                 <span class="navbar__logo-icon">▶</span>
                 <span>ReelsBundles</span>
             </a>
 
             <!-- Menu -->
             <nav class="navbar__menu">
-                <a href="index.html#home">Home</a>
-                <a href="index.html#features">Features</a>
-                <a href="demo.html">Demo</a>
-                <a href="index.html#pricing">Pricing</a>
-                <a href="index.html#faq">FAQ</a>
+                <a href="/#home">Home</a>
+                <a href="/#features">Features</a>
+                <a href="/demo">Demo</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#faq">FAQ</a>
 
                 <!-- Action Buttons -->
                 <div class="navbar__buttons">
-                    <a href="login.html" class="btn btn--secondary">Sign In</a>
-                    <a href="signup.html" class="btn btn--primary">Get Started</a>
+                    <a href="/login" class="btn btn--secondary">Sign In</a>
+                    <a href="/signup" class="btn btn--primary">Get Started</a>
                 </div>
             </nav>
 
@@ -255,13 +262,13 @@
                 The page you are looking for doesn't exist, has been removed, or the link might be broken. Let's get you back on track!
             </p>
             <div class="notfound-actions">
-                <a href="index.html" class="btn-404 btn-404-primary">
+                <a href="/" class="btn-404 btn-404-primary">
                     🏠 Back to Home
                 </a>
-                <a href="download.html" class="btn-404 btn-404-secondary">
+                <a href="/download" class="btn-404 btn-404-secondary">
                     📦 My Downloads
                 </a>
-                <a href="contact.html" class="btn-404 btn-404-secondary">
+                <a href="/contact" class="btn-404 btn-404-secondary">
                     ✉️ Support
                 </a>
             </div>
@@ -273,7 +280,7 @@
         <div class="container footer-grid">
             <!-- Brand -->
             <div class="footer-brand">
-                <a href="index.html" class="footer-logo">
+                <a href="/" class="footer-logo">
                     <span class="footer-logo-icon">▶</span>
                     <span>ReelsBundles</span>
                 </a>
@@ -282,7 +289,7 @@
                 </p>
                 <div class="footer-social">
                     <a href="#" aria-label="Instagram">📸</a>
-                    <a href="contact.html" aria-label="Contact Us">📩</a>
+                    <a href="/contact" aria-label="Contact Us">📩</a>
                     <a href="#" aria-label="YouTube">▶️</a>
                     <a href="#" aria-label="WhatsApp">💬</a>
                 </div>
@@ -291,25 +298,25 @@
             <!-- Products -->
             <div class="footer-links">
                 <h3>Products</h3>
-                <a href="payment.html?plan=basic">Basic Plan</a>
-                <a href="payment.html?plan=premium">Premium Plan</a>
-                <a href="index.html#features">Features</a>
+                <a href="/payment?plan=basic">Basic Plan</a>
+                <a href="/payment?plan=premium">Premium Plan</a>
+                <a href="/#features">Features</a>
             </div>
 
             <!-- Support -->
             <div class="footer-links">
                 <h3>Support</h3>
-                <a href="index.html#faq">FAQ</a>
-                <a href="contact.html">Contact</a>
+                <a href="/#faq">FAQ</a>
+                <a href="/contact">Contact</a>
             </div>
 
             <!-- Legal -->
             <div class="footer-links">
                 <h3>Legal</h3>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms & Conditions</a>
-                <a href="refund.html">Refund Policy</a>
-                <a href="disclaimer.html">Disclaimer</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms & Conditions</a>
+                <a href="/refund">Refund Policy</a>
+                <a href="/disclaimer">Disclaimer</a>
             </div>
         </div>
 
@@ -319,7 +326,7 @@
         </div>
     </footer>
 
-    <script type="module" src="assets/js/navbar.js"></script>
+    <script type="module" src="/assets/js/navbar.js"></script>
     
     
     </body>

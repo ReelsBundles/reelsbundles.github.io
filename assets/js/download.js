@@ -568,7 +568,7 @@ function setupLogout() {
                     try { sessionStorage.removeItem(k); } catch (e) {}
                 });
             } catch(e) {}
-            window.location.href = "index.html";
+            window.location.href = "/";
         }
     });
 }
@@ -1095,7 +1095,8 @@ async function loadBundleLibrary(silent = false) {
         const response = await apiFetch("/api/user/bundles");
 
         if (response.status === 401) {
-            window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+            const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+            window.location.href = `/login?return=${returnUrl}`;
             return;
         }
 
@@ -1664,7 +1665,7 @@ function renderBundleFilesView(
                 loadFolderContents(requestedBundleId, null, null);
             }
         } else {
-            window.location.href = "download.html";
+            window.location.href = "/download";
         }
     });
 

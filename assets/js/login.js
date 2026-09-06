@@ -12,43 +12,44 @@ import { createUserSession, logoutUser, syncUserToBackend } from "./auth-common.
 // Helper function to extract redirect target URL cleanly
 function getLoginRedirect() {
     const params = new URLSearchParams(window.location.search);
-    const redirect = params.get("redirect");
+    const redirect = params.get("return") || params.get("redirect");
 
     if (!redirect) {
-        return "dashboard.html";
+        return "/dashboard";
     }
 
     try {
         const decoded = decodeURIComponent(redirect).trim();
-        if (
-            decoded.includes("payment") ||
-            decoded.includes("download") ||
-            decoded.includes("dashboard") ||
-            decoded.startsWith("user/") ||
-            decoded.startsWith("/") ||
-            decoded.startsWith(".")
-        ) {
-            return decoded;
+        // Disallow external URLs (prevent open redirect vulnerability)
+        if (decoded.includes("://") || decoded.startsWith("//") || decoded.startsWith("\\")) {
+            console.warn("[AUTH] External redirect rejected for security:", decoded);
+            return "/dashboard";
         }
+        // Normalize any .html to clean route
+        let clean = decoded.replace(/(?:^|\/|\.\/|\.\.\/)?([a-zA-Z0-9_-]+)\.html(\?|#|$)/g, (m, page, suffix) => {
+            return page === "index" ? "/" + suffix : "/" + page + suffix;
+        });
+        if (!clean.startsWith("/")) clean = "/" + clean;
+        return clean;
     } catch (error) {
         console.warn("[AUTH] Invalid redirect target:", error);
     }
 
-    return "dashboard.html";
+    return "/dashboard";
 }
 
 // Preserve redirect query parameters across link navigations
 document.addEventListener("DOMContentLoaded", () => {
     const message = document.getElementById("authMessage");
     const params = new URLSearchParams(window.location.search);
-    const redirectParam = params.get("redirect");
+    const returnParam = params.get("return") || params.get("redirect");
     const planParam = params.get("plan");
 
-    // Preserve redirect parameters on Signup link
-    if (redirectParam) {
+    // Preserve return parameters on Signup link
+    if (returnParam) {
         const signupLink = document.getElementById("signupLink") || document.querySelector("a[href*='signup']");
         if (signupLink) {
-            let target = `signup.html?redirect=${encodeURIComponent(redirectParam)}`;
+            let target = `/signup?return=${encodeURIComponent(returnParam)}`;
             if (planParam) target += `&plan=${encodeURIComponent(planParam)}`;
             signupLink.setAttribute("href", target);
         }

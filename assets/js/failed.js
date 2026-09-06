@@ -133,7 +133,7 @@ function retryPayment() {
      */
 
     window.location.href =
-        "payment.html";
+        "/payment";
 
 }
 
