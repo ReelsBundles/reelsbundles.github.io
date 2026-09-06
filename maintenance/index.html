@@ -10,16 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/maintenance.css">
-    <link rel="stylesheet" href="../assets/css/notifications.css">
 </head>
 <body style="margin: 0; background: #030712; min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Inter', system-ui, -apple-system, sans-serif;">
 
     <div id="maintOverlay" class="maint-overlay">
         <div class="maint-card" style="position: relative;">
-            <button type="button" class="notification-bell-btn maint-bell-btn" id="maintBellBtn" title="View Live System Alerts" style="position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 20px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-                🔔
-                <span class="bell-badge" id="maintBellBadge" style="position: absolute; top: -2px; right: -2px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; border-radius: 10px; padding: 2px 6px; display: none;"></span>
-            </button>
             <div class="maint-gear-box">
                 <span class="maint-gear-main">⚙️</span>
                 <span class="maint-gear-sub">🔧</span>
@@ -49,6 +44,5 @@
 
     <!-- Live Maintenance & Tester Bypass Script -->
     <script src="../assets/js/maintenance-guard.js"></script>
-    <script type="module" src="../assets/js/notifications.js"></script>
 </body>
 </html>

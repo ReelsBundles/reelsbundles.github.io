@@ -46,7 +46,6 @@ let activeNotifications = [];
                     updateBadgeCount();
                     renderNotificationList();
                     updateTopTickerBar(data.notifications);
-                    updateDashboardAlerts();
                 }
             }
         } catch (err) {
@@ -58,92 +57,19 @@ let activeNotifications = [];
                     updateBadgeCount();
                     renderNotificationList();
                     updateTopTickerBar(activeNotifications);
-                    updateDashboardAlerts();
                 }
             } catch (e) {}
         }
-
-        // Also fetch active Important Alerts
-        try {
-            const resAlerts = await fetch(`${API_BASE}/system/important-alerts`, { cache: "no-store" });
-            if (resAlerts.ok) {
-                const alertData = await resAlerts.json();
-                if (alertData.success && Array.isArray(alertData.alerts)) {
-                    try {
-                        localStorage.setItem("rb_active_important_alerts", JSON.stringify(alertData.alerts));
-                    } catch (e) {}
-                    updateBadgeCount();
-                    renderNotificationList();
-                    updateDashboardAlerts();
-                }
-            }
-        } catch (e) {}
-    }
-
-    function getAllActiveAlerts() {
-        if (!isNotificationAllowedPage()) {
-            return [];
-        }
-
-        const alerts = [];
-
-        // 1. Maintenance Alert
-        const isMaintActive = localStorage.getItem("rb_maint_active") === "true" || Boolean(document.getElementById("maintOverlay"));
-        if (isMaintActive) {
-            let maintMsg = "ReelsBundles is undergoing scheduled system maintenance.";
-            try {
-                const raw = localStorage.getItem("rb_maint_data");
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && parsed.message) {
-                        maintMsg = parsed.message;
-                    }
-                }
-            } catch (e) {}
-
-            alerts.push({
-                id: "system_maintenance_active_alert",
-                type: "alert",
-                category: "maintenance",
-                title: "⚙️ Scheduled Maintenance Active",
-                message: maintMsg,
-                active: true
-            });
-        }
-
-        // 2. Important Alerts
-        try {
-            const rawAlerts = localStorage.getItem("rb_active_important_alerts");
-            if (rawAlerts) {
-                const list = JSON.parse(rawAlerts);
-                if (Array.isArray(list)) {
-                    list.filter(a => a.active !== false).forEach(a => {
-                        alerts.push({
-                            id: a.id || "important_alert",
-                            type: "alert",
-                            category: "important",
-                            title: a.title || "⚠️ Important Alert",
-                            message: a.message || "",
-                            active: true
-                        });
-                    });
-                }
-            }
-        } catch (e) {}
-
-        return alerts;
     }
 
     function updateBadgeCount() {
-        // FILTER: Bell Badge & Drawer displays ALERTS ONLY
-        const systemAlerts = getAllActiveAlerts();
         const readIds = getReadNotificationIds();
-        const unreadAlerts = systemAlerts.filter(n => !readIds.includes(n.id));
+        const unread = (activeNotifications || []).filter(n => n.active !== false && !readIds.includes(n.id));
 
-        const badges = document.querySelectorAll("#notifBadge, #maintBellBadge, .bell-badge, .notif-badge");
+        const badges = document.querySelectorAll("#notifBadge, .bell-badge, .notif-badge");
         badges.forEach(badgeEl => {
-            if (unreadAlerts.length > 0) {
-                badgeEl.textContent = unreadAlerts.length > 9 ? "9+" : unreadAlerts.length;
+            if (unread.length > 0) {
+                badgeEl.textContent = unread.length > 9 ? "9+" : unread.length;
                 badgeEl.classList.remove("hidden");
                 badgeEl.style.display = "inline-block";
             } else {
@@ -180,33 +106,43 @@ let activeNotifications = [];
         const bodyEl = document.getElementById("notifDrawerBody");
         if (!bodyEl) return;
 
-        // ROUTING RULE: Bell Drawer displays ALERTS ONLY
-        const systemAlerts = getAllActiveAlerts();
+        const notifs = (activeNotifications || []).filter(n => n.active !== false);
 
-        if (systemAlerts.length === 0) {
+        if (notifs.length === 0) {
             bodyEl.innerHTML = `
                 <div class="notif-empty">
                     <div class="notif-empty-icon">🔔</div>
-                    <p>No active system alerts right now.</p>
+                    <p>No notifications right now.</p>
                 </div>
             `;
             return;
         }
 
-        const html = systemAlerts.map(n => {
-            const isMaint = n.category === "maintenance";
-            const tagText = isMaint ? "🛠️ MAINTENANCE" : "⚠️ IMPORTANT ALERT";
-            const tagStyle = isMaint
-                ? "background:rgba(239, 68, 68, 0.2); border:1px solid rgba(239, 68, 68, 0.4); color:#fca5a5;"
-                : "background:rgba(234, 179, 8, 0.2); border:1px solid rgba(234, 179, 8, 0.4); color:#fde047;";
+        const html = notifs.map(n => {
+            const isCoupon = n.type === "coupon";
+            const tagText = isCoupon ? "🎁 COUPON" : "📢 ANNOUNCEMENT";
+            const tagStyle = isCoupon
+                ? "background:rgba(124, 58, 237, 0.2); border:1px solid rgba(124, 58, 237, 0.4); color:#c4b5fd;"
+                : "background:rgba(59, 130, 246, 0.2); border:1px solid rgba(59, 130, 246, 0.4); color:#93c5fd;";
+
+            let couponActionHtml = "";
+            if (isCoupon && n.couponCode) {
+                couponActionHtml = `
+                    <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+                        <code style="background:rgba(255,255,255,0.08); border:1px dashed rgba(255,255,255,0.25); color:#4ade80; padding:4px 10px; border-radius:6px; font-weight:700; font-size:13px; letter-spacing:0.5px;">${escapeHtml(n.couponCode)}</code>
+                        <button type="button" class="btn-copy-code" onclick="copyCouponCode('${escapeHtml(n.couponCode)}', this)" style="background:linear-gradient(135deg, #7c3aed, #4f46e5); border:none; color:#fff; padding:5px 12px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">Copy Code</button>
+                    </div>
+                `;
+            }
 
             return `
-                <div class="notif-item alert ${n.category || ''}" data-id="${escapeHtml(n.id)}">
+                <div class="notif-item ${n.type || ''}" data-id="${escapeHtml(n.id)}">
                     <div class="notif-item-header">
                         <h5 class="notif-item-title">${escapeHtml(n.title)}</h5>
-                        <span class="notif-type-tag alert" style="${tagStyle}">${tagText}</span>
+                        <span class="notif-type-tag" style="${tagStyle}">${tagText}</span>
                     </div>
                     <p class="notif-item-msg">${escapeHtml(n.message)}</p>
+                    ${couponActionHtml}
                 </div>
             `;
         }).join("");
@@ -218,6 +154,7 @@ let activeNotifications = [];
         const tickerContentEl = document.querySelector(".top-ticker-bar .ticker-track span") || 
                                 document.querySelector(".top-ticker-bar .ticker-track") || 
                                 document.querySelector(".top-ticker-bar .marquee-content");
+        const tickerBadgeEl = document.querySelector(".top-ticker-bar .ticker-badge");
         if (!tickerContentEl) return;
 
         // ROUTING RULE: Top Ticker Bar displays ANNOUNCEMENTS & COUPONS
@@ -226,7 +163,17 @@ let activeNotifications = [];
         if (tickerNotifs.length === 0) {
             // Standard clean default marquee when no custom announcements exist
             tickerContentEl.innerHTML = `📢 No any kind of announcements and offers`;
+            if (tickerBadgeEl) {
+                tickerBadgeEl.style.display = "none";
+                tickerBadgeEl.textContent = "";
+            }
             return;
+        }
+
+        const hasCoupon = tickerNotifs.some(n => n.type === "coupon");
+        if (tickerBadgeEl) {
+            tickerBadgeEl.style.display = "inline-flex";
+            tickerBadgeEl.innerHTML = hasCoupon ? `🎁 OFFER` : `📢 ANNOUNCEMENT`;
         }
 
         const itemsHtml = tickerNotifs.map(n => {
@@ -241,48 +188,15 @@ let activeNotifications = [];
         tickerContentEl.innerHTML = itemsHtml;
     }
 
-    function updateDashboardAlerts() {
-        const container = document.getElementById("dashboardAlertContainer") || document.getElementById("dashboardAlerts");
-        if (!container) return;
-
-        // ROUTING RULE: User Dashboard displays ALERTS ONLY
-        const systemAlerts = getAllActiveAlerts();
-
-        if (systemAlerts.length === 0) {
-            container.style.display = "none";
-            container.innerHTML = "";
-            return;
-        }
-
-        container.style.display = "block";
-        container.innerHTML = systemAlerts.map(n => {
-            const isMaint = n.category === "maintenance";
-            const bg = isMaint ? "rgba(239, 68, 68, 0.15)" : "rgba(234, 179, 8, 0.15)";
-            const border = isMaint ? "rgba(239, 68, 68, 0.35)" : "rgba(234, 179, 8, 0.4)";
-            const icon = isMaint ? "🛠️" : "⚠️";
-            const titleColor = "#fff";
-            const msgColor = isMaint ? "#fca5a5" : "#fef08a";
-
-            return `
-                <div class="dashboard-alert-card ${n.category || ''}" style="background:${bg}; border:1px solid ${border}; border-radius:14px; padding:14px 18px; margin-bottom:14px; display:flex; align-items:flex-start; gap:12px;">
-                    <span style="font-size:22px; line-height:1.2;">${icon}</span>
-                    <div>
-                        <strong style="color:${titleColor}; font-size:14px; display:block; margin-bottom:2px;">${escapeHtml(n.title)}</strong>
-                        <span style="font-size:13px; color:${msgColor}; line-height:1.5;">${escapeHtml(n.message)}</span>
-                    </div>
-                </div>
-            `;
-        }).join("");
-    }
-
     function isNotificationAllowedPage() {
-        if (document.getElementById("maintOverlay")) {
-            return true;
-        }
-
         const path = window.location.pathname.toLowerCase();
 
         if (path.includes("/admin/")) {
+            return false;
+        }
+
+        // Maintenance page should never render normal user notifications
+        if (path.includes("maintenance.html") || path.endsWith("/maintenance") || path.includes("/maintenance/")) {
             return false;
         }
 
@@ -355,13 +269,13 @@ let activeNotifications = [];
             drawer.className = "notif-drawer";
             drawer.innerHTML = `
                 <div class="notif-header">
-                    <h4>🔔 System Alerts</h4>
+                    <h4>🔔 Notifications</h4>
                     <button type="button" class="notif-close-btn" id="notifCloseBtn">&times;</button>
                 </div>
                 <div class="notif-body" id="notifDrawerBody">
                     <div class="notif-empty">
                         <div class="notif-empty-icon">🔔</div>
-                        <p>Loading announcements...</p>
+                        <p>No notifications right now.</p>
                     </div>
                 </div>
             `;
@@ -391,7 +305,7 @@ let activeNotifications = [];
 
     // Global Click Delegation for Bell Button
     document.addEventListener("click", (e) => {
-        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn, .notif-card-btn, #maintBellBtn, .maint-bell-btn, .notification-bell-btn");
+        const bell = e.target.closest("#notifBellBtn, .notif-bell-btn, .notif-card-btn, .notification-bell-btn");
         if (bell) {
             e.stopPropagation();
             toggleDrawer();
@@ -407,12 +321,11 @@ let activeNotifications = [];
     function syncMaintenanceNotifications() {
         updateBadgeCount();
         renderNotificationList();
-        updateDashboardAlerts();
     }
 
     window.addEventListener("storage", (e) => {
-        if (e.key === "rb_maint_active" || e.key === "rb_maint_data" || e.key === "rb_active_important_alerts") {
-            syncMaintenanceNotifications();
+        if (e.key === "rb_cached_notifications") {
+            fetchPublicNotifications();
         }
     });
 

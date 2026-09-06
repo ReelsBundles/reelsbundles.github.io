@@ -391,7 +391,7 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
             const preStyle = document.createElement("style");
             preStyle.id = "maintPreBlockStyle";
             preStyle.textContent = `
-                body > *:not(#maintOverlay):not(#testerPassModal):not(#maintAlertModal) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+                body > *:not(#maintOverlay):not(#testerPassModal) { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
                 html { background: #030712 !important; }
             `;
             (document.head || document.documentElement).appendChild(preStyle);
@@ -434,12 +434,6 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
                     </div>
                 </div>
             `;
-        } else {
-            middleSectionHtml = `
-                <div style="margin:22px 0; padding:18px 22px; background:rgba(124, 58, 237, 0.14); border:1px solid rgba(167, 139, 250, 0.35); border-radius:18px; color:#c4b5fd; font-size:14px; font-weight:600; text-align:center; line-height:1.6; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
-                    ✨ ${escapeHtml(message)}
-                </div>
-            `;
         }
 
         let importantAlertHtml = "";
@@ -464,10 +458,6 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
 
         const innerContent = `
             <div class="maint-card" style="position: relative;">
-                <button type="button" class="notification-bell-btn maint-bell-btn" id="maintBellBtn" title="View Live System Alerts" style="position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; font-size: 20px; transition: background 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-                    🔔
-                    <span class="bell-badge" id="maintBellBadge" style="position: absolute; top: -2px; right: -2px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 800; border-radius: 10px; padding: 2px 6px; display: none;"></span>
-                </button>
                 <div class="maint-gear-box">
                     <span class="maint-gear-main">⚙️</span>
                     <span class="maint-gear-sub">🔧</span>
@@ -513,35 +503,11 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
             overlay.innerHTML = innerContent;
         }
 
-        // Ensure notifications CSS and JS are loaded for the notification drawer
-        if (!document.querySelector("link[href*='notifications.css']")) {
-            const cssLink = document.createElement("link");
-            cssLink.rel = "stylesheet";
-            cssLink.href = "assets/css/notifications.css";
-            document.head.appendChild(cssLink);
-        }
-        if (!document.querySelector("script[src*='notifications.js']")) {
-            const jsScript = document.createElement("script");
-            jsScript.type = "module";
-            jsScript.src = "assets/js/notifications.js";
-            document.head.appendChild(jsScript);
-        }
-
-        // Attach listeners for Tester Passcode Modal & Notification Bell
+        // Attach listener for Tester Passcode Modal
         setTimeout(() => {
             const btn = document.getElementById("openTesterModalBtn");
             if (btn) {
                 btn.onclick = () => openTesterPasscodeModal(data);
-            }
-            const bellBtn = document.getElementById("maintBellBtn");
-            if (bellBtn) {
-                bellBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    openMaintenanceAlertModal(data);
-                    if (typeof window.toggleNotifDrawer === "function") {
-                        window.toggleNotifDrawer();
-                    }
-                };
             }
         }, 100);
 
@@ -549,43 +515,6 @@ const API_BASE = String(RAW_API_BASE).replace(/\/+$/, "").replace(/\/api$/, "") 
             startCountdownTimer(targetDate);
         } else if (countdownInterval) {
             clearInterval(countdownInterval);
-        }
-    }
-
-    function openMaintenanceAlertModal(data) {
-        let alertModal = document.getElementById("maintAlertModal");
-        if (!alertModal) {
-            alertModal = document.createElement("div");
-            alertModal.id = "maintAlertModal";
-            alertModal.style.cssText = "position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); z-index:10000000; display:flex; align-items:center; justify-content:center; padding:20px; font-family:'Inter',sans-serif;";
-            
-            const alertMsg = data?.message || "ReelsBundles is currently undergoing scheduled system maintenance to upgrade server infrastructure.";
-            
-            alertModal.innerHTML = `
-                <div style="background:#0f172a; border:1px solid rgba(124,58,237,0.5); border-radius:24px; padding:32px; width:100%; max-width:440px; color:#fff; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.9); position:relative;">
-                    <button type="button" id="closeMaintAlertBtn" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:#94a3b8; font-size:20px; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;">&times;</button>
-                    <div style="font-size:42px; margin-bottom:12px;">🔔</div>
-                    <h3 style="margin:0 0 8px; font-size:20px; font-weight:800; color:#fff;">Live System Alert</h3>
-                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(239,68,68,0.2); border:1px solid rgba(239,68,68,0.4); border-radius:999px; padding:4px 12px; font-size:11px; font-weight:700; color:#fca5a5; margin-bottom:16px;">
-                        <span style="width:6px; height:6px; background:#ef4444; border-radius:50%;"></span> SYSTEM MAINTENANCE ACTIVE
-                    </div>
-                    <p style="font-size:14px; color:#cbd5e1; line-height:1.6; margin-bottom:24px; background:rgba(30,41,59,0.6); padding:16px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); text-align:left;">
-                        ${escapeHtml(alertMsg)}
-                    </p>
-                    <button type="button" id="dismissMaintAlertBtn" style="width:100%; padding:12px; background:linear-gradient(135deg, #7c3aed, #4f46e5); border:none; border-radius:12px; color:#fff; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 4px 15px rgba(124,58,237,0.4);">
-                        ✓ Dismiss Alert
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(alertModal);
-
-            const closeBtn = document.getElementById("closeMaintAlertBtn");
-            const dismissBtn = document.getElementById("dismissMaintAlertBtn");
-            const closeHandler = () => { alertModal.style.display = "none"; };
-            if (closeBtn) closeBtn.onclick = closeHandler;
-            if (dismissBtn) dismissBtn.onclick = closeHandler;
-        } else {
-            alertModal.style.display = "flex";
         }
     }
 
