@@ -150,37 +150,20 @@ async function loadNotifications() {
             headers
         });
 
-        if (!res.ok) throw new Error("Failed to load notifications");
-        const data = await res.json();
-        const rawServerList = Array.isArray(data.notifications) ? data.notifications : [];
-        const serverList = rawServerList.filter(n => n.type !== "alert");
+        if (res.ok) {
+            const data = await res.json();
+            const rawServerList = Array.isArray(data.notifications) ? data.notifications : [];
+            const serverList = rawServerList.filter(n => n.type !== "alert");
 
-        if (serverList.length > 0) {
             cachedNotificationsList = serverList;
             setStoredNotifications(serverList);
             renderNotificationsTable(cachedNotificationsList);
-        } else if (cachedNotificationsList.length > 0) {
-            const normalList = cachedNotificationsList.filter(n => n.type !== "alert");
-            cachedNotificationsList = normalList;
-            setStoredNotifications(normalList);
-            renderNotificationsTable(normalList);
-            for (const notif of normalList) {
-                try {
-                    await fetch(`${API_BASE}/admin/notifications`, {
-                        method: "POST",
-                        headers,
-                        body: JSON.stringify(notif)
-                    });
-                } catch (e) {}
-            }
         } else {
-            cachedNotificationsList = [];
-            setStoredNotifications([]);
-            renderNotificationsTable([]);
+            throw new Error(`Server returned HTTP ${res.status}`);
         }
     } catch (err) {
         console.warn("[ADMIN NOTIFICATIONS] Server load warning:", err.message);
-        // Ensure local persistent notifications are shown even during network issues
+        // During network outage only, use cached notifications
         const localList = getStoredNotifications();
         if (localList.length > 0) {
             cachedNotificationsList = localList;
